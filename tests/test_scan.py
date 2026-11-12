@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import io
 from http import HTTPStatus
 from pathlib import Path
@@ -52,6 +53,12 @@ async def _setup(hass: HomeAssistant, entry: MockConfigEntry) -> None:
     entry.add_to_hass(hass)
     assert await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done(wait_background_tasks=True)
+
+
+async def _view_done(hass: HomeAssistant) -> None:
+    for _ in range(20):
+        await asyncio.sleep(0.01)
+    await hass.async_block_till_done()
 
 
 async def _scan(hass: HomeAssistant, **data):
@@ -347,9 +354,29 @@ async def test_download_last_scan(
     assert resp.status == HTTPStatus.OK
     assert resp.headers["Content-Type"] == "application/pdf"
     assert resp.headers["Content-Disposition"] == 'attachment; filename="letter.pdf"'
-    assert await resp.read() == Path(response["files"][0]).read_bytes()
+    body = await resp.read()
+    assert body[:5] == b"%PDF-"
+    # Downloaded: the file is deleted and leaves the last scan (the view finishes after the body is sent).
+    await _view_done(hass)
+    assert not Path(response["files"][0]).exists()
+    last = hass.states.get(f"sensor.{P}_last_scan")
+    assert last.attributes["files"] == []
+    assert last.attributes["download_paths"] == []
+    assert (await client.get(path)).status == HTTPStatus.NOT_FOUND
 
-    for other in (f"/api/hp/scans/{entry.entry_id}/1", f"/api/hp/scans/{entry.entry_id}/x", "/api/hp/scans/nope/0"):
+    # Several pages: each file downloaded goes, the others keep working links.
+    printer.pages = [JPEG_1, JPEG_2]
+    response = await _scan(hass, format="jpeg", source="feeder", filename="pages")
+    resp = await client.get(response["download_paths"][1])
+    assert await resp.read() == JPEG_2
+    await _view_done(hass)
+    last = hass.states.get(f"sensor.{P}_last_scan")
+    assert last.attributes["files"] == [response["files"][0]]
+    assert last.attributes["download_paths"] == [f"/api/hp/scans/{entry.entry_id}/0"]
+    resp = await client.get(last.attributes["download_paths"][0])
+    assert await resp.read() == JPEG_1
+
+    for other in (f"/api/hp/scans/{entry.entry_id}/5", f"/api/hp/scans/{entry.entry_id}/x", "/api/hp/scans/nope/0"):
         assert (await client.get(other)).status == HTTPStatus.NOT_FOUND
     anonymous = await hass_client_no_auth()
     assert (await anonymous.get(path)).status == HTTPStatus.UNAUTHORIZED

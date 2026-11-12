@@ -2,7 +2,8 @@
 
 Home Assistant's media view only serves audio, video and images: a PDF in the media folder is
 answered 404. This view serves the files of a printer's last scan (and only those), to an
-authenticated user or a signed link.
+authenticated user or a signed link, then deletes each file once it is fully sent: a scan
+downloaded leaves nothing behind, and an interrupted download keeps its file.
 """
 
 from __future__ import annotations
@@ -13,9 +14,10 @@ from pathlib import Path
 
 from aiohttp import web
 from homeassistant.components.http import HomeAssistantView
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers.http import KEY_HASS
 
-from .const import DOMAIN
+from .const import DOMAIN, LOGGER
 
 DOWNLOAD_URL = "/api/hp/scans/{entry_id}/{index}"
 
@@ -23,6 +25,18 @@ DOWNLOAD_URL = "/api/hp/scans/{entry_id}/{index}"
 def download_path(entry_id: str, index: int) -> str:
     """Return the path that downloads one file of a printer's last scan."""
     return DOWNLOAD_URL.format(entry_id=entry_id, index=index)
+
+
+def media_ids(hass: HomeAssistant, files: list[str]) -> list[str]:
+    """Media source IDs of the files in a media folder (to show or download them), in the files' order."""
+    ids = []
+    for file in files:
+        path = Path(file)
+        for key, root in hass.config.media_dirs.items():
+            if path.is_relative_to(root):
+                ids.append(f"media-source://media_source/{key}/{path.relative_to(root).as_posix()}")
+                break
+    return ids
 
 
 class HpScanView(HomeAssistantView):
@@ -42,14 +56,37 @@ class HpScanView(HomeAssistantView):
         if not index.isdigit() or int(index) >= len(files):
             return web.Response(status=HTTPStatus.NOT_FOUND)
         path = Path(files[int(index)])
-        if not await hass.async_add_executor_job(path.is_file):
+        try:
+            body = await hass.async_add_executor_job(path.read_bytes)
+        except OSError:
             return web.Response(status=HTTPStatus.NOT_FOUND)
-        content_type = mimetypes.guess_type(path.name)[0] or "application/octet-stream"
-        return web.FileResponse(
-            path,
+        response = web.StreamResponse(
             headers={
-                "Content-Type": content_type,
+                "Content-Type": mimetypes.guess_type(path.name)[0] or "application/octet-stream",
                 "Content-Disposition": f'attachment; filename="{path.name}"',
                 "Cache-Control": "no-store",
-            },
+            }
         )
+        response.content_length = len(body)
+        await response.prepare(request)
+        await response.write(body)
+        await response.write_eof()
+        # Fully sent (a client that went away raised above): the file is not kept.
+        await hass.async_add_executor_job(path.unlink, True)
+        LOGGER.info("%s downloaded and deleted", path)
+        _forget(hass, entry, str(path))
+        return response
+
+
+def _forget(hass: HomeAssistant, entry, file: str) -> None:
+    """Take a deleted file out of the printer's last scan (and its image, if it showed that file)."""
+    coordinator = entry.runtime_data
+    last = dict(coordinator.data.get("last_scan") or {})
+    files = [f for f in last.get("files", []) if f != file]
+    last.update(
+        files=files,
+        media_ids=media_ids(hass, files),
+        download_paths=[download_path(entry.entry_id, i) for i in range(len(files))],
+    )
+    image = coordinator.data.get("last_image")
+    coordinator.async_set_scan(last, None, clear_image=bool(image and image.get("file") == file))

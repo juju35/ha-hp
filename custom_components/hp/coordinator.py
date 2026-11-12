@@ -152,11 +152,13 @@ class HpCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     def _is_due(self, group: str, now: datetime) -> bool:
         return now >= self._due.get(group, now)
 
-    def async_set_scan(self, last_scan: dict[str, Any], last_image: dict[str, Any] | None) -> None:
-        """Record a finished scan: written to the entities and saved."""
+    def async_set_scan(
+        self, last_scan: dict[str, Any], last_image: dict[str, Any] | None, *, clear_image: bool = False
+    ) -> None:
+        """Record a finished scan, or its files once downloaded: written to the entities and saved."""
         data = deepcopy(self.data)
         data["last_scan"] = last_scan
-        if last_image is not None:
+        if last_image is not None or clear_image:
             data["last_image"] = last_image
         self.async_set_updated_data(data)
         self._save()

@@ -3,7 +3,7 @@
 ## 1.2.0 (2026-11-12)
 
 ### Fixes
-- Downloading a PDF scan gave a 14-byte file (`404: Not Found`): Home Assistant's media view only serves audio, video and images. The integration now serves the files of each printer's last scan itself, at `/api/hp/scans/<entry>/<n>`, to a signed-in user or a signed link; their paths are in `download_paths` (action response, event, **Last scan** sensor). ha-printer-card 2.13 downloads through them.
+- Downloading a PDF scan gave a 14-byte file (`404: Not Found`): Home Assistant's media view only serves audio, video and images. The integration now serves the files of each printer's last scan itself, at `/api/hp/scans/<entry>/<n>`, to a signed-in user or a signed link; their paths are in `download_paths` (action response, event, **Last scan** sensor). Each file is **deleted once downloaded** (after it is fully sent: an interrupted download keeps it) and leaves the last scan; files never downloaded stay in the scan folder. ha-printer-card 2.12.1 downloads through these paths.
 - The `device_id` of `hp.scan` no longer uses `DeviceEntry.config_entries`, deprecated since Home Assistant 2026.10.
 
 ## 1.1.1 (2026-11-12)

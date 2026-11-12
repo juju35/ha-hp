@@ -157,7 +157,7 @@ response_variable: scan    # scan.files, scan.media_ids, scan.download_paths, sc
 
 When a scan is saved, the event `hp_scan_completed` is fired with `device_id`, `format`, `files`, `media_ids`, `download_paths` and `pages`.
 
-The files of each printer's last scan are downloaded from `/api/hp/scans/<entry>/<n>` (the paths in `download_paths`), by a signed-in user or a signed link: Home Assistant's media view only serves audio, video and images, not PDFs. [ha-printer-card](https://github.com/juju35/ha-printer-card) scans from the glass or the feeder and offers the download link.
+The files of each printer's last scan are downloaded from `/api/hp/scans/<entry>/<n>` (the paths in `download_paths`), by a signed-in user or a signed link: Home Assistant's media view only serves audio, video and images, not PDFs. **A file is deleted once downloaded** (once fully sent: an interrupted download keeps it), and leaves the last scan; a scan never downloaded stays in the folder. [ha-printer-card](https://github.com/juju35/ha-printer-card) scans from the glass or the feeder and offers the download link.
 
 PDF and PNG are made by the integration from the scanner's JPEG pages (embedded as is in the PDF, no new compression), which is what lets pages be added to a PDF. A scanner that only offers PDF gets its own PDF saved, without adding pages.
 
