@@ -311,6 +311,12 @@
           },
           "files": {
             "name": "Files"
+          },
+          "media_ids": {
+            "name": "Media IDs"
+          },
+          "pages": {
+            "name": "Pages"
           }
         }
       }

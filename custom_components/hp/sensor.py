@@ -206,9 +206,14 @@ class HpLastScanSensor(HpEntity, SensorEntity):
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
-        """Return the format and files of the last scan."""
+        """Return the format, files, media source IDs (to download them) and pages of the last scan."""
         last = self.coordinator.data.get("last_scan") or {}
-        return {"format": last.get("format"), "files": last.get("files", [])}
+        return {
+            "format": last.get("format"),
+            "files": last.get("files", []),
+            "media_ids": last.get("media_ids", []),
+            "pages": last.get("pages"),
+        }
 
 
 class HpCounterSensor(HpEntity, SensorEntity):
