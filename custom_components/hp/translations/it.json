@@ -1,0 +1,62 @@
+{
+  "config": {
+    "flow_title": "{name}",
+    "step": {
+      "user": {
+        "title": "Stampante HP",
+        "description": "Inserisci l'indirizzo della stampante. Assegnale un indirizzo IP fisso nel router.",
+        "data": {
+          "host": "Host",
+          "port": "Porta",
+          "ssl": "Usa HTTPS"
+        },
+        "data_description": {
+          "host": "Indirizzo IP o nome host della stampante, ad esempio 192.168.1.12.",
+          "port": "Lascia vuoto per la porta predefinita (80, o 443 con HTTPS).",
+          "ssl": "Solo per le stampanti il cui server web risponde solo in HTTPS."
+        }
+      },
+      "zeroconf_confirm": {
+        "title": "Stampante HP trovata",
+        "description": "Aggiungere {name} ({host})?"
+      },
+      "reconfigure": {
+        "title": "Cambia l'indirizzo della stampante",
+        "description": "La stampante deve essere accesa per verificare il nuovo indirizzo.",
+        "data": {
+          "host": "Host",
+          "port": "Porta",
+          "ssl": "Usa HTTPS"
+        },
+        "data_description": {
+          "host": "Indirizzo IP o nome host della stampante, ad esempio 192.168.1.12.",
+          "port": "Lascia vuoto per la porta predefinita (80, o 443 con HTTPS).",
+          "ssl": "Solo per le stampanti il cui server web risponde solo in HTTPS."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "La stampante non risponde. Verifica che sia accesa e che l'indirizzo sia corretto."
+    },
+    "abort": {
+      "already_configured": "Questa stampante è già configurata.",
+      "cannot_connect": "La stampante non risponde.",
+      "missing_serial_number": "La stampante non indica un numero di serie: non può essere aggiunta.",
+      "wrong_printer": "A questo indirizzo risponde un'altra stampante.",
+      "reconfigure_successful": "L'indirizzo della stampante è stato aggiornato."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opzioni",
+        "data": {
+          "scan_interval": "Intervallo di aggiornamento dello stato"
+        },
+        "data_description": {
+          "scan_interval": "Ogni quanto viene letto lo stato, in secondi. I contatori di pagine e i livelli d'inchiostro vengono letti ogni 5 minuti e dopo ogni lavoro."
+        }
+      }
+    }
+  }
+}

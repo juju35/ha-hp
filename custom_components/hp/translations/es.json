@@ -1,0 +1,62 @@
+{
+  "config": {
+    "flow_title": "{name}",
+    "step": {
+      "user": {
+        "title": "Impresora HP",
+        "description": "Introduce la dirección de la impresora. Asígnale una dirección IP fija en tu router.",
+        "data": {
+          "host": "Host",
+          "port": "Puerto",
+          "ssl": "Usar HTTPS"
+        },
+        "data_description": {
+          "host": "Dirección IP o nombre de host de la impresora, por ejemplo 192.168.1.12.",
+          "port": "Déjalo vacío para el puerto predeterminado (80, o 443 con HTTPS).",
+          "ssl": "Solo para impresoras cuyo servidor web solo responde por HTTPS."
+        }
+      },
+      "zeroconf_confirm": {
+        "title": "Impresora HP encontrada",
+        "description": "¿Añadir {name} ({host})?"
+      },
+      "reconfigure": {
+        "title": "Cambiar la dirección de la impresora",
+        "description": "La impresora debe estar encendida para comprobar su nueva dirección.",
+        "data": {
+          "host": "Host",
+          "port": "Puerto",
+          "ssl": "Usar HTTPS"
+        },
+        "data_description": {
+          "host": "Dirección IP o nombre de host de la impresora, por ejemplo 192.168.1.12.",
+          "port": "Déjalo vacío para el puerto predeterminado (80, o 443 con HTTPS).",
+          "ssl": "Solo para impresoras cuyo servidor web solo responde por HTTPS."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "La impresora no responde. Comprueba que está encendida y que su dirección es correcta."
+    },
+    "abort": {
+      "already_configured": "Esta impresora ya está configurada.",
+      "cannot_connect": "La impresora no responde.",
+      "missing_serial_number": "La impresora no indica un número de serie: no se puede añadir.",
+      "wrong_printer": "Otra impresora responde en esta dirección.",
+      "reconfigure_successful": "Se ha actualizado la dirección de la impresora."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opciones",
+        "data": {
+          "scan_interval": "Intervalo de actualización del estado"
+        },
+        "data_description": {
+          "scan_interval": "Frecuencia de lectura del estado, en segundos. Los contadores de páginas y los niveles de tinta se leen cada 5 minutos y después de cada trabajo."
+        }
+      }
+    }
+  }
+}

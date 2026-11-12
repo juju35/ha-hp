@@ -1,0 +1,62 @@
+{
+  "config": {
+    "flow_title": "{name}",
+    "step": {
+      "user": {
+        "title": "Impressora HP",
+        "description": "Introduza o endereço da impressora. Atribua-lhe um endereço IP fixo no router.",
+        "data": {
+          "host": "Anfitrião",
+          "port": "Porta",
+          "ssl": "Utilizar HTTPS"
+        },
+        "data_description": {
+          "host": "Endereço IP ou nome do anfitrião da impressora, por exemplo 192.168.1.12.",
+          "port": "Deixe vazio para a porta predefinida (80, ou 443 com HTTPS).",
+          "ssl": "Apenas para impressoras cujo servidor web só responde em HTTPS."
+        }
+      },
+      "zeroconf_confirm": {
+        "title": "Impressora HP encontrada",
+        "description": "Adicionar {name} ({host})?"
+      },
+      "reconfigure": {
+        "title": "Alterar o endereço da impressora",
+        "description": "A impressora tem de estar ligada para verificar o novo endereço.",
+        "data": {
+          "host": "Anfitrião",
+          "port": "Porta",
+          "ssl": "Utilizar HTTPS"
+        },
+        "data_description": {
+          "host": "Endereço IP ou nome do anfitrião da impressora, por exemplo 192.168.1.12.",
+          "port": "Deixe vazio para a porta predefinida (80, ou 443 com HTTPS).",
+          "ssl": "Apenas para impressoras cujo servidor web só responde em HTTPS."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "A impressora não responde. Verifique se está ligada e se o endereço está correto."
+    },
+    "abort": {
+      "already_configured": "Esta impressora já está configurada.",
+      "cannot_connect": "A impressora não responde.",
+      "missing_serial_number": "A impressora não indica um número de série: não pode ser adicionada.",
+      "wrong_printer": "Outra impressora responde neste endereço.",
+      "reconfigure_successful": "O endereço da impressora foi atualizado."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opções",
+        "data": {
+          "scan_interval": "Intervalo de atualização do estado"
+        },
+        "data_description": {
+          "scan_interval": "Frequência de leitura do estado, em segundos. Os contadores de páginas e os níveis de tinta são lidos a cada 5 minutos e após cada trabalho."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "config": {
+    "flow_title": "{name}",
+    "step": {
+      "user": {
+        "title": "HP-printer",
+        "description": "Voer het adres van de printer in. Geef hem een vast IP-adres in je router.",
+        "data": {
+          "host": "Host",
+          "port": "Poort",
+          "ssl": "HTTPS gebruiken"
+        },
+        "data_description": {
+          "host": "IP-adres of hostnaam van de printer, bijvoorbeeld 192.168.1.12.",
+          "port": "Leeg laten voor de standaardpoort (80, of 443 met HTTPS).",
+          "ssl": "Alleen voor printers waarvan de webserver alleen via HTTPS antwoordt."
+        }
+      },
+      "zeroconf_confirm": {
+        "title": "HP-printer gevonden",
+        "description": "{name} ({host}) toevoegen?"
+      },
+      "reconfigure": {
+        "title": "Printeradres wijzigen",
+        "description": "De printer moet aan staan om het nieuwe adres te controleren.",
+        "data": {
+          "host": "Host",
+          "port": "Poort",
+          "ssl": "HTTPS gebruiken"
+        },
+        "data_description": {
+          "host": "IP-adres of hostnaam van de printer, bijvoorbeeld 192.168.1.12.",
+          "port": "Leeg laten voor de standaardpoort (80, of 443 met HTTPS).",
+          "ssl": "Alleen voor printers waarvan de webserver alleen via HTTPS antwoordt."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "De printer antwoordt niet. Controleer of hij aan staat en of het adres klopt."
+    },
+    "abort": {
+      "already_configured": "Deze printer is al geconfigureerd.",
+      "cannot_connect": "De printer antwoordt niet.",
+      "missing_serial_number": "De printer geeft geen serienummer: hij kan niet worden toegevoegd.",
+      "wrong_printer": "Op dit adres antwoordt een andere printer.",
+      "reconfigure_successful": "Het printeradres is bijgewerkt."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opties",
+        "data": {
+          "scan_interval": "Vernieuwingsinterval van de status"
+        },
+        "data_description": {
+          "scan_interval": "Hoe vaak de status wordt gelezen, in seconden. Paginatellers en inktniveaus worden elke 5 minuten en na elke taak gelezen."
+        }
+      }
+    }
+  }
+}

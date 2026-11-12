@@ -1,0 +1,62 @@
+{
+  "config": {
+    "flow_title": "{name}",
+    "step": {
+      "user": {
+        "title": "HP-printer",
+        "description": "Indtast printerens adresse. Giv den en fast IP-adresse i din router.",
+        "data": {
+          "host": "Vært",
+          "port": "Port",
+          "ssl": "Brug HTTPS"
+        },
+        "data_description": {
+          "host": "Printerens IP-adresse eller værtsnavn, for eksempel 192.168.1.12.",
+          "port": "Lad være tom for standardporten (80, eller 443 med HTTPS).",
+          "ssl": "Kun for printere, hvis webserver kun svarer via HTTPS."
+        }
+      },
+      "zeroconf_confirm": {
+        "title": "HP-printer fundet",
+        "description": "Tilføj {name} ({host})?"
+      },
+      "reconfigure": {
+        "title": "Skift printerens adresse",
+        "description": "Printeren skal være tændt for at kontrollere dens nye adresse.",
+        "data": {
+          "host": "Vært",
+          "port": "Port",
+          "ssl": "Brug HTTPS"
+        },
+        "data_description": {
+          "host": "Printerens IP-adresse eller værtsnavn, for eksempel 192.168.1.12.",
+          "port": "Lad være tom for standardporten (80, eller 443 med HTTPS).",
+          "ssl": "Kun for printere, hvis webserver kun svarer via HTTPS."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Printeren svarer ikke. Kontrollér, at den er tændt, og at adressen er korrekt."
+    },
+    "abort": {
+      "already_configured": "Denne printer er allerede konfigureret.",
+      "cannot_connect": "Printeren svarer ikke.",
+      "missing_serial_number": "Printeren oplyser intet serienummer: den kan ikke tilføjes.",
+      "wrong_printer": "En anden printer svarer på denne adresse.",
+      "reconfigure_successful": "Printerens adresse er opdateret."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Indstillinger",
+        "data": {
+          "scan_interval": "Opdateringsinterval for status"
+        },
+        "data_description": {
+          "scan_interval": "Hvor ofte status læses, i sekunder. Sidetællere og blækniveauer læses hvert 5. minut og efter hvert job."
+        }
+      }
+    }
+  }
+}

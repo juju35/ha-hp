@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ccdyn:ConsumableConfigDyn xmlns:ccdyn="http://www.hp.com/schemas/imaging/con/ledm/consumableconfigdyn/2007/11/19" xmlns:dd="http://www.hp.com/schemas/imaging/con/dictionaries/1.0/">
+  <ccdyn:ConsumableInfo>
+    <dd:ConsumableTypeEnum>printhead</dd:ConsumableTypeEnum>
+    <dd:ConsumableLabelCode>CMYK</dd:ConsumableLabelCode>
+  </ccdyn:ConsumableInfo>
+  <ccdyn:ConsumableInfo>
+    <dd:ConsumableTypeEnum>ink</dd:ConsumableTypeEnum>
+    <dd:ConsumableLabelCode>K</dd:ConsumableLabelCode>
+    <dd:ConsumablePercentageLevelRemaining>42</dd:ConsumablePercentageLevelRemaining>
+    <dd:ConsumableSelectibilityNumber>963</dd:ConsumableSelectibilityNumber>
+    <dd:ProductNumber>3JA26AE</dd:ProductNumber>
+    <ccdyn:ConsumableLifeState><dd:ConsumableState>ok</dd:ConsumableState></ccdyn:ConsumableLifeState>
+  </ccdyn:ConsumableInfo>
+  <ccdyn:ConsumableInfo>
+    <dd:ConsumableTypeEnum>ink</dd:ConsumableTypeEnum>
+    <dd:ConsumableLabelCode>C</dd:ConsumableLabelCode>
+    <dd:ConsumablePercentageLevelRemaining>8</dd:ConsumablePercentageLevelRemaining>
+    <dd:ConsumableSelectibilityNumber>963</dd:ConsumableSelectibilityNumber>
+    <ccdyn:ConsumableLifeState><dd:ConsumableState>veryLow</dd:ConsumableState></ccdyn:ConsumableLifeState>
+  </ccdyn:ConsumableInfo>
+  <ccdyn:ConsumableInfo>
+    <dd:ConsumableTypeEnum>ink</dd:ConsumableTypeEnum>
+    <dd:ConsumableLabelCode>M</dd:ConsumableLabelCode>
+    <dd:ConsumablePercentageLevelRemaining>60</dd:ConsumablePercentageLevelRemaining>
+  </ccdyn:ConsumableInfo>
+  <ccdyn:ConsumableInfo>
+    <dd:ConsumableTypeEnum>ink</dd:ConsumableTypeEnum>
+    <dd:ConsumableLabelCode>Y</dd:ConsumableLabelCode>
+    <dd:ConsumablePercentageLevelRemaining>-128</dd:ConsumablePercentageLevelRemaining>
+  </ccdyn:ConsumableInfo>
+</ccdyn:ConsumableConfigDyn>

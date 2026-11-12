@@ -1,0 +1,62 @@
+{
+  "config": {
+    "flow_title": "{name}",
+    "step": {
+      "user": {
+        "title": "HP-skrivare",
+        "description": "Ange skrivarens adress. Ge den en fast IP-adress i din router.",
+        "data": {
+          "host": "Värd",
+          "port": "Port",
+          "ssl": "Använd HTTPS"
+        },
+        "data_description": {
+          "host": "Skrivarens IP-adress eller värdnamn, till exempel 192.168.1.12.",
+          "port": "Lämna tomt för standardporten (80, eller 443 med HTTPS).",
+          "ssl": "Endast för skrivare vars webbserver bara svarar via HTTPS."
+        }
+      },
+      "zeroconf_confirm": {
+        "title": "HP-skrivare hittad",
+        "description": "Lägg till {name} ({host})?"
+      },
+      "reconfigure": {
+        "title": "Ändra skrivarens adress",
+        "description": "Skrivaren måste vara på för att kontrollera dess nya adress.",
+        "data": {
+          "host": "Värd",
+          "port": "Port",
+          "ssl": "Använd HTTPS"
+        },
+        "data_description": {
+          "host": "Skrivarens IP-adress eller värdnamn, till exempel 192.168.1.12.",
+          "port": "Lämna tomt för standardporten (80, eller 443 med HTTPS).",
+          "ssl": "Endast för skrivare vars webbserver bara svarar via HTTPS."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Skrivaren svarar inte. Kontrollera att den är på och att adressen är rätt."
+    },
+    "abort": {
+      "already_configured": "Den här skrivaren är redan konfigurerad.",
+      "cannot_connect": "Skrivaren svarar inte.",
+      "missing_serial_number": "Skrivaren rapporterar inget serienummer: den kan inte läggas till.",
+      "wrong_printer": "En annan skrivare svarar på den här adressen.",
+      "reconfigure_successful": "Skrivarens adress har uppdaterats."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Alternativ",
+        "data": {
+          "scan_interval": "Uppdateringsintervall för status"
+        },
+        "data_description": {
+          "scan_interval": "Hur ofta statusen läses, i sekunder. Sidräknare och bläcknivåer läses var 5:e minut och efter varje jobb."
+        }
+      }
+    }
+  }
+}

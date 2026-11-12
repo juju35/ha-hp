@@ -1,0 +1,62 @@
+{
+  "config": {
+    "flow_title": "{name}",
+    "step": {
+      "user": {
+        "title": "Imprimante HP",
+        "description": "Saisissez l'adresse de l'imprimante. Donnez-lui une adresse IP fixe dans votre box.",
+        "data": {
+          "host": "Hôte",
+          "port": "Port",
+          "ssl": "Utiliser HTTPS"
+        },
+        "data_description": {
+          "host": "Adresse IP ou nom d'hôte de l'imprimante, par exemple 192.168.1.12.",
+          "port": "Laissez vide pour le port par défaut (80, ou 443 en HTTPS).",
+          "ssl": "Uniquement pour les imprimantes dont le serveur web ne répond qu'en HTTPS."
+        }
+      },
+      "zeroconf_confirm": {
+        "title": "Imprimante HP trouvée",
+        "description": "Ajouter {name} ({host}) ?"
+      },
+      "reconfigure": {
+        "title": "Changer l'adresse de l'imprimante",
+        "description": "L'imprimante doit être allumée pour vérifier sa nouvelle adresse.",
+        "data": {
+          "host": "Hôte",
+          "port": "Port",
+          "ssl": "Utiliser HTTPS"
+        },
+        "data_description": {
+          "host": "Adresse IP ou nom d'hôte de l'imprimante, par exemple 192.168.1.12.",
+          "port": "Laissez vide pour le port par défaut (80, ou 443 en HTTPS).",
+          "ssl": "Uniquement pour les imprimantes dont le serveur web ne répond qu'en HTTPS."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "L'imprimante ne répond pas. Vérifiez qu'elle est allumée et que son adresse est correcte."
+    },
+    "abort": {
+      "already_configured": "Cette imprimante est déjà configurée.",
+      "cannot_connect": "L'imprimante ne répond pas.",
+      "missing_serial_number": "L'imprimante n'indique pas de numéro de série : elle ne peut pas être ajoutée.",
+      "wrong_printer": "Une autre imprimante répond à cette adresse.",
+      "reconfigure_successful": "L'adresse de l'imprimante a été mise à jour."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options",
+        "data": {
+          "scan_interval": "Intervalle de rafraîchissement de l'état"
+        },
+        "data_description": {
+          "scan_interval": "Fréquence de lecture de l'état, en secondes. Les compteurs de pages et niveaux d'encre sont lus toutes les 5 minutes et après chaque travail."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "config": {
+    "flow_title": "{name}",
+    "step": {
+      "user": {
+        "title": "Tiskárna HP",
+        "description": "Zadejte adresu tiskárny. Přiřaďte jí pevnou IP adresu v routeru.",
+        "data": {
+          "host": "Hostitel",
+          "port": "Port",
+          "ssl": "Použít HTTPS"
+        },
+        "data_description": {
+          "host": "IP adresa nebo název hostitele tiskárny, například 192.168.1.12.",
+          "port": "Ponechte prázdné pro výchozí port (80, nebo 443 s HTTPS).",
+          "ssl": "Pouze pro tiskárny, jejichž webový server odpovídá jen přes HTTPS."
+        }
+      },
+      "zeroconf_confirm": {
+        "title": "Nalezena tiskárna HP",
+        "description": "Přidat {name} ({host})?"
+      },
+      "reconfigure": {
+        "title": "Změnit adresu tiskárny",
+        "description": "Tiskárna musí být zapnutá, aby se ověřila její nová adresa.",
+        "data": {
+          "host": "Hostitel",
+          "port": "Port",
+          "ssl": "Použít HTTPS"
+        },
+        "data_description": {
+          "host": "IP adresa nebo název hostitele tiskárny, například 192.168.1.12.",
+          "port": "Ponechte prázdné pro výchozí port (80, nebo 443 s HTTPS).",
+          "ssl": "Pouze pro tiskárny, jejichž webový server odpovídá jen přes HTTPS."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Tiskárna neodpovídá. Zkontrolujte, zda je zapnutá a zda je její adresa správná."
+    },
+    "abort": {
+      "already_configured": "Tato tiskárna je již nakonfigurována.",
+      "cannot_connect": "Tiskárna neodpovídá.",
+      "missing_serial_number": "Tiskárna neuvádí sériové číslo: nelze ji přidat.",
+      "wrong_printer": "Na této adrese odpovídá jiná tiskárna.",
+      "reconfigure_successful": "Adresa tiskárny byla aktualizována."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Možnosti",
+        "data": {
+          "scan_interval": "Interval obnovování stavu"
+        },
+        "data_description": {
+          "scan_interval": "Jak často se čte stav, v sekundách. Počítadla stran a hladiny inkoustu se čtou každých 5 minut a po každé úloze."
+        }
+      }
+    }
+  }
+}

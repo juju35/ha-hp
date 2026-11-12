@@ -1,0 +1,63 @@
+{
+  "entity": {
+    "binary_sensor": {
+      "online": { "default": "mdi:printer-off", "state": { "on": "mdi:printer-check" } },
+      "ethernet": { "default": "mdi:ethernet-off", "state": { "on": "mdi:ethernet" } },
+      "wifi": { "default": "mdi:wifi-off", "state": { "on": "mdi:wifi" } },
+      "usb": { "default": "mdi:usb" },
+      "cloud_registered": { "default": "mdi:cloud-off-outline", "state": { "on": "mdi:cloud-check-outline" } },
+      "cloud_services": { "default": "mdi:cloud-off-outline", "state": { "on": "mdi:cloud-outline" } }
+    },
+    "sensor": {
+      "status": {
+        "default": "mdi:printer",
+        "state": {
+          "ready": "mdi:printer-check",
+          "processing": "mdi:printer-pos-sync",
+          "copying": "mdi:content-copy",
+          "scan_processing": "mdi:scanner",
+          "cancel_job": "mdi:printer-pos-remove",
+          "in_power_save": "mdi:power-sleep",
+          "initializing": "mdi:printer-settings",
+          "shutting_down": "mdi:power",
+          "off": "mdi:printer-off",
+          "tray_empty": "mdi:tray-alert",
+          "paper_jam": "mdi:alert",
+          "close_door_or_cover": "mdi:door-open",
+          "other": "mdi:printer-alert"
+        }
+      },
+      "last_seen": { "default": "mdi:clock-check-outline" },
+      "total_pages": { "default": "mdi:file-document-multiple" },
+      "monochrome_pages": { "default": "mdi:file-document-outline" },
+      "color_pages": { "default": "mdi:palette" },
+      "simplex_sheets": { "default": "mdi:file-outline" },
+      "duplex_sheets": { "default": "mdi:file-multiple-outline" },
+      "jams": { "default": "mdi:alert-octagon" },
+      "mispicks": { "default": "mdi:alert-circle-outline" },
+      "scanned_pages": { "default": "mdi:scanner" },
+      "scanned_adf_pages": { "default": "mdi:tray-full" },
+      "scanned_flatbed_pages": { "default": "mdi:scanner" },
+      "scanned_duplex_sheets": { "default": "mdi:file-multiple-outline" },
+      "scanner_jams": { "default": "mdi:alert-octagon" },
+      "scanner_mispicks": { "default": "mdi:alert-circle-outline" },
+      "copied_pages": { "default": "mdi:content-copy" },
+      "faxed_pages": { "default": "mdi:fax" },
+      "black_level": { "default": "mdi:water" },
+      "cyan_level": { "default": "mdi:water" },
+      "magenta_level": { "default": "mdi:water" },
+      "yellow_level": { "default": "mdi:water" },
+      "tri_color_level": { "default": "mdi:water" },
+      "black_pages_remaining": { "default": "mdi:file-clock-outline" },
+      "cyan_pages_remaining": { "default": "mdi:file-clock-outline" },
+      "magenta_pages_remaining": { "default": "mdi:file-clock-outline" },
+      "yellow_pages_remaining": { "default": "mdi:file-clock-outline" },
+      "tri_color_pages_remaining": { "default": "mdi:file-clock-outline" },
+      "black_pages_printed": { "default": "mdi:file-document-multiple-outline" },
+      "cyan_pages_printed": { "default": "mdi:file-document-multiple-outline" },
+      "magenta_pages_printed": { "default": "mdi:file-document-multiple-outline" },
+      "yellow_pages_printed": { "default": "mdi:file-document-multiple-outline" },
+      "tri_color_pages_printed": { "default": "mdi:file-document-multiple-outline" }
+    }
+  }
+}

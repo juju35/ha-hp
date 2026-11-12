@@ -1,0 +1,62 @@
+{
+  "config": {
+    "flow_title": "{name}",
+    "step": {
+      "user": {
+        "title": "HP-Drucker",
+        "description": "Geben Sie die Adresse des Druckers ein. Weisen Sie ihm in Ihrem Router eine feste IP-Adresse zu.",
+        "data": {
+          "host": "Host",
+          "port": "Port",
+          "ssl": "HTTPS verwenden"
+        },
+        "data_description": {
+          "host": "IP-Adresse oder Hostname des Druckers, zum Beispiel 192.168.1.12.",
+          "port": "Leer lassen für den Standardport (80, oder 443 mit HTTPS).",
+          "ssl": "Nur für Drucker, deren Webserver ausschließlich über HTTPS antwortet."
+        }
+      },
+      "zeroconf_confirm": {
+        "title": "HP-Drucker gefunden",
+        "description": "{name} ({host}) hinzufügen?"
+      },
+      "reconfigure": {
+        "title": "Druckeradresse ändern",
+        "description": "Der Drucker muss eingeschaltet sein, um seine neue Adresse zu prüfen.",
+        "data": {
+          "host": "Host",
+          "port": "Port",
+          "ssl": "HTTPS verwenden"
+        },
+        "data_description": {
+          "host": "IP-Adresse oder Hostname des Druckers, zum Beispiel 192.168.1.12.",
+          "port": "Leer lassen für den Standardport (80, oder 443 mit HTTPS).",
+          "ssl": "Nur für Drucker, deren Webserver ausschließlich über HTTPS antwortet."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Der Drucker antwortet nicht. Prüfen Sie, ob er eingeschaltet und seine Adresse korrekt ist."
+    },
+    "abort": {
+      "already_configured": "Dieser Drucker ist bereits eingerichtet.",
+      "cannot_connect": "Der Drucker antwortet nicht.",
+      "missing_serial_number": "Der Drucker meldet keine Seriennummer: Er kann nicht hinzugefügt werden.",
+      "wrong_printer": "Unter dieser Adresse antwortet ein anderer Drucker.",
+      "reconfigure_successful": "Die Druckeradresse wurde aktualisiert."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Optionen",
+        "data": {
+          "scan_interval": "Aktualisierungsintervall des Status"
+        },
+        "data_description": {
+          "scan_interval": "Wie oft der Status gelesen wird, in Sekunden. Seitenzähler und Tintenstände werden alle 5 Minuten und nach jedem Auftrag gelesen."
+        }
+      }
+    }
+  }
+}

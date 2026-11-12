@@ -1,0 +1,62 @@
+{
+  "config": {
+    "flow_title": "{name}",
+    "step": {
+      "user": {
+        "title": "Tiskalnik HP",
+        "description": "Vnesite naslov tiskalnika. V usmerjevalniku mu dodelite stalen naslov IP.",
+        "data": {
+          "host": "Gostitelj",
+          "port": "Vrata",
+          "ssl": "Uporabi HTTPS"
+        },
+        "data_description": {
+          "host": "Naslov IP ali ime gostitelja tiskalnika, na primer 192.168.1.12.",
+          "port": "Pustite prazno za privzeta vrata (80 ali 443 s HTTPS).",
+          "ssl": "Samo za tiskalnike, katerih spletni strežnik odgovarja le prek HTTPS."
+        }
+      },
+      "zeroconf_confirm": {
+        "title": "Najden tiskalnik HP",
+        "description": "Dodam {name} ({host})?"
+      },
+      "reconfigure": {
+        "title": "Spremeni naslov tiskalnika",
+        "description": "Tiskalnik mora biti vklopljen, da se preveri njegov novi naslov.",
+        "data": {
+          "host": "Gostitelj",
+          "port": "Vrata",
+          "ssl": "Uporabi HTTPS"
+        },
+        "data_description": {
+          "host": "Naslov IP ali ime gostitelja tiskalnika, na primer 192.168.1.12.",
+          "port": "Pustite prazno za privzeta vrata (80 ali 443 s HTTPS).",
+          "ssl": "Samo za tiskalnike, katerih spletni strežnik odgovarja le prek HTTPS."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Tiskalnik se ne odziva. Preverite, ali je vklopljen in ali je njegov naslov pravilen."
+    },
+    "abort": {
+      "already_configured": "Ta tiskalnik je že nastavljen.",
+      "cannot_connect": "Tiskalnik se ne odziva.",
+      "missing_serial_number": "Tiskalnik ne sporoča serijske številke: ni ga mogoče dodati.",
+      "wrong_printer": "Na tem naslovu se odziva drug tiskalnik.",
+      "reconfigure_successful": "Naslov tiskalnika je posodobljen."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Možnosti",
+        "data": {
+          "scan_interval": "Interval osveževanja stanja"
+        },
+        "data_description": {
+          "scan_interval": "Kako pogosto se bere stanje, v sekundah. Števci strani in ravni črnila se berejo vsakih 5 minut in po vsakem opravilu."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "config": {
+    "flow_title": "{name}",
+    "step": {
+      "user": {
+        "title": "Drukarka HP",
+        "description": "Podaj adres drukarki. Przypisz jej stały adres IP w routerze.",
+        "data": {
+          "host": "Host",
+          "port": "Port",
+          "ssl": "Użyj HTTPS"
+        },
+        "data_description": {
+          "host": "Adres IP lub nazwa hosta drukarki, na przykład 192.168.1.12.",
+          "port": "Pozostaw puste dla domyślnego portu (80 lub 443 z HTTPS).",
+          "ssl": "Tylko dla drukarek, których serwer WWW odpowiada wyłącznie przez HTTPS."
+        }
+      },
+      "zeroconf_confirm": {
+        "title": "Znaleziono drukarkę HP",
+        "description": "Dodać {name} ({host})?"
+      },
+      "reconfigure": {
+        "title": "Zmień adres drukarki",
+        "description": "Drukarka musi być włączona, aby sprawdzić jej nowy adres.",
+        "data": {
+          "host": "Host",
+          "port": "Port",
+          "ssl": "Użyj HTTPS"
+        },
+        "data_description": {
+          "host": "Adres IP lub nazwa hosta drukarki, na przykład 192.168.1.12.",
+          "port": "Pozostaw puste dla domyślnego portu (80 lub 443 z HTTPS).",
+          "ssl": "Tylko dla drukarek, których serwer WWW odpowiada wyłącznie przez HTTPS."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Drukarka nie odpowiada. Sprawdź, czy jest włączona i czy jej adres jest poprawny."
+    },
+    "abort": {
+      "already_configured": "Ta drukarka jest już skonfigurowana.",
+      "cannot_connect": "Drukarka nie odpowiada.",
+      "missing_serial_number": "Drukarka nie podaje numeru seryjnego: nie można jej dodać.",
+      "wrong_printer": "Pod tym adresem odpowiada inna drukarka.",
+      "reconfigure_successful": "Adres drukarki został zaktualizowany."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opcje",
+        "data": {
+          "scan_interval": "Interwał odświeżania stanu"
+        },
+        "data_description": {
+          "scan_interval": "Jak często odczytywany jest stan, w sekundach. Liczniki stron i poziomy tuszu są odczytywane co 5 minut i po każdym zadaniu."
+        }
+      }
+    }
+  }
+}

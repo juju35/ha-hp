@@ -1,0 +1,62 @@
+{
+  "config": {
+    "flow_title": "{name}",
+    "step": {
+      "user": {
+        "title": "Imprimantă HP",
+        "description": "Introduceți adresa imprimantei. Atribuiți-i o adresă IP fixă în router.",
+        "data": {
+          "host": "Gazdă",
+          "port": "Port",
+          "ssl": "Folosește HTTPS"
+        },
+        "data_description": {
+          "host": "Adresa IP sau numele de gazdă al imprimantei, de exemplu 192.168.1.12.",
+          "port": "Lăsați gol pentru portul implicit (80, sau 443 cu HTTPS).",
+          "ssl": "Doar pentru imprimantele al căror server web răspunde numai prin HTTPS."
+        }
+      },
+      "zeroconf_confirm": {
+        "title": "Imprimantă HP găsită",
+        "description": "Adăugați {name} ({host})?"
+      },
+      "reconfigure": {
+        "title": "Schimbați adresa imprimantei",
+        "description": "Imprimanta trebuie să fie pornită pentru a verifica noua adresă.",
+        "data": {
+          "host": "Gazdă",
+          "port": "Port",
+          "ssl": "Folosește HTTPS"
+        },
+        "data_description": {
+          "host": "Adresa IP sau numele de gazdă al imprimantei, de exemplu 192.168.1.12.",
+          "port": "Lăsați gol pentru portul implicit (80, sau 443 cu HTTPS).",
+          "ssl": "Doar pentru imprimantele al căror server web răspunde numai prin HTTPS."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Imprimanta nu răspunde. Verificați că este pornită și că adresa este corectă."
+    },
+    "abort": {
+      "already_configured": "Această imprimantă este deja configurată.",
+      "cannot_connect": "Imprimanta nu răspunde.",
+      "missing_serial_number": "Imprimanta nu raportează un număr de serie: nu poate fi adăugată.",
+      "wrong_printer": "La această adresă răspunde o altă imprimantă.",
+      "reconfigure_successful": "Adresa imprimantei a fost actualizată."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opțiuni",
+        "data": {
+          "scan_interval": "Interval de actualizare a stării"
+        },
+        "data_description": {
+          "scan_interval": "Cât de des este citită starea, în secunde. Contoarele de pagini și nivelurile de cerneală sunt citite la fiecare 5 minute și după fiecare lucrare."
+        }
+      }
+    }
+  }
+}

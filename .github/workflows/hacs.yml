@@ -1,0 +1,34 @@
+name: Marketplace Validation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+  # Called by Release, so that a version is published only once these checks pass.
+  workflow_call:
+
+permissions:
+  contents: read
+
+# github.workflow is "Release" when called from Release: the group then stays distinct from this
+# workflow's own push run on main, so neither cancels the other.
+concurrency:
+  group: hacs-${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  hacs:
+    name: Marketplace
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Marketplace validation
+        uses: hacs/action@1ebf01c408f29afcb6406bd431bc98fd8cbb15aa # main
+        with:
+          category: integration

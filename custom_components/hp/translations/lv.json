@@ -1,0 +1,62 @@
+{
+  "config": {
+    "flow_title": "{name}",
+    "step": {
+      "user": {
+        "title": "HP printeris",
+        "description": "Ievadiet printera adresi. Piešķiriet tam fiksētu IP adresi maršrutētājā.",
+        "data": {
+          "host": "Resursdators",
+          "port": "Ports",
+          "ssl": "Izmantot HTTPS"
+        },
+        "data_description": {
+          "host": "Printera IP adrese vai resursdatora nosaukums, piemēram, 192.168.1.12.",
+          "port": "Atstājiet tukšu noklusējuma portam (80 vai 443 ar HTTPS).",
+          "ssl": "Tikai printeriem, kuru tīmekļa serveris atbild tikai caur HTTPS."
+        }
+      },
+      "zeroconf_confirm": {
+        "title": "Atrasts HP printeris",
+        "description": "Pievienot {name} ({host})?"
+      },
+      "reconfigure": {
+        "title": "Mainīt printera adresi",
+        "description": "Printerim jābūt ieslēgtam, lai pārbaudītu tā jauno adresi.",
+        "data": {
+          "host": "Resursdators",
+          "port": "Ports",
+          "ssl": "Izmantot HTTPS"
+        },
+        "data_description": {
+          "host": "Printera IP adrese vai resursdatora nosaukums, piemēram, 192.168.1.12.",
+          "port": "Atstājiet tukšu noklusējuma portam (80 vai 443 ar HTTPS).",
+          "ssl": "Tikai printeriem, kuru tīmekļa serveris atbild tikai caur HTTPS."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Printeris neatbild. Pārbaudiet, vai tas ir ieslēgts un vai tā adrese ir pareiza."
+    },
+    "abort": {
+      "already_configured": "Šis printeris jau ir konfigurēts.",
+      "cannot_connect": "Printeris neatbild.",
+      "missing_serial_number": "Printeris nenorāda sērijas numuru: to nevar pievienot.",
+      "wrong_printer": "Šajā adresē atbild cits printeris.",
+      "reconfigure_successful": "Printera adrese ir atjaunināta."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opcijas",
+        "data": {
+          "scan_interval": "Statusa atsvaidzināšanas intervāls"
+        },
+        "data_description": {
+          "scan_interval": "Cik bieži tiek nolasīts statuss, sekundēs. Lappušu skaitītāji un tintes līmeņi tiek nolasīti ik pēc 5 minūtēm un pēc katra darba."
+        }
+      }
+    }
+  }
+}

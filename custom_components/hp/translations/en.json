@@ -1,0 +1,308 @@
+{
+  "config": {
+    "flow_title": "{name}",
+    "step": {
+      "user": {
+        "title": "HP printer",
+        "description": "Enter the address of the printer. Give it a fixed IP address in your router.",
+        "data": {
+          "host": "Host",
+          "port": "Port",
+          "ssl": "Use HTTPS"
+        },
+        "data_description": {
+          "host": "IP address or hostname of the printer, for example 192.168.1.12.",
+          "port": "Leave empty for the default port (80, or 443 with HTTPS).",
+          "ssl": "Only for printers whose web server answers over HTTPS only."
+        }
+      },
+      "zeroconf_confirm": {
+        "title": "HP printer found",
+        "description": "Add {name} ({host})?"
+      },
+      "reconfigure": {
+        "title": "Change the printer address",
+        "description": "The printer must be on to check its new address.",
+        "data": {
+          "host": "Host",
+          "port": "Port",
+          "ssl": "Use HTTPS"
+        },
+        "data_description": {
+          "host": "IP address or hostname of the printer, for example 192.168.1.12.",
+          "port": "Leave empty for the default port (80, or 443 with HTTPS).",
+          "ssl": "Only for printers whose web server answers over HTTPS only."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "The printer does not answer. Check that it is on and that its address is correct."
+    },
+    "abort": {
+      "already_configured": "This printer is already configured.",
+      "cannot_connect": "The printer does not answer.",
+      "missing_serial_number": "The printer does not report a serial number: it cannot be added.",
+      "wrong_printer": "Another printer answers at this address.",
+      "reconfigure_successful": "The printer address was updated."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options",
+        "data": {
+          "scan_interval": "Status refresh interval"
+        },
+        "data_description": {
+          "scan_interval": "How often the status is read, in seconds. Page counters and ink levels are read every 5 minutes and after each job."
+        }
+      }
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "online": {
+        "name": "Online"
+      },
+      "ethernet": {
+        "name": "Ethernet"
+      },
+      "wifi": {
+        "name": "Wi-Fi"
+      },
+      "usb": {
+        "name": "USB"
+      },
+      "cloud_registered": {
+        "name": "HP cloud registered"
+      },
+      "cloud_services": {
+        "name": "HP cloud services"
+      }
+    },
+    "sensor": {
+      "status": {
+        "name": "Status",
+        "state": {
+          "ready": "Ready",
+          "processing": "Printing",
+          "copying": "Copying",
+          "scan_processing": "Scanning",
+          "cancel_job": "Canceling job",
+          "in_power_save": "Power save",
+          "initializing": "Initializing",
+          "shutting_down": "Shutting down",
+          "off": "Off",
+          "tray_empty": "Paper tray empty",
+          "paper_jam": "Paper jam",
+          "close_door_or_cover": "Door or cover open",
+          "other": "Other"
+        },
+        "state_attributes": {
+          "raw_status": {
+            "name": "Printer status"
+          },
+          "message": {
+            "name": "Message"
+          },
+          "alerts": {
+            "name": "Alerts"
+          }
+        }
+      },
+      "last_seen": {
+        "name": "Last seen"
+      },
+      "total_pages": {
+        "name": "Printed pages"
+      },
+      "monochrome_pages": {
+        "name": "Printed black and white pages"
+      },
+      "color_pages": {
+        "name": "Printed color pages"
+      },
+      "simplex_sheets": {
+        "name": "Printed single-sided sheets"
+      },
+      "duplex_sheets": {
+        "name": "Printed double-sided sheets"
+      },
+      "jams": {
+        "name": "Paper jams"
+      },
+      "mispicks": {
+        "name": "Paper mispicks"
+      },
+      "scanned_pages": {
+        "name": "Scanned pages"
+      },
+      "scanned_adf_pages": {
+        "name": "Scanned pages from document feeder"
+      },
+      "scanned_flatbed_pages": {
+        "name": "Scanned pages from glass"
+      },
+      "scanned_duplex_sheets": {
+        "name": "Scanned double-sided sheets"
+      },
+      "scanner_jams": {
+        "name": "Scanner jams"
+      },
+      "scanner_mispicks": {
+        "name": "Scanner mispicks"
+      },
+      "copied_pages": {
+        "name": "Copied pages"
+      },
+      "faxed_pages": {
+        "name": "Faxed pages"
+      },
+      "black_level": {
+        "name": "Black level",
+        "state_attributes": {
+          "state": {
+            "name": "Cartridge state"
+          },
+          "installed": {
+            "name": "Installed"
+          },
+          "cartridge": {
+            "name": "Cartridge"
+          },
+          "product_number": {
+            "name": "Product number"
+          },
+          "low_threshold": {
+            "name": "Low threshold"
+          },
+          "type": {
+            "name": "Type"
+          }
+        }
+      },
+      "black_pages_remaining": {
+        "name": "Black pages remaining"
+      },
+      "black_pages_printed": {
+        "name": "Black pages printed"
+      },
+      "cyan_level": {
+        "name": "Cyan level",
+        "state_attributes": {
+          "state": {
+            "name": "Cartridge state"
+          },
+          "installed": {
+            "name": "Installed"
+          },
+          "cartridge": {
+            "name": "Cartridge"
+          },
+          "product_number": {
+            "name": "Product number"
+          },
+          "low_threshold": {
+            "name": "Low threshold"
+          },
+          "type": {
+            "name": "Type"
+          }
+        }
+      },
+      "cyan_pages_remaining": {
+        "name": "Cyan pages remaining"
+      },
+      "cyan_pages_printed": {
+        "name": "Cyan pages printed"
+      },
+      "magenta_level": {
+        "name": "Magenta level",
+        "state_attributes": {
+          "state": {
+            "name": "Cartridge state"
+          },
+          "installed": {
+            "name": "Installed"
+          },
+          "cartridge": {
+            "name": "Cartridge"
+          },
+          "product_number": {
+            "name": "Product number"
+          },
+          "low_threshold": {
+            "name": "Low threshold"
+          },
+          "type": {
+            "name": "Type"
+          }
+        }
+      },
+      "magenta_pages_remaining": {
+        "name": "Magenta pages remaining"
+      },
+      "magenta_pages_printed": {
+        "name": "Magenta pages printed"
+      },
+      "yellow_level": {
+        "name": "Yellow level",
+        "state_attributes": {
+          "state": {
+            "name": "Cartridge state"
+          },
+          "installed": {
+            "name": "Installed"
+          },
+          "cartridge": {
+            "name": "Cartridge"
+          },
+          "product_number": {
+            "name": "Product number"
+          },
+          "low_threshold": {
+            "name": "Low threshold"
+          },
+          "type": {
+            "name": "Type"
+          }
+        }
+      },
+      "yellow_pages_remaining": {
+        "name": "Yellow pages remaining"
+      },
+      "yellow_pages_printed": {
+        "name": "Yellow pages printed"
+      },
+      "tri_color_level": {
+        "name": "Tri-color level",
+        "state_attributes": {
+          "state": {
+            "name": "Cartridge state"
+          },
+          "installed": {
+            "name": "Installed"
+          },
+          "cartridge": {
+            "name": "Cartridge"
+          },
+          "product_number": {
+            "name": "Product number"
+          },
+          "low_threshold": {
+            "name": "Low threshold"
+          },
+          "type": {
+            "name": "Type"
+          }
+        }
+      },
+      "tri_color_pages_remaining": {
+        "name": "Tri-color pages remaining"
+      },
+      "tri_color_pages_printed": {
+        "name": "Tri-color pages printed"
+      }
+    }
+  }
+}

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pudyn:ProductUsageDyn xmlns:pudyn="http://www.hp.com/schemas/imaging/con/ledm/productusagedyn/2007/12/11" xmlns:dd="http://www.hp.com/schemas/imaging/con/dictionaries/1.0/">
+  <pudyn:PrinterSubunit>
+    <dd:TotalImpressions PEID="5082">1234</dd:TotalImpressions>
+    <dd:MonochromeImpressions>800</dd:MonochromeImpressions>
+    <dd:ColorImpressions>434</dd:ColorImpressions>
+    <dd:SimplexSheets>600</dd:SimplexSheets>
+    <dd:DuplexSheets>317</dd:DuplexSheets>
+    <dd:JamEvents>3</dd:JamEvents>
+    <dd:MispickEvents>1</dd:MispickEvents>
+  </pudyn:PrinterSubunit>
+  <pudyn:ScannerEngineSubunit>
+    <dd:ScanImages>210</dd:ScanImages>
+    <dd:AdfImages>150</dd:AdfImages>
+    <dd:FlatbedImages>60</dd:FlatbedImages>
+  </pudyn:ScannerEngineSubunit>
+  <pudyn:CopyApplicationSubunit>
+    <dd:TotalImpressions>45</dd:TotalImpressions>
+  </pudyn:CopyApplicationSubunit>
+  <pudyn:ConsumableSubunit>
+    <pudyn:Consumable>
+      <dd:MarkerColor>Black</dd:MarkerColor>
+      <dd:EstimatedPagesRemaining>380</dd:EstimatedPagesRemaining>
+      <dd:TotalImpressions>700</dd:TotalImpressions>
+    </pudyn:Consumable>
+    <pudyn:Consumable>
+      <dd:MarkerColor>Yellow</dd:MarkerColor>
+      <dd:ConsumableRawPercentageLevelRemaining>25</dd:ConsumableRawPercentageLevelRemaining>
+    </pudyn:Consumable>
+  </pudyn:ConsumableSubunit>
+</pudyn:ProductUsageDyn>

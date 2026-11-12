@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ep:ePrintConfigDyn xmlns:ep="http://www.hp.com/schemas/imaging/con/eprint/2010/04/30" xmlns:dd="http://www.hp.com/schemas/imaging/con/dictionaries/1.0/">
+  <ep:RegistrationState>registered</ep:RegistrationState>
+  <ep:CloudServicesSwitch><dd:Status>enabled</dd:Status></ep:CloudServicesSwitch>
+</ep:ePrintConfigDyn>

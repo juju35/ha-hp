@@ -1,0 +1,62 @@
+{
+  "config": {
+    "flow_title": "{name}",
+    "step": {
+      "user": {
+        "title": "HP nyomtató",
+        "description": "Adja meg a nyomtató címét. Adjon neki fix IP-címet a routerben.",
+        "data": {
+          "host": "Gazdagép",
+          "port": "Port",
+          "ssl": "HTTPS használata"
+        },
+        "data_description": {
+          "host": "A nyomtató IP-címe vagy gazdagépneve, például 192.168.1.12.",
+          "port": "Hagyja üresen az alapértelmezett porthoz (80, vagy HTTPS esetén 443).",
+          "ssl": "Csak olyan nyomtatókhoz, amelyek webszervere kizárólag HTTPS-en válaszol."
+        }
+      },
+      "zeroconf_confirm": {
+        "title": "HP nyomtató található",
+        "description": "Hozzáadja: {name} ({host})?"
+      },
+      "reconfigure": {
+        "title": "A nyomtató címének módosítása",
+        "description": "A nyomtatónak bekapcsolva kell lennie az új cím ellenőrzéséhez.",
+        "data": {
+          "host": "Gazdagép",
+          "port": "Port",
+          "ssl": "HTTPS használata"
+        },
+        "data_description": {
+          "host": "A nyomtató IP-címe vagy gazdagépneve, például 192.168.1.12.",
+          "port": "Hagyja üresen az alapértelmezett porthoz (80, vagy HTTPS esetén 443).",
+          "ssl": "Csak olyan nyomtatókhoz, amelyek webszervere kizárólag HTTPS-en válaszol."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "A nyomtató nem válaszol. Ellenőrizze, hogy be van-e kapcsolva, és helyes-e a címe."
+    },
+    "abort": {
+      "already_configured": "Ez a nyomtató már be van állítva.",
+      "cannot_connect": "A nyomtató nem válaszol.",
+      "missing_serial_number": "A nyomtató nem ad meg sorozatszámot: nem adható hozzá.",
+      "wrong_printer": "Ezen a címen egy másik nyomtató válaszol.",
+      "reconfigure_successful": "A nyomtató címe frissítve."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Beállítások",
+        "data": {
+          "scan_interval": "Állapotfrissítési időköz"
+        },
+        "data_description": {
+          "scan_interval": "Milyen gyakran olvassa az állapotot, másodpercben. Az oldalszámlálókat és a tintaszinteket 5 percenként és minden feladat után olvassa."
+        }
+      }
+    }
+  }
+}

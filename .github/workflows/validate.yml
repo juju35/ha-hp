@@ -1,0 +1,97 @@
+name: Validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+  # Called by Release, so that a version is published only once these checks pass.
+  workflow_call:
+
+permissions:
+  contents: read
+
+# github.workflow is "Release" when called from Release: the group then stays distinct from this
+# workflow's own push run on main, so neither cancels the other.
+concurrency:
+  group: validate-${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  version:
+    name: Version consistency
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # The checks the release makes, before merging: a version bumped in one file only fails the release on main.
+      - name: Same version everywhere, and in the changelog
+        run: |
+          VERSION="$(jq -r .version custom_components/hp/manifest.json)"
+          grep -q "VERSION: Final = \"$VERSION\"" custom_components/hp/const.py || { echo "::error file=custom_components/hp/const.py::version $VERSION not found in custom_components/hp/const.py"; exit 1; }
+          grep -q "^## $VERSION " CHANGELOG.md || { echo "::error file=CHANGELOG.md::no '## $VERSION' entry in CHANGELOG.md"; exit 1; }
+          echo "Version $VERSION everywhere"
+
+  hassfest:
+    name: Hassfest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Hassfest validation
+        uses: home-assistant/actions/hassfest@86d4564712fa02543c808e3a693dd04f9d3f8361 # master
+
+  tests:
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # Latest Home Assistant: releases since 2026.3 need Python 3.14 (3.13 would resolve to 2026.2).
+      - name: Set up Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.14"
+
+      - name: Install dependencies
+        run: pip install -r requirements_test.txt
+
+      - name: Home Assistant version
+        run: python -c 'from homeassistant.const import __version__; print(f"::notice::Home Assistant {__version__}")'
+
+      - name: Run tests
+        run: pytest
+        env:
+          DEPRECATIONS_LOG: ${{ runner.temp }}/deprecations.log
+
+      - name: Annotate deprecated calls
+        if: failure()
+        run: |
+          if [ -f "$RUNNER_TEMP/deprecations.log" ]; then
+            sort -u "$RUNNER_TEMP/deprecations.log" | head -n 20 | while IFS= read -r line; do echo "::error::$line"; done
+          fi
+
+  pytest-min-ha:
+    name: Tests (minimum Home Assistant, 2025.8.0)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.13"
+
+      # 0.13.269 pins homeassistant==2025.8.0, the minimum in hacs.json.
+      - name: Install dependencies
+        run: pip install pytest-homeassistant-custom-component==0.13.269 "pycares<5"
+
+      - name: Run tests
+        run: pytest
