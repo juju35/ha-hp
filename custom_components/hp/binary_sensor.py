@@ -22,7 +22,7 @@ ONLINE = BinarySensorEntityDescription(
     device_class=BinarySensorDeviceClass.CONNECTIVITY,
 )
 
-# Read from data["connectivity"][key]; kept while the printer is off.
+# Read from data["connectivity"][key]; off while the printer is offline (the last report is kept for its return).
 CONNECTIVITY: tuple[BinarySensorEntityDescription, ...] = (
     BinarySensorEntityDescription(
         key="ethernet",
@@ -94,7 +94,7 @@ class HpOnlineSensor(HpEntity, BinarySensorEntity):
 
 
 class HpConnectivitySensor(HpEntity, BinarySensorEntity):
-    """A network adapter or cloud setting, as last reported."""
+    """A network adapter or cloud setting, as last reported; off while the printer is offline."""
 
     def __init__(self, coordinator: HpCoordinator, description: BinarySensorEntityDescription) -> None:
         """Initialize the sensor."""
@@ -103,5 +103,11 @@ class HpConnectivitySensor(HpEntity, BinarySensorEntity):
 
     @property
     def is_on(self) -> bool | None:
-        """Return the last reported value."""
+        """Return the last reported value, off when the printer does not answer.
+
+        A printer that is off is connected to nothing: its adapters and cloud services are off, not
+        the last value it reported.
+        """
+        if not self.coordinator.data.get("online"):
+            return False
         return self.coordinator.data["connectivity"].get(self.entity_description.key)
