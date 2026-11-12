@@ -95,6 +95,10 @@
         "filename": {
           "name": "Filnamn",
           "description": "Utan filändelse. Standard: scan_ följt av datum och tid."
+        },
+        "append": {
+          "name": "Lägg till i senaste PDF",
+          "description": "Skanna en sida till och lägg till den i den senast skannade PDF:en i stället för att börja en ny fil: för ett dokument som skannas sida för sida på glaset."
         }
       }
     }
@@ -103,7 +107,8 @@
     "scan_format": {
       "options": {
         "pdf": "PDF",
-        "jpeg": "JPEG"
+        "jpeg": "JPEG",
+        "png": "PNG"
       }
     },
     "scan_source": {

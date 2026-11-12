@@ -95,6 +95,10 @@
         "filename": {
           "name": "Nome file",
           "description": "Senza estensione. Predefinito: scan_ seguito da data e ora."
+        },
+        "append": {
+          "name": "Aggiungi all'ultimo PDF",
+          "description": "Scansiona un'altra pagina e aggiungila all'ultimo PDF invece di creare un nuovo file: per un documento scansionato pagina per pagina sul vetro."
         }
       }
     }
@@ -103,7 +107,8 @@
     "scan_format": {
       "options": {
         "pdf": "PDF",
-        "jpeg": "JPEG"
+        "jpeg": "JPEG",
+        "png": "PNG"
       }
     },
     "scan_source": {

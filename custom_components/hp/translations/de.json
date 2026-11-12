@@ -95,6 +95,10 @@
         "filename": {
           "name": "Dateiname",
           "description": "Ohne Endung. Standard: scan_ gefolgt von Datum und Uhrzeit."
+        },
+        "append": {
+          "name": "Zum letzten PDF hinzufügen",
+          "description": "Eine weitere Seite scannen und dem zuletzt gescannten PDF hinzufügen, statt eine neue Datei zu beginnen: für ein Dokument, das Seite für Seite auf dem Vorlagenglas gescannt wird."
         }
       }
     }
@@ -103,7 +107,8 @@
     "scan_format": {
       "options": {
         "pdf": "PDF",
-        "jpeg": "JPEG"
+        "jpeg": "JPEG",
+        "png": "PNG"
       }
     },
     "scan_source": {

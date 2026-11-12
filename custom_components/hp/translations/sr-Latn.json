@@ -95,6 +95,10 @@
         "filename": {
           "name": "Ime datoteke",
           "description": "Bez ekstenzije. Podrazumevano: scan_ sa datumom i vremenom."
+        },
+        "append": {
+          "name": "Dodaj u poslednji PDF",
+          "description": "Skeniraj još jednu stranicu i dodaj je u poslednji PDF umesto nove datoteke: za dokument koji se skenira stranicu po stranicu na staklu."
         }
       }
     }
@@ -103,7 +107,8 @@
     "scan_format": {
       "options": {
         "pdf": "PDF",
-        "jpeg": "JPEG"
+        "jpeg": "JPEG",
+        "png": "PNG"
       }
     },
     "scan_source": {

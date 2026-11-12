@@ -22,8 +22,8 @@ CAPABILITIES = "/eSCL/ScannerCapabilities"
 SCANNER_STATUS = "/eSCL/ScannerStatus"
 SCAN_JOBS = "/eSCL/ScanJobs"
 
-FORMATS = {"pdf": "application/pdf", "jpeg": "image/jpeg"}
-EXTENSIONS = {"pdf": "pdf", "jpeg": "jpg"}
+FORMATS = {"pdf": "application/pdf", "jpeg": "image/jpeg", "png": "image/png"}
+EXTENSIONS = {"pdf": "pdf", "jpeg": "jpg", "png": "png"}
 COLOR_MODES = {"color": "RGB24", "grayscale": "Grayscale8", "black_and_white": "BlackAndWhite1"}
 SOURCES = {"flatbed": "Platen", "feeder": "Feeder", "feeder_duplex": "Feeder"}
 DEFAULT_RESOLUTIONS = [75, 100, 150, 200, 300, 600]
@@ -57,9 +57,17 @@ class ScanSettings:
     page_size: str = "a4"
 
 
+def wire_format(settings: ScanSettings, capabilities: dict[str, Any]) -> str:
+    """Format asked from the scanner: JPEG pages for a PDF or PNG built here, else the format itself."""
+    native = capabilities.get("native_formats", capabilities["formats"])
+    if settings.format in ("pdf", "png") and "jpeg" in native:
+        return "jpeg"
+    return settings.format
+
+
 @dataclass
 class ScanResult:
-    """The documents of one scan job."""
+    """The documents of one scan job, in the format the scanner sent."""
 
     format: str
     documents: list[bytes] = field(default_factory=list)
@@ -93,10 +101,14 @@ def parse_capabilities(document: Element | dict[str, Any]) -> dict[str, Any]:
                 resolutions.add(int(text))
     if not sources:
         raise HpError("ScannerCapabilities: no input source")
-    # A firmware that lists nothing still scans in the eSCL basics.
+    # A firmware that lists nothing still scans in the eSCL basics. With JPEG, PDF and PNG are made here
+    # (PDF from the JPEG pages, so that pages can be added; PNG converted).
+    native = sorted(formats) or ["jpeg", "pdf"]
+    offered = {*native, "pdf", "png"} if "jpeg" in native else set(native)
     return {
         "sources": sources,
-        "formats": sorted(formats) or sorted(FORMATS),
+        "native_formats": native,
+        "formats": [name for name in FORMATS if name in offered],
         "resolutions": sorted(resolutions) or DEFAULT_RESOLUTIONS,
         "color_modes": [mode for mode in COLOR_MODES if mode in color_modes] or ["color", "grayscale"],
     }
@@ -109,6 +121,7 @@ def build_settings(settings: ScanSettings, capabilities: dict[str, Any]) -> byte
         raise ScanError("unsupported_source", settings.source)
     if settings.format not in capabilities["formats"]:
         raise ScanError("unsupported_format", settings.format)
+    fmt = wire_format(settings, capabilities)
     if settings.resolution not in capabilities["resolutions"]:
         raise ScanError("unsupported_resolution", str(settings.resolution))
     if settings.color_mode not in capabilities["color_modes"]:
@@ -117,7 +130,7 @@ def build_settings(settings: ScanSettings, capabilities: dict[str, Any]) -> byte
     max_height = source.get("MaxHeight", PAGE_SIZES["a4"][1])
     width, height = PAGE_SIZES.get(settings.page_size, (max_width, max_height))
     width, height = min(width, max_width), min(height, max_height)
-    mime = FORMATS[settings.format]
+    mime = FORMATS[fmt]
     duplex = (
         f"<scan:Duplex>{'true' if settings.source == 'feeder_duplex' else 'false'}</scan:Duplex>"
         if settings.source != "flatbed"
@@ -191,14 +204,14 @@ async def async_scan(client: HpClient, settings: ScanSettings, capabilities: dic
         raise ScanError("scan_failed", "no job address")
     job = job.rstrip("/")
 
-    result = ScanResult(format=settings.format)
+    result = ScanResult(format=wire_format(settings, capabilities))
     try:
         while True:
             document = await _next_document(client, job)
             if document is None:
                 break
             result.documents.append(document)
-            if settings.format == "pdf" or settings.source == "flatbed":
+            if result.format == "pdf" or settings.source == "flatbed":
                 # A PDF holds every page; the glass gives one page.
                 break
     except BaseException:

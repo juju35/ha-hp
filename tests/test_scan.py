@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import io
 from http import HTTPStatus
 from pathlib import Path
 from unittest.mock import patch
@@ -9,16 +10,26 @@ from unittest.mock import patch
 import pytest
 from homeassistant.core import HomeAssistant, State
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
+from PIL import Image
 from pytest_homeassistant_custom_component.common import MockConfigEntry, async_capture_events, mock_restore_cache
 
 from custom_components.hp.const import DOMAIN
+from custom_components.hp.document import read_pdf
 
 from .conftest import JOB, FakePrinter
 
 P = "hp_officejet_pro_9010_series"
-PDF = b"%PDF-1.7 three pages"
-JPEG_1 = b"\xff\xd8\xff page one"
-JPEG_2 = b"\xff\xd8\xff page two"
+
+
+def _jpeg(width: int = 2480, height: int = 3508, color: str = "white") -> bytes:
+    with io.BytesIO() as out:
+        Image.new("RGB", (width, height), color).save(out, "JPEG")
+        return out.getvalue()
+
+
+JPEG_1 = _jpeg(color="white")
+JPEG_2 = _jpeg(color="gray")
+PDF = b"%PDF-1.7 from the scanner"
 
 
 @pytest.fixture(autouse=True)
@@ -52,7 +63,7 @@ async def test_scan_entities(hass: HomeAssistant, printer: FakePrinter, entry: M
     assert hass.states.get(f"button.{P}_scan")
     fmt = hass.states.get(f"select.{P}_scan_format")
     assert fmt.state == "pdf"
-    assert fmt.attributes["options"] == ["jpeg", "pdf"]
+    assert fmt.attributes["options"] == ["pdf", "jpeg", "png"]
     assert hass.states.get(f"select.{P}_scan_source").attributes["options"] == ["flatbed", "feeder", "feeder_duplex"]
     assert hass.states.get(f"select.{P}_scan_resolution").attributes["options"] == ["75", "200", "300", "600"]
     assert hass.states.get(f"select.{P}_scan_resolution").state == "300"
@@ -73,18 +84,21 @@ async def test_no_scanner_no_entities(hass: HomeAssistant, printer: FakePrinter,
 
 
 async def test_scan_pdf(hass: HomeAssistant, printer: FakePrinter, entry: MockConfigEntry, media: Path) -> None:
-    """A PDF scan of the glass: one file in the media folder, settings sent to the printer."""
+    """A PDF scan of the glass: the scanner's JPEG page in a PDF, in the media folder."""
     await _setup(hass, entry)
     events = async_capture_events(hass, "hp_scan_completed")
-    printer.pages = [PDF]
+    printer.pages = [JPEG_1]
     response = await _scan(hass, filename="invoice")
     path = media / "hp" / "invoice.pdf"
-    assert response == {"format": "pdf", "files": [str(path)]}
-    assert path.read_bytes() == PDF
+    assert response == {"format": "pdf", "files": [str(path)], "pages": 1}
+    pages = read_pdf(path.read_bytes())
+    assert [page[0] for page in pages] == [JPEG_1]
+    # 2480 x 3508 pixels at 300 dpi: an A4 page.
+    assert (round(pages[0][1]), round(pages[0][2])) == (595, 842)
     settings = printer.scan_jobs[0].decode()
     for part in (
         "<pwg:InputSource>Platen</pwg:InputSource>",
-        "<pwg:DocumentFormat>application/pdf</pwg:DocumentFormat>",
+        "<pwg:DocumentFormat>image/jpeg</pwg:DocumentFormat>",
         "<scan:XResolution>300</scan:XResolution>",
         "<scan:ColorMode>RGB24</scan:ColorMode>",
         "<pwg:Height>3508</pwg:Height><pwg:Width>2480</pwg:Width>",
@@ -96,12 +110,75 @@ async def test_scan_pdf(hass: HomeAssistant, printer: FakePrinter, entry: MockCo
     assert last.state != "unknown"
     assert last.attributes["files"] == [str(path)]
     assert events[0].data["files"] == [str(path)]
+    assert events[0].data["pages"] == 1
     assert events[0].data["device_id"]
 
     # Same name again: nothing is overwritten.
-    printer.pages = [PDF]
+    printer.pages = [JPEG_1]
     response = await _scan(hass, filename="invoice")
     assert response["files"] == [str(media / "hp" / "invoice_2.pdf")]
+
+
+async def test_add_pages_to_pdf(
+    hass: HomeAssistant, printer: FakePrinter, entry: MockConfigEntry, media: Path, hass_client
+) -> None:
+    """Pages scanned one by one on the glass go into the same PDF; the image shows its first page."""
+    await _setup(hass, entry)
+    printer.pages = [JPEG_1]
+    first = await _scan(hass, filename="contract")
+    printer.pages = [JPEG_2]
+    await hass.services.async_call("button", "press", {"entity_id": f"button.{P}_scan_and_add_page"}, blocking=True)
+    printer.pages = [JPEG_1]
+    response = await _scan(hass, append=True)
+    assert response == {"format": "pdf", "files": first["files"], "pages": 3}
+    pages = read_pdf(Path(first["files"][0]).read_bytes())
+    assert [page[0] for page in pages] == [JPEG_1, JPEG_2, JPEG_1]
+    assert sorted(p.name for p in (media / "hp").iterdir()) == ["contract.pdf"]
+
+    await hass.async_block_till_done()
+    client = await hass_client()
+    image = hass.states.get(f"image.{P}_last_scanned_image")
+    resp = await client.get(image.attributes["entity_picture"])
+    assert resp.status == HTTPStatus.OK
+    assert resp.content_type == "image/jpeg"
+    assert await resp.read() == JPEG_1
+
+
+async def test_append_after_a_jpeg_starts_a_pdf(
+    hass: HomeAssistant, printer: FakePrinter, entry: MockConfigEntry, media: Path
+) -> None:
+    """Adding a page when the last scan is not a PDF starts a new PDF."""
+    await _setup(hass, entry)
+    printer.pages = [JPEG_1]
+    await _scan(hass, format="jpeg", filename="photo")
+    printer.pages = [JPEG_2]
+    response = await _scan(hass, format="pdf", append=True, filename="doc")
+    assert response["files"] == [str(media / "hp" / "doc.pdf")]
+    assert response["pages"] == 1
+
+
+async def test_scan_png(hass: HomeAssistant, printer: FakePrinter, entry: MockConfigEntry, media: Path) -> None:
+    """PNG: the scanner's JPEG converted."""
+    await _setup(hass, entry)
+    printer.pages = [_jpeg(100, 140)]
+    response = await _scan(hass, format="png", filename="drawing")
+    path = Path(response["files"][0])
+    assert path.name == "drawing.png"
+    with Image.open(path) as image:
+        assert (image.format, image.size) == ("PNG", (100, 140))
+    assert "<pwg:DocumentFormat>image/jpeg</pwg:DocumentFormat>" in printer.scan_jobs[0].decode()
+
+
+async def test_scanner_pdf_only(hass: HomeAssistant, printer: FakePrinter, entry: MockConfigEntry, media: Path) -> None:
+    """A scanner that only offers PDF: its own PDF is saved, and PNG is not offered."""
+    printer.replace("/eSCL/ScannerCapabilities", "<pwg:DocumentFormat>image/jpeg</pwg:DocumentFormat>", "")
+    await _setup(hass, entry)
+    assert hass.states.get(f"select.{P}_scan_format").attributes["options"] == ["pdf"]
+    printer.pages = [PDF]
+    response = await _scan(hass)
+    assert Path(response["files"][0]).read_bytes() == PDF
+    assert response["pages"] is None
+    assert "<pwg:DocumentFormat>application/pdf</pwg:DocumentFormat>" in printer.scan_jobs[0].decode()
 
 
 async def test_scan_jpeg_feeder_duplex(
@@ -130,7 +207,7 @@ async def test_job_address_from_status(hass: HomeAssistant, printer: FakePrinter
     """A firmware that gives no job address: it is read from the scanner status."""
     await _setup(hass, entry)
     printer.give_location = False
-    printer.pages = [PDF]
+    printer.pages = [JPEG_1]
     response = await _scan(hass)
     assert len(response["files"]) == 1
 

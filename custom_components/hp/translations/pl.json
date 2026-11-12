@@ -95,6 +95,10 @@
         "filename": {
           "name": "Nazwa pliku",
           "description": "Bez rozszerzenia. Domyślnie: scan_ z datą i godziną."
+        },
+        "append": {
+          "name": "Dodaj do ostatniego PDF",
+          "description": "Zeskanuj jeszcze jedną stronę i dodaj ją do ostatniego PDF zamiast tworzyć nowy plik: dla dokumentu skanowanego strona po stronie na szybie."
         }
       }
     }
@@ -103,7 +107,8 @@
     "scan_format": {
       "options": {
         "pdf": "PDF",
-        "jpeg": "JPEG"
+        "jpeg": "JPEG",
+        "png": "PNG"
       }
     },
     "scan_source": {

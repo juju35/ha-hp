@@ -95,6 +95,10 @@
         "filename": {
           "name": "Filnavn",
           "description": "Uden filtype. Standard: scan_ efterfulgt af dato og klokkeslæt."
+        },
+        "append": {
+          "name": "Tilføj til seneste PDF",
+          "description": "Scan én side mere og tilføj den til den senest scannede PDF i stedet for at starte en ny fil: til et dokument, der scannes side for side på glaspladen."
         }
       }
     }
@@ -103,7 +107,8 @@
     "scan_format": {
       "options": {
         "pdf": "PDF",
-        "jpeg": "JPEG"
+        "jpeg": "JPEG",
+        "png": "PNG"
       }
     },
     "scan_source": {

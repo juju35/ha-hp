@@ -154,6 +154,9 @@
     "button": {
       "scan": {
         "default": "mdi:scanner"
+      },
+      "scan_add_page": {
+        "default": "mdi:file-document-plus-outline"
       }
     },
     "image": {
@@ -166,7 +169,8 @@
         "default": "mdi:file-document-outline",
         "state": {
           "pdf": "mdi:file-pdf-box",
-          "jpeg": "mdi:file-jpg-box"
+          "jpeg": "mdi:file-jpg-box",
+          "png": "mdi:file-png-box"
         }
       },
       "scan_source": {

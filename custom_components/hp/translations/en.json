@@ -318,6 +318,9 @@
     "button": {
       "scan": {
         "name": "Scan"
+      },
+      "scan_add_page": {
+        "name": "Scan and add page"
       }
     },
     "image": {
@@ -330,7 +333,8 @@
         "name": "Scan format",
         "state": {
           "pdf": "PDF",
-          "jpeg": "JPEG"
+          "jpeg": "JPEG",
+          "png": "PNG"
         }
       },
       "scan_source": {
@@ -399,6 +403,10 @@
         "filename": {
           "name": "File name",
           "description": "Without extension. Default: scan_ followed by the date and time."
+        },
+        "append": {
+          "name": "Add to the last PDF",
+          "description": "Scan one more page and add it to the last PDF scanned, instead of starting a new file: for a document scanned page by page on the glass."
         }
       }
     }
@@ -407,7 +415,8 @@
     "scan_format": {
       "options": {
         "pdf": "PDF",
-        "jpeg": "JPEG"
+        "jpeg": "JPEG",
+        "png": "PNG"
       }
     },
     "scan_source": {

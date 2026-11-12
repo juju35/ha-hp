@@ -95,6 +95,10 @@
         "filename": {
           "name": "Ime datoteke",
           "description": "Brez končnice. Privzeto: scan_ z datumom in uro."
+        },
+        "append": {
+          "name": "Dodaj v zadnji PDF",
+          "description": "Optično preberi še eno stran in jo dodaj v zadnji PDF namesto nove datoteke: za dokument, skeniran stran za stranjo na steklu."
         }
       }
     }
@@ -103,7 +107,8 @@
     "scan_format": {
       "options": {
         "pdf": "PDF",
-        "jpeg": "JPEG"
+        "jpeg": "JPEG",
+        "png": "PNG"
       }
     },
     "scan_source": {

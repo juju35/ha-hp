@@ -95,6 +95,10 @@
         "filename": {
           "name": "Fájlnév",
           "description": "Kiterjesztés nélkül. Alapértelmezés: scan_ és a dátum, idő."
+        },
+        "append": {
+          "name": "Hozzáadás az utolsó PDF-hez",
+          "description": "Még egy oldal beszkennelése és hozzáadása az utoljára szkennelt PDF-hez új fájl helyett: oldalanként az üveglapon szkennelt dokumentumhoz."
         }
       }
     }
@@ -103,7 +107,8 @@
     "scan_format": {
       "options": {
         "pdf": "PDF",
-        "jpeg": "JPEG"
+        "jpeg": "JPEG",
+        "png": "PNG"
       }
     },
     "scan_source": {

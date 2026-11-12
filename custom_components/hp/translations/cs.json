@@ -95,6 +95,10 @@
         "filename": {
           "name": "Název souboru",
           "description": "Bez přípony. Výchozí: scan_ s datem a časem."
+        },
+        "append": {
+          "name": "Přidat do posledního PDF",
+          "description": "Naskenovat další stránku a přidat ji do posledního PDF místo vytvoření nového souboru: pro dokument skenovaný stránku po stránce na skle."
         }
       }
     }
@@ -103,7 +107,8 @@
     "scan_format": {
       "options": {
         "pdf": "PDF",
-        "jpeg": "JPEG"
+        "jpeg": "JPEG",
+        "png": "PNG"
       }
     },
     "scan_source": {

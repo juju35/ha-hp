@@ -95,6 +95,10 @@
         "filename": {
           "name": "Faila nosaukums",
           "description": "Bez paplašinājuma. Noklusējums: scan_ ar datumu un laiku."
+        },
+        "append": {
+          "name": "Pievienot pēdējam PDF",
+          "description": "Noskenēt vēl vienu lapu un pievienot to pēdējam PDF, nevis veidot jaunu failu: dokumentam, ko skenē lapu pa lapai uz stikla."
         }
       }
     }
@@ -103,7 +107,8 @@
     "scan_format": {
       "options": {
         "pdf": "PDF",
-        "jpeg": "JPEG"
+        "jpeg": "JPEG",
+        "png": "PNG"
       }
     },
     "scan_source": {

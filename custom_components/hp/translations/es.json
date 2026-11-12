@@ -95,6 +95,10 @@
         "filename": {
           "name": "Nombre de archivo",
           "description": "Sin extensión. Por defecto: scan_ seguido de la fecha y la hora."
+        },
+        "append": {
+          "name": "Añadir al último PDF",
+          "description": "Escanear una página más y añadirla al último PDF en lugar de crear un archivo nuevo: para un documento escaneado página a página en el cristal."
         }
       }
     }
@@ -103,7 +107,8 @@
     "scan_format": {
       "options": {
         "pdf": "PDF",
-        "jpeg": "JPEG"
+        "jpeg": "JPEG",
+        "png": "PNG"
       }
     },
     "scan_source": {

@@ -72,7 +72,7 @@ def test_translation_parity(language: str):
 
 
 # Serbian: brands, placeholders and identifiers stay in Latin script in the Cyrillic translation.
-_SR_LATIN_ALLOWED = re.compile(r"HTTPS|HP|IP|PDF|JPEG|eSCL|AirScan|allowlist_external_dirs|scan_|A4|\bhp\b|\{\w+\}")
+_SR_LATIN_ALLOWED = re.compile(r"HTTPS|HP|IP|PDF|JPEG|PNG|eSCL|AirScan|allowlist_external_dirs|scan_|A4|\bhp\b|\{\w+\}")
 
 
 @pytest.mark.parametrize(
@@ -98,7 +98,7 @@ def test_every_translation_key_is_used() -> None:
 
     english = json.loads((TRANSLATIONS / "en.json").read_text(encoding="utf-8"))["entity"]
     used = {
-        "button": {button.SCAN.translation_key},
+        "button": {button.SCAN.translation_key, button.ADD_PAGE.translation_key},
         "image": {image.LAST_IMAGE.translation_key},
         "select": {d.translation_key for d in select.SCAN_SELECTS},
         "binary_sensor": {binary_sensor.ONLINE.translation_key}

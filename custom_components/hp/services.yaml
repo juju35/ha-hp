@@ -9,7 +9,7 @@ scan:
       required: false
       selector:
         select:
-          options: ["pdf", "jpeg"]
+          options: ["pdf", "jpeg", "png"]
           translation_key: scan_format
     source:
       required: false
@@ -44,3 +44,8 @@ scan:
       example: invoice_2026_11
       selector:
         text:
+    append:
+      required: false
+      default: false
+      selector:
+        boolean:

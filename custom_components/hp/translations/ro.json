@@ -95,6 +95,10 @@
         "filename": {
           "name": "Nume fișier",
           "description": "Fără extensie. Implicit: scan_ urmat de dată și oră."
+        },
+        "append": {
+          "name": "Adaugă la ultimul PDF",
+          "description": "Scanează încă o pagină și adaug-o la ultimul PDF în loc să creezi un fișier nou: pentru un document scanat pagină cu pagină pe geam."
         }
       }
     }
@@ -103,7 +107,8 @@
     "scan_format": {
       "options": {
         "pdf": "PDF",
-        "jpeg": "JPEG"
+        "jpeg": "JPEG",
+        "png": "PNG"
       }
     },
     "scan_source": {

@@ -10,7 +10,7 @@
 
 <p align="center"><img src="https://raw.githubusercontent.com/juju35/ha-hp/main/custom_components/hp/brand/icon.png" alt="HP Printer" width="120"></p>
 
-Home Assistant integration for HP printers, fully local: status, ink or toner levels, pages remaining and page counters, read from the printer's built-in web server, and **scanning to PDF or JPEG** from the glass or the document feeder. When the printer is off or asleep, **its sensors keep their last values** instead of turning unavailable or unknown, even across a Home Assistant restart.
+Home Assistant integration for HP printers, fully local: status, ink or toner levels, pages remaining and page counters, read from the printer's built-in web server, and **scanning to PDF, JPEG or PNG** from the glass or the document feeder, multi-page PDFs included. When the printer is off or asleep, **its sensors keep their last values** instead of turning unavailable or unknown, even across a Home Assistant restart.
 
 [![Open your Home Assistant instance and open a repository inside the Marketplace.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/marketplace_repository/?owner=juju35&repository=ha-hp&category=integration)
 
@@ -25,9 +25,9 @@ Home Assistant integration for HP printers, fully local: status, ink or toner le
 - **Unchanged documents not downloaded again**: counters, ink, identity and network are asked with their ETag, so an unchanged one costs a short `304` and no parsing (the status is always read in full, and cached documents are read in full again every 30 minutes, in case a firmware's ETags do not follow its content)
 - **Unsupported documents not asked again and again**: a document the printer does not publish is asked again every 6 hours only
 - **At most two requests at a time** to the printer's small web server
-- **No dependency**: no Python package to install, nothing to conflict with Home Assistant
+- **No dependency**: no Python package to install, nothing to conflict with Home Assistant (PNG uses Pillow, which Home Assistant ships)
 - **Status never unknown**: a status this integration does not know is `other`, with the printer's own status in an attribute; paper jams and open doors are recognized
-- **Scan to PDF or JPEG**: a **Scan** button with its settings (format, source, resolution, color mode, page size) and an `hp.scan` action for automations; glass, document feeder and double-sided feeder; files saved in the local media, the last scan shown by an image and a sensor
+- **Scan to PDF, JPEG or PNG**: a **Scan** button with its settings (format, source, resolution, color mode, page size) and an `hp.scan` action for automations; glass, document feeder and double-sided feeder; **multi-page PDFs from the glass** with a **Scan and add page** button; files saved in the local media, the last scan shown by an image and a sensor
 - **Cartridge details** on each level sensor: state (`ok`, `low`, `very_low`…), cartridge number to buy, product number, installed; a cartridge taken out keeps its last level, with `installed: false`
 - **Zeroconf discovery**, and a printer announced at a new address is followed there
 - **Reconfigure** the address without removing the printer; a printer that changed address is detected and keeps its values instead of mixing them with another printer's
@@ -47,7 +47,7 @@ Home Assistant integration for HP printers, fully local: status, ink or toner le
 | Unchanged documents | Downloaded and parsed again | `304` with ETags |
 | Cartridge taken out | Unavailable | Last level kept, `installed: false` |
 | Address change | Remove and add the printer again | Reconfigure, or followed by discovery |
-| Scanning | No | PDF or JPEG, glass or feeder, button and action |
+| Scanning | No | PDF (multi-page from the glass too), JPEG or PNG, glass or feeder, buttons and action |
 | Python dependency | `aiohpprinter` | None |
 
 The two can be installed side by side (different domains), but use only one per printer.
@@ -125,16 +125,17 @@ Printers whose scanner answers eSCL (AirScan, at `http://<printer address>/eSCL/
 
 | Entity | Notes |
 |---|---|
-| `button.<printer>_scan` | Scans with the settings below and saves the file |
-| `select.<printer>_scan_format` | `pdf` (one file with every page) or `jpeg` (one image per page) |
+| `button.<printer>_scan` | Scans with the settings below and saves a new file |
+| `button.<printer>_scan_and_add_page` | Scans one more page and adds it to the last PDF: put the next page on the glass and press it, page after page |
+| `select.<printer>_scan_format` | `pdf` (one file with every page), `jpeg` or `png` (one image per page) |
 | `select.<printer>_scan_source` | `flatbed` (glass), `feeder`, `feeder_duplex` |
 | `select.<printer>_scan_resolution` | The resolutions the scanner offers (300 by default) |
 | `select.<printer>_scan_color_mode` | `color`, `grayscale`, `black_and_white` |
 | `select.<printer>_scan_page_size` | `a4` (default), `letter`, `legal`, `max` (largest area of the source) |
 | `sensor.<printer>_last_scan` | Time of the last scan; attributes `format`, `files` |
-| `image.<printer>_last_scanned_image` | First page of the last JPEG scan |
+| `image.<printer>_last_scanned_image` | First page of the last scan (PDF, JPEG or PNG) |
 
-Files are saved in the `hp` folder of the local media (`/media/hp` on Home Assistant OS), named `scan_<date>_<time>.pdf` (`_1.jpg`, `_2.jpg`… per page in JPEG); an existing file is never overwritten. They show in **Media → Local media → hp**. The settings are kept across restarts.
+Files are saved in the `hp` folder of the local media (`/media/hp` on Home Assistant OS), named `scan_<date>_<time>.pdf` (`_1.jpg`, `_2.jpg`… per page in JPEG or PNG); an existing file is never overwritten. They show in **Media → Local media → hp**. The settings are kept across restarts.
 
 ### Action `hp.scan`
 
@@ -143,17 +144,20 @@ Every field is optional: those not given come from the select entities, and `dev
 ```yaml
 action: hp.scan
 data:
-  format: pdf              # pdf, jpeg
+  format: pdf              # pdf, jpeg, png
   source: feeder_duplex    # flatbed, feeder, feeder_duplex
   resolution: 300
   color_mode: grayscale    # color, grayscale, black_and_white
   page_size: a4            # a4, letter, legal, max
   filename: invoice_2026_11
   directory: /media/scans  # must be in allowlist_external_dirs (the media folders are)
-response_variable: scan    # scan.files: the saved files
+  append: false            # true: add the pages to the last PDF instead of a new file
+response_variable: scan    # scan.files: the saved files, scan.pages: their number of pages
 ```
 
-When a scan is saved, the event `hp_scan_completed` is fired with `device_id`, `format`, `files` and `pages` (JPEG).
+When a scan is saved, the event `hp_scan_completed` is fired with `device_id`, `format`, `files` and `pages`.
+
+PDF and PNG are made by the integration from the scanner's JPEG pages (embedded as is in the PDF, no new compression), which is what lets pages be added to a PDF. A scanner that only offers PDF gets its own PDF saved, without adding pages.
 
 Errors are shown, translated, on the button or the action: printer off, scanner busy, feeder empty, a setting the scanner does not offer, folder not allowed.
 
@@ -203,7 +207,7 @@ actions:
 
 ## How it works
 
-- Scans: eSCL, `POST /eSCL/ScanJobs` with the settings, then `GET <job>/NextDocument` until the printer has no document left; the scanner and feeder states are checked first, a busy answer (`503`) is asked again, and a job that fails is deleted so the scanner is free. Capabilities are read with the identity, so the scan entities exist even while the printer is off
+- Scans: eSCL, `POST /eSCL/ScanJobs` (JPEG pages, made into PDF or PNG here) with the settings, then `GET <job>/NextDocument` until the printer has no document left; the scanner and feeder states are checked first, a busy answer (`503`) is asked again, and a job that fails is deleted so the scanner is free. Capabilities are read with the identity, so the scan entities exist even while the printer is off
 - Documents: `ProductStatusDyn` (status), `ConsumableConfigDyn` and `ProductUsageDyn` (cartridges and counters), `ProductConfigDyn` (identity), `/IoMgmt/Adapters` and `ePrintConfigDyn` (network), over HTTP on port 80 (HTTPS optional, self-signed certificates accepted)
 - A poll reads the status; when it does not answer twice in a row, the printer is off: the status turns `off`, the other values stay, and everything is read again when it answers. While it is off, one attempt per poll
 - Another printer answering at the address (DHCP) is detected by its serial number: this printer counts as off and keeps its values, and the address is checked again every 5 minutes

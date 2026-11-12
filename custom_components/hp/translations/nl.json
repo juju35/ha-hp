@@ -95,6 +95,10 @@
         "filename": {
           "name": "Bestandsnaam",
           "description": "Zonder extensie. Standaard: scan_ gevolgd door datum en tijd."
+        },
+        "append": {
+          "name": "Toevoegen aan laatste PDF",
+          "description": "Nog een pagina scannen en toevoegen aan de laatst gescande PDF in plaats van een nieuw bestand te maken: voor een document dat pagina voor pagina op de glasplaat wordt gescand."
         }
       }
     }
@@ -103,7 +107,8 @@
     "scan_format": {
       "options": {
         "pdf": "PDF",
-        "jpeg": "JPEG"
+        "jpeg": "JPEG",
+        "png": "PNG"
       }
     },
     "scan_source": {

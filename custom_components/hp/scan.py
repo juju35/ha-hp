@@ -16,13 +16,15 @@ from homeassistant.util import dt as dt_util
 from .api import HpError
 from .const import DOMAIN, LOGGER
 from .coordinator import HpConfigEntry, HpCoordinator
-from .escl import COLOR_MODES, EXTENSIONS, FORMATS, PAGE_SIZES, SOURCES, ScanError, ScanSettings, async_scan
+from .document import DocumentError, build_pdf, jpeg_to_png, page_from_jpeg, read_pdf
+from .escl import COLOR_MODES, EXTENSIONS, FORMATS, PAGE_SIZES, SOURCES, ScanError, ScanResult, ScanSettings, async_scan
 
 EVENT_SCAN_COMPLETED = "hp_scan_completed"
 SERVICE_SCAN = "scan"
 ATTR_DEVICE_ID = "device_id"
 ATTR_DIRECTORY = "directory"
 ATTR_FILENAME = "filename"
+ATTR_APPEND = "append"
 
 SCAN_SCHEMA = vol.Schema(
     {
@@ -34,6 +36,7 @@ SCAN_SCHEMA = vol.Schema(
         vol.Optional("page_size"): vol.In([*PAGE_SIZES, "max"]),
         vol.Optional(ATTR_DIRECTORY): cv.string,
         vol.Optional(ATTR_FILENAME): vol.All(cv.string, vol.Match(r"^[^/\\:*?\"<>|]+$")),
+        vol.Optional(ATTR_APPEND, default=False): cv.boolean,
     }
 )
 
@@ -62,6 +65,7 @@ def async_register_services(hass: HomeAssistant) -> None:
             settings,
             directory=call.data.get(ATTR_DIRECTORY),
             filename=call.data.get(ATTR_FILENAME),
+            append=call.data[ATTR_APPEND],
         )
         return result if call.return_response else None
 
@@ -91,6 +95,7 @@ async def async_scan_to_files(
     *,
     directory: str | None = None,
     filename: str | None = None,
+    append: bool = False,
 ) -> dict[str, Any]:
     """Scan, save the documents and return what was saved."""
     capabilities = coordinator.data.get("scanner")
@@ -122,29 +127,58 @@ async def async_scan_to_files(
 
     now = dt_util.now()
     stem = filename or now.strftime("scan_%Y%m%d_%H%M%S")
-    extension = EXTENSIONS[result.format]
-    files = await hass.async_add_executor_job(_write, folder, stem, extension, result.documents)
+    last = coordinator.data.get("last_scan") or {}
+    append_to = last["files"][0] if append and last.get("format") == "pdf" and last.get("files") else None
+    try:
+        files, pages = await hass.async_add_executor_job(
+            _save, folder, stem, settings.format, result, settings.resolution, append_to
+        )
+    except (OSError, DocumentError) as err:
+        raise HomeAssistantError(
+            translation_domain=DOMAIN, translation_key="scan_failed", translation_placeholders={"error": str(err)}
+        ) from err
     LOGGER.info("%s: scan saved to %s", coordinator.client.host, ", ".join(files))
 
-    last_scan = {"time": now.isoformat(), "format": result.format, "files": files}
-    last_image = {"time": now.isoformat(), "file": files[0]} if result.format == "jpeg" else None
-    coordinator.async_set_scan(last_scan, last_image)
+    last_scan = {"time": now.isoformat(), "format": settings.format, "files": files, "pages": pages}
+    coordinator.async_set_scan(last_scan, {"time": now.isoformat(), "file": files[0]})
 
     hass.bus.async_fire(
         EVENT_SCAN_COMPLETED,
-        {
-            "device_id": _device_id(hass, coordinator),
-            "format": result.format,
-            "files": files,
-            "pages": len(files) if result.format == "jpeg" else None,
-        },
+        {"device_id": _device_id(hass, coordinator), "format": settings.format, "files": files, "pages": pages},
     )
-    return {"format": result.format, "files": files}
+    return {"format": settings.format, "files": files, "pages": pages}
 
 
 def _device_id(hass: HomeAssistant, coordinator: HpCoordinator) -> str | None:
     devices = dr.async_entries_for_config_entry(dr.async_get(hass), coordinator.config_entry.entry_id)
     return devices[0].id if devices else None
+
+
+def _save(
+    folder: Path, stem: str, fmt: str, result: ScanResult, resolution: int, append_to: str | None
+) -> tuple[list[str], int | None]:
+    """Write the scan in the asked format; return the files and the number of pages."""
+    documents = result.documents
+    if fmt == "pdf" and result.format == "jpeg":
+        pages = [page_from_jpeg(jpeg, resolution) for jpeg in documents]
+        if append_to is not None and (existing := _read_own_pdf(Path(append_to))) is not None:
+            pages = existing + pages
+            Path(append_to).write_bytes(build_pdf(pages))
+            return [append_to], len(pages)
+        return _write(folder, stem, "pdf", [build_pdf(pages)]), len(pages)
+    if fmt == "png" and result.format == "jpeg":
+        documents = [jpeg_to_png(jpeg) for jpeg in documents]
+    files = _write(folder, stem, EXTENSIONS[fmt], documents)
+    # A PDF from the scanner itself: its page count is not read.
+    return files, len(files) if fmt != "pdf" else None
+
+
+def _read_own_pdf(path: Path) -> list | None:
+    """Pages of a PDF this integration wrote, to add more; None for a missing file or another PDF."""
+    try:
+        return read_pdf(path.read_bytes())
+    except OSError:
+        return None
 
 
 def _write(folder: Path, stem: str, extension: str, documents: list[bytes]) -> list[str]:

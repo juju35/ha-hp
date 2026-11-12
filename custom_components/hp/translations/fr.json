@@ -95,6 +95,10 @@
         "filename": {
           "name": "Nom du fichier",
           "description": "Sans extension. Par défaut : scan_ suivi de la date et de l'heure."
+        },
+        "append": {
+          "name": "Ajouter au dernier PDF",
+          "description": "Numériser une page de plus et l'ajouter au dernier PDF au lieu de créer un nouveau fichier : pour un document numérisé page par page sur la vitre."
         }
       }
     }
@@ -103,7 +107,8 @@
     "scan_format": {
       "options": {
         "pdf": "PDF",
-        "jpeg": "JPEG"
+        "jpeg": "JPEG",
+        "png": "PNG"
       }
     },
     "scan_source": {

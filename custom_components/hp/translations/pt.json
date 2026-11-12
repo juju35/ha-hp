@@ -95,6 +95,10 @@
         "filename": {
           "name": "Nome do ficheiro",
           "description": "Sem extensão. Predefinição: scan_ seguido da data e hora."
+        },
+        "append": {
+          "name": "Adicionar ao último PDF",
+          "description": "Digitalizar mais uma página e adicioná-la ao último PDF em vez de criar um novo ficheiro: para um documento digitalizado página a página no vidro."
         }
       }
     }
@@ -103,7 +107,8 @@
     "scan_format": {
       "options": {
         "pdf": "PDF",
-        "jpeg": "JPEG"
+        "jpeg": "JPEG",
+        "png": "PNG"
       }
     },
     "scan_source": {

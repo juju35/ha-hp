@@ -11,6 +11,7 @@ from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.util import dt as dt_util
 
 from .coordinator import HpConfigEntry, HpCoordinator
+from .document import read_pdf
 from .entity import HpEntity
 
 PARALLEL_UPDATES = 0
@@ -39,10 +40,9 @@ async def async_setup_entry(
 
 
 class HpLastScannedImage(HpEntity, ImageEntity):
-    """The first page of the last JPEG scan."""
+    """The first page of the last scan, whatever its format."""
 
     entity_description = LAST_IMAGE
-    _attr_content_type = "image/jpeg"
 
     def __init__(self, coordinator: HpCoordinator) -> None:
         """Initialize the image."""
@@ -59,6 +59,12 @@ class HpLastScannedImage(HpEntity, ImageEntity):
         last = self._last
         return dt_util.parse_datetime(last["time"]) if last else None
 
+    @property
+    def content_type(self) -> str:
+        """PNG for a PNG scan, JPEG otherwise (the first page of a PDF is its JPEG)."""
+        last = self._last
+        return "image/png" if last and last["file"].endswith(".png") else "image/jpeg"
+
     async def async_image(self) -> bytes | None:
         """Return the image, read from its file."""
         last = self._last
@@ -74,6 +80,11 @@ class HpLastScannedImage(HpEntity, ImageEntity):
 
 def _read(path: Path) -> bytes | None:
     try:
-        return path.read_bytes()
+        data = path.read_bytes()
     except OSError:
         return None
+    if path.suffix != ".pdf":
+        return data
+    # A PDF written by this integration holds its pages' JPEGs; one from the scanner itself shows nothing.
+    pages = read_pdf(data)
+    return pages[0][0] if pages else None
