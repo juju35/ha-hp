@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import io
+from datetime import timedelta
 from http import HTTPStatus
 from pathlib import Path
 from unittest.mock import patch
@@ -13,9 +14,14 @@ from homeassistant.core import HomeAssistant, State
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from homeassistant.helpers import device_registry as dr
 from PIL import Image
-from pytest_homeassistant_custom_component.common import MockConfigEntry, async_capture_events, mock_restore_cache
+from pytest_homeassistant_custom_component.common import (
+    MockConfigEntry,
+    async_capture_events,
+    async_fire_time_changed,
+    mock_restore_cache,
+)
 
-from custom_components.hp.const import DOMAIN
+from custom_components.hp.const import DOMAIN, SAVE_DELAY
 from custom_components.hp.document import read_pdf
 
 from .conftest import JOB, FakePrinter
@@ -380,3 +386,55 @@ async def test_download_last_scan(
         assert (await client.get(other)).status == HTTPStatus.NOT_FOUND
     anonymous = await hass_client_no_auth()
     assert (await anonymous.get(path)).status == HTTPStatus.UNAUTHORIZED
+
+
+async def test_scans_not_downloaded_are_deleted(
+    hass: HomeAssistant, printer: FakePrinter, entry: MockConfigEntry, freezer
+) -> None:
+    """A scan not downloaded is deleted after 30 minutes and leaves the last scan."""
+    await _setup(hass, entry)
+    printer.pages = [JPEG_1]
+    file = Path((await _scan(hass, filename="kept"))["files"][0])
+    for minutes in (29, 2):
+        freezer.tick(timedelta(minutes=minutes))
+        async_fire_time_changed(hass)
+        await hass.async_block_till_done(wait_background_tasks=True)
+        if minutes == 29:
+            assert file.exists()
+    assert not file.exists()
+    last = hass.states.get(f"sensor.{P}_last_scan")
+    assert last.attributes["files"] == []
+    assert entry.runtime_data.data["scan_files"] == []
+
+
+async def test_scan_retention_option(
+    hass: HomeAssistant, printer: FakePrinter, entry: MockConfigEntry, freezer
+) -> None:
+    """0 keeps the scans."""
+    entry.add_to_hass(hass)
+    hass.config_entries.async_update_entry(entry, options={"scan_retention": 0})
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done(wait_background_tasks=True)
+    printer.pages = [JPEG_1]
+    file = Path((await _scan(hass))["files"][0])
+    freezer.tick(timedelta(days=2))
+    async_fire_time_changed(hass)
+    await hass.async_block_till_done(wait_background_tasks=True)
+    assert file.exists()
+
+
+async def test_scan_files_deleted_after_a_restart(
+    hass: HomeAssistant, printer: FakePrinter, entry: MockConfigEntry, freezer
+) -> None:
+    """Files of a scan made before a restart are still deleted once their time is over."""
+    await _setup(hass, entry)
+    printer.pages = [JPEG_1]
+    file = Path((await _scan(hass))["files"][0])
+    freezer.tick(timedelta(seconds=SAVE_DELAY + 1))
+    async_fire_time_changed(hass)
+    await hass.async_block_till_done(wait_background_tasks=True)
+    assert await hass.config_entries.async_unload(entry.entry_id)
+    freezer.tick(timedelta(hours=1))
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done(wait_background_tasks=True)
+    assert not file.exists()

@@ -51,10 +51,12 @@
       "init": {
         "title": "Options",
         "data": {
-          "scan_interval": "Status refresh interval"
+          "scan_interval": "Status refresh interval",
+          "scan_retention": "Keep scans not downloaded"
         },
         "data_description": {
-          "scan_interval": "How often the status is read, in seconds. Page counters and ink levels are read every 5 minutes and after each job."
+          "scan_interval": "How often the status is read, in seconds. Page counters and ink levels are read every 5 minutes and after each job.",
+          "scan_retention": "Minutes before a scan file that was not downloaded is deleted (a downloaded file is deleted at once). 0 keeps them."
         }
       }
     }

@@ -51,10 +51,12 @@
       "init": {
         "title": "Indstillinger",
         "data": {
-          "scan_interval": "Opdateringsinterval for status"
+          "scan_interval": "Opdateringsinterval for status",
+          "scan_retention": "Behold scanninger, der ikke er hentet"
         },
         "data_description": {
-          "scan_interval": "Hvor ofte status læses, i sekunder. Sidetællere og blækniveauer læses hvert 5. minut og efter hvert job."
+          "scan_interval": "Hvor ofte status læses, i sekunder. Sidetællere og blækniveauer læses hvert 5. minut og efter hvert job.",
+          "scan_retention": "Minutter før en scanningsfil, der ikke er hentet, slettes (en hentet fil slettes med det samme). 0 beholder dem."
         }
       }
     }

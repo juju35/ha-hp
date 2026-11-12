@@ -304,9 +304,11 @@ async def test_options_change_interval(
     """The status interval comes from the options."""
     await _setup(hass, entry)
     result = await hass.config_entries.options.async_init(entry.entry_id)
-    result = await hass.config_entries.options.async_configure(result["flow_id"], {"scan_interval": 120})
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"], {"scan_interval": 120, "scan_retention": 30}
+    )
     await hass.async_block_till_done(wait_background_tasks=True)
-    assert entry.options == {"scan_interval": 120}
+    assert entry.options == {"scan_interval": 120, "scan_retention": 30}
     before = printer.count(STATUS)
     await _tick(hass, freezer, 61)
     assert printer.count(STATUS) == before

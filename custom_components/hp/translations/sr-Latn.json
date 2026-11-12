@@ -51,10 +51,12 @@
       "init": {
         "title": "Opcije",
         "data": {
-          "scan_interval": "Interval osvežavanja stanja"
+          "scan_interval": "Interval osvežavanja stanja",
+          "scan_retention": "Zadrži nepreuzeta skeniranja"
         },
         "data_description": {
-          "scan_interval": "Koliko često se čita stanje, u sekundama. Brojači stranica i nivoi mastila se čitaju svakih 5 minuta i posle svakog posla."
+          "scan_interval": "Koliko često se čita stanje, u sekundama. Brojači stranica i nivoi mastila se čitaju svakih 5 minuta i posle svakog posla.",
+          "scan_retention": "Minuta do brisanja nepreuzete datoteke skeniranja (preuzeta se briše odmah). 0 ih zadržava."
         }
       }
     }

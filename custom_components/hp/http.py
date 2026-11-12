@@ -74,19 +74,5 @@ class HpScanView(HomeAssistantView):
         # Fully sent (a client that went away raised above): the file is not kept.
         await hass.async_add_executor_job(path.unlink, True)
         LOGGER.info("%s downloaded and deleted", path)
-        _forget(hass, entry, str(path))
+        entry.runtime_data.async_forget_files({str(path)})
         return response
-
-
-def _forget(hass: HomeAssistant, entry, file: str) -> None:
-    """Take a deleted file out of the printer's last scan (and its image, if it showed that file)."""
-    coordinator = entry.runtime_data
-    last = dict(coordinator.data.get("last_scan") or {})
-    files = [f for f in last.get("files", []) if f != file]
-    last.update(
-        files=files,
-        media_ids=media_ids(hass, files),
-        download_paths=[download_path(entry.entry_id, i) for i in range(len(files))],
-    )
-    image = coordinator.data.get("last_image")
-    coordinator.async_set_scan(last, None, clear_image=bool(image and image.get("file") == file))

@@ -51,10 +51,12 @@
       "init": {
         "title": "Možnosti",
         "data": {
-          "scan_interval": "Interval obnovování stavu"
+          "scan_interval": "Interval obnovování stavu",
+          "scan_retention": "Ponechat nestažené skeny"
         },
         "data_description": {
-          "scan_interval": "Jak často se čte stav, v sekundách. Počítadla stran a hladiny inkoustu se čtou každých 5 minut a po každé úloze."
+          "scan_interval": "Jak často se čte stav, v sekundách. Počítadla stran a hladiny inkoustu se čtou každých 5 minut a po každé úloze.",
+          "scan_retention": "Minuty do smazání nestaženého souboru skenu (stažený se smaže hned). 0 je ponechá."
         }
       }
     }

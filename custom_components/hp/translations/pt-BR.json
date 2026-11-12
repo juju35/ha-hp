@@ -51,10 +51,12 @@
       "init": {
         "title": "Opções",
         "data": {
-          "scan_interval": "Intervalo de atualização do status"
+          "scan_interval": "Intervalo de atualização do status",
+          "scan_retention": "Manter digitalizações não baixadas"
         },
         "data_description": {
-          "scan_interval": "Frequência de leitura do status, em segundos. Os contadores de páginas e os níveis de tinta são lidos a cada 5 minutos e após cada trabalho."
+          "scan_interval": "Frequência de leitura do status, em segundos. Os contadores de páginas e os níveis de tinta são lidos a cada 5 minutos e após cada trabalho.",
+          "scan_retention": "Minutos até um arquivo de digitalização não baixado ser excluído (um baixado é excluído na hora). 0 os mantém."
         }
       }
     }

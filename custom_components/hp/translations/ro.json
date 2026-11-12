@@ -51,10 +51,12 @@
       "init": {
         "title": "Opțiuni",
         "data": {
-          "scan_interval": "Interval de actualizare a stării"
+          "scan_interval": "Interval de actualizare a stării",
+          "scan_retention": "Păstrează scanările nedescărcate"
         },
         "data_description": {
-          "scan_interval": "Cât de des este citită starea, în secunde. Contoarele de pagini și nivelurile de cerneală sunt citite la fiecare 5 minute și după fiecare lucrare."
+          "scan_interval": "Cât de des este citită starea, în secunde. Contoarele de pagini și nivelurile de cerneală sunt citite la fiecare 5 minute și după fiecare lucrare.",
+          "scan_retention": "Minute până la ștergerea unui fișier de scanare nedescărcat (unul descărcat se șterge imediat). 0 le păstrează."
         }
       }
     }

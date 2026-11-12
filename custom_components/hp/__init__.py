@@ -7,10 +7,11 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.event import async_track_time_interval
 from homeassistant.helpers.typing import ConfigType
 
 from .api import HpClient
-from .const import DOMAIN
+from .const import DOMAIN, SWEEP_INTERVAL
 from .coordinator import HpConfigEntry, HpCoordinator, store_for
 from .http import HpScanView
 from .scan import async_register_services
@@ -65,6 +66,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: HpConfigEntry) -> bool:
             registry.async_update_device(entry_device.id, **changes)
 
     entry.async_on_unload(coordinator.async_add_listener(_update_device))
+    # Scan files not downloaded are deleted once their retention is over, also those left by a restart.
+    entry.async_on_unload(async_track_time_interval(hass, coordinator.async_sweep, SWEEP_INTERVAL))
+    entry.async_create_background_task(hass, coordinator.async_sweep(), f"{DOMAIN} scan files")
     entry.async_on_unload(entry.add_update_listener(_async_reload))
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True

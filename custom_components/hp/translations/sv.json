@@ -51,10 +51,12 @@
       "init": {
         "title": "Alternativ",
         "data": {
-          "scan_interval": "Uppdateringsintervall för status"
+          "scan_interval": "Uppdateringsintervall för status",
+          "scan_retention": "Behåll skanningar som inte laddats ner"
         },
         "data_description": {
-          "scan_interval": "Hur ofta statusen läses, i sekunder. Sidräknare och bläcknivåer läses var 5:e minut och efter varje jobb."
+          "scan_interval": "Hur ofta statusen läses, i sekunder. Sidräknare och bläcknivåer läses var 5:e minut och efter varje jobb.",
+          "scan_retention": "Minuter innan en skanningsfil som inte laddats ner raderas (en nedladdad fil raderas direkt). 0 behåller dem."
         }
       }
     }

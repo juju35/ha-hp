@@ -51,10 +51,12 @@
       "init": {
         "title": "Options",
         "data": {
-          "scan_interval": "Intervalle de rafraîchissement de l'état"
+          "scan_interval": "Intervalle de rafraîchissement de l'état",
+          "scan_retention": "Conserver les scans non téléchargés"
         },
         "data_description": {
-          "scan_interval": "Fréquence de lecture de l'état, en secondes. Les compteurs de pages et niveaux d'encre sont lus toutes les 5 minutes et après chaque travail."
+          "scan_interval": "Fréquence de lecture de l'état, en secondes. Les compteurs de pages et niveaux d'encre sont lus toutes les 5 minutes et après chaque travail.",
+          "scan_retention": "Minutes avant la suppression d'un fichier de scan non téléchargé (un fichier téléchargé est supprimé aussitôt). 0 les conserve."
         }
       }
     }
