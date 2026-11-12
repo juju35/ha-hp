@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.1 (2026-11-12)
+
+### Maintenance
+- Config flow tests no longer set the printer up: the reconfigure test left the image token timer running and failed on the latest Home Assistant depending on test order. No change to the integration itself.
+
 ## 1.1.0 (2026-11-12)
 
 ### Improvements
