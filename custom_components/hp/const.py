@@ -7,10 +7,15 @@ from datetime import timedelta
 from typing import Final
 
 DOMAIN: Final = "hp"
-VERSION: Final = "1.1.1"
+VERSION: Final = "1.2.0"
 LOGGER: Final = logging.getLogger(__package__)
 
 CONF_SCAN_INTERVAL: Final = "scan_interval"
+# Minutes a scan file is kept when it is not downloaded (0: kept), and how often that is checked.
+CONF_SCAN_RETENTION: Final = "scan_retention"
+DEFAULT_SCAN_RETENTION: Final = 30
+MAX_SCAN_RETENTION: Final = 10080
+SWEEP_INTERVAL: Final = timedelta(minutes=1)
 DEFAULT_SCAN_INTERVAL: Final = 30
 MIN_SCAN_INTERVAL: Final = 10
 MAX_SCAN_INTERVAL: Final = 600

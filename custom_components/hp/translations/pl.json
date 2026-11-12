@@ -51,10 +51,12 @@
       "init": {
         "title": "Opcje",
         "data": {
-          "scan_interval": "Interwał odświeżania stanu"
+          "scan_interval": "Interwał odświeżania stanu",
+          "scan_retention": "Zachowaj nie pobrane skany"
         },
         "data_description": {
-          "scan_interval": "Jak często odczytywany jest stan, w sekundach. Liczniki stron i poziomy tuszu są odczytywane co 5 minut i po każdym zadaniu."
+          "scan_interval": "Jak często odczytywany jest stan, w sekundach. Liczniki stron i poziomy tuszu są odczytywane co 5 minut i po każdym zadaniu.",
+          "scan_retention": "Minuty do usunięcia nie pobranego pliku skanu (pobrany plik jest usuwany od razu). 0 je zachowuje."
         }
       }
     }

@@ -51,10 +51,12 @@
       "init": {
         "title": "Beállítások",
         "data": {
-          "scan_interval": "Állapotfrissítési időköz"
+          "scan_interval": "Állapotfrissítési időköz",
+          "scan_retention": "Nem letöltött szkennelések megtartása"
         },
         "data_description": {
-          "scan_interval": "Milyen gyakran olvassa az állapotot, másodpercben. Az oldalszámlálókat és a tintaszinteket 5 percenként és minden feladat után olvassa."
+          "scan_interval": "Milyen gyakran olvassa az állapotot, másodpercben. Az oldalszámlálókat és a tintaszinteket 5 percenként és minden feladat után olvassa.",
+          "scan_retention": "Ennyi perc után törlődik a nem letöltött szkennelt fájl (a letöltött azonnal törlődik). 0: megtartja."
         }
       }
     }

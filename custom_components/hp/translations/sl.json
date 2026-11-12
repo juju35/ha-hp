@@ -51,10 +51,12 @@
       "init": {
         "title": "Možnosti",
         "data": {
-          "scan_interval": "Interval osveževanja stanja"
+          "scan_interval": "Interval osveževanja stanja",
+          "scan_retention": "Obdrži nepreneseno optično branje"
         },
         "data_description": {
-          "scan_interval": "Kako pogosto se bere stanje, v sekundah. Števci strani in ravni črnila se berejo vsakih 5 minut in po vsakem opravilu."
+          "scan_interval": "Kako pogosto se bere stanje, v sekundah. Števci strani in ravni črnila se berejo vsakih 5 minut in po vsakem opravilu.",
+          "scan_retention": "Minute do izbrisa neprenesene datoteke optičnega branja (prenesena se izbriše takoj). 0 jih obdrži."
         }
       }
     }

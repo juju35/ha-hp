@@ -51,10 +51,12 @@
       "init": {
         "title": "Opzioni",
         "data": {
-          "scan_interval": "Intervallo di aggiornamento dello stato"
+          "scan_interval": "Intervallo di aggiornamento dello stato",
+          "scan_retention": "Conserva le scansioni non scaricate"
         },
         "data_description": {
-          "scan_interval": "Ogni quanto viene letto lo stato, in secondi. I contatori di pagine e i livelli d'inchiostro vengono letti ogni 5 minuti e dopo ogni lavoro."
+          "scan_interval": "Ogni quanto viene letto lo stato, in secondi. I contatori di pagine e i livelli d'inchiostro vengono letti ogni 5 minuti e dopo ogni lavoro.",
+          "scan_retention": "Minuti prima che un file di scansione non scaricato venga eliminato (uno scaricato viene eliminato subito). 0 li conserva."
         }
       }
     }

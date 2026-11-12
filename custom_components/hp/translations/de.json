@@ -51,10 +51,12 @@
       "init": {
         "title": "Optionen",
         "data": {
-          "scan_interval": "Aktualisierungsintervall des Status"
+          "scan_interval": "Aktualisierungsintervall des Status",
+          "scan_retention": "Nicht heruntergeladene Scans behalten"
         },
         "data_description": {
-          "scan_interval": "Wie oft der Status gelesen wird, in Sekunden. Seitenzähler und Tintenstände werden alle 5 Minuten und nach jedem Auftrag gelesen."
+          "scan_interval": "Wie oft der Status gelesen wird, in Sekunden. Seitenzähler und Tintenstände werden alle 5 Minuten und nach jedem Auftrag gelesen.",
+          "scan_retention": "Minuten, bevor eine nicht heruntergeladene Scandatei gelöscht wird (eine heruntergeladene wird sofort gelöscht). 0 behält sie."
         }
       }
     }

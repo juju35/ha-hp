@@ -19,7 +19,16 @@ from homeassistant.helpers.selector import (
 from homeassistant.helpers.service_info.zeroconf import ZeroconfServiceInfo
 
 from .api import HpClient, HpError, async_identify
-from .const import CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL, DOMAIN, MAX_SCAN_INTERVAL, MIN_SCAN_INTERVAL
+from .const import (
+    CONF_SCAN_INTERVAL,
+    CONF_SCAN_RETENTION,
+    DEFAULT_SCAN_INTERVAL,
+    DEFAULT_SCAN_RETENTION,
+    DOMAIN,
+    MAX_SCAN_INTERVAL,
+    MAX_SCAN_RETENTION,
+    MIN_SCAN_INTERVAL,
+)
 
 PORT_SELECTOR = NumberSelector(NumberSelectorConfig(min=1, max=65535, mode=NumberSelectorMode.BOX))
 
@@ -130,13 +139,19 @@ class HpConfigFlow(ConfigFlow, domain=DOMAIN):
 
 
 class HpOptionsFlow(OptionsFlow):
-    """Polling interval."""
+    """Polling interval and how long scans not downloaded are kept."""
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Show the options."""
         if user_input is not None:
-            return self.async_create_entry(data={CONF_SCAN_INTERVAL: int(user_input[CONF_SCAN_INTERVAL])})
-        current = self.config_entry.options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
+            return self.async_create_entry(
+                data={
+                    CONF_SCAN_INTERVAL: int(user_input[CONF_SCAN_INTERVAL]),
+                    CONF_SCAN_RETENTION: int(user_input[CONF_SCAN_RETENTION]),
+                }
+            )
+        options = self.config_entry.options
+        current = options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
         schema = vol.Schema(
             {
                 vol.Required(CONF_SCAN_INTERVAL, default=current): NumberSelector(
@@ -147,7 +162,14 @@ class HpOptionsFlow(OptionsFlow):
                         unit_of_measurement="s",
                         mode=NumberSelectorMode.BOX,
                     )
-                )
+                ),
+                vol.Required(
+                    CONF_SCAN_RETENTION, default=options.get(CONF_SCAN_RETENTION, DEFAULT_SCAN_RETENTION)
+                ): NumberSelector(
+                    NumberSelectorConfig(
+                        min=0, max=MAX_SCAN_RETENTION, step=5, unit_of_measurement="min", mode=NumberSelectorMode.BOX
+                    )
+                ),
             }
         )
         return self.async_show_form(step_id="init", data_schema=schema)

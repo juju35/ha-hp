@@ -51,10 +51,12 @@
       "init": {
         "title": "Opciones",
         "data": {
-          "scan_interval": "Intervalo de actualización del estado"
+          "scan_interval": "Intervalo de actualización del estado",
+          "scan_retention": "Conservar escaneos no descargados"
         },
         "data_description": {
-          "scan_interval": "Frecuencia de lectura del estado, en segundos. Los contadores de páginas y los niveles de tinta se leen cada 5 minutos y después de cada trabajo."
+          "scan_interval": "Frecuencia de lectura del estado, en segundos. Los contadores de páginas y los niveles de tinta se leen cada 5 minutos y después de cada trabajo.",
+          "scan_retention": "Minutos antes de eliminar un archivo de escaneo no descargado (uno descargado se elimina al instante). 0 los conserva."
         }
       }
     }

@@ -16,6 +16,7 @@ import time
 from collections.abc import Callable
 from copy import deepcopy
 from datetime import datetime, timedelta
+from pathlib import Path
 from typing import Any
 
 from homeassistant.config_entries import ConfigEntry
@@ -45,7 +46,9 @@ from .api import (
 from .const import (
     BUSY_STATUSES,
     CONF_SCAN_INTERVAL,
+    CONF_SCAN_RETENTION,
     DEFAULT_SCAN_INTERVAL,
+    DEFAULT_SCAN_RETENTION,
     DEVICE_INTERVAL,
     DOMAIN,
     LOGGER,
@@ -59,8 +62,12 @@ from .const import (
     WRONG_PRINTER_RETRY,
 )
 from .escl import CAPABILITIES, ScanSettings, parse_capabilities
+from .http import download_path, media_ids
 
 type HpConfigEntry = ConfigEntry[HpCoordinator]
+
+# Data changed by scans and downloads, not by polling.
+SCAN_KEYS = ("last_scan", "last_image", "scan_files")
 
 # While online and unchanged, the last-seen time is still saved this often.
 SAVE_LAST_SEEN_EVERY = 600
@@ -81,6 +88,8 @@ def empty_data() -> dict[str, Any]:
         "scanner": {},
         "last_scan": None,
         "last_image": None,
+        # Files written by scans and when, to delete them once their retention is over.
+        "scan_files": [],
     }
 
 
@@ -152,14 +161,52 @@ class HpCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     def _is_due(self, group: str, now: datetime) -> bool:
         return now >= self._due.get(group, now)
 
-    def async_set_scan(self, last_scan: dict[str, Any], last_image: dict[str, Any] | None) -> None:
-        """Record a finished scan: written to the entities and saved."""
+    def async_set_scan(self, last_scan: dict[str, Any], last_image: dict[str, Any]) -> None:
+        """Record a finished scan: written to the entities, its files tracked for deletion, saved."""
         data = deepcopy(self.data)
         data["last_scan"] = last_scan
-        if last_image is not None:
-            data["last_image"] = last_image
+        data["last_image"] = last_image
+        # A PDF that got more pages starts its retention again.
+        files = set(last_scan["files"])
+        data["scan_files"] = [f for f in data["scan_files"] if f["file"] not in files] + [
+            {"file": file, "time": last_scan["time"]} for file in last_scan["files"]
+        ]
         self.async_set_updated_data(data)
         self._save()
+
+    def async_forget_files(self, deleted: set[str]) -> None:
+        """Take deleted files out of the last scan, the last image and the tracked files."""
+        data = deepcopy(self.data)
+        if last := data.get("last_scan"):
+            files = [f for f in last.get("files", []) if f not in deleted]
+            last.update(
+                files=files,
+                media_ids=media_ids(self.hass, files),
+                download_paths=[download_path(self.config_entry.entry_id, i) for i in range(len(files))],
+            )
+        if (image := data.get("last_image")) and image.get("file") in deleted:
+            data["last_image"] = None
+        data["scan_files"] = [f for f in data["scan_files"] if f["file"] not in deleted]
+        if data != self.data:
+            self.async_set_updated_data(data)
+            self._save()
+
+    async def async_sweep(self, _now: datetime | None = None) -> None:
+        """Delete the scan files kept longer than the retention option (not downloaded in time)."""
+        retention = self.config_entry.options.get(CONF_SCAN_RETENTION, DEFAULT_SCAN_RETENTION)
+        if not retention or not self.data or not self.data["scan_files"]:
+            return
+        limit = dt_util.utcnow() - timedelta(minutes=retention)
+        expired = {
+            f["file"] for f in self.data["scan_files"] if (t := dt_util.parse_datetime(f["time"])) is None or t < limit
+        }
+        if not expired:
+            return
+        await self.hass.async_add_executor_job(_delete, expired)
+        LOGGER.info(
+            "%s: deleted %d scan file(s) not downloaded within %s min", self.client.host, len(expired), retention
+        )
+        self.async_forget_files(expired)
 
     async def _optional(self, path: str, now: datetime) -> Any:
         """Fetch a document the printer may not publish; None when it doesn't or fails this time."""
@@ -191,6 +238,14 @@ class HpCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             return parse_status(await self.client.fetch(STATUS))
 
     async def _async_update_data(self) -> dict[str, Any]:
+        data = await self._poll()
+        # A scan finished or a file deleted while the printer was read changed self.data meanwhile: the poll
+        # started from a copy, so it must not bring the scan state back to what it was.
+        if self.data is not None and data is not self.data:
+            data = {**data, **{key: self.data[key] for key in SCAN_KEYS}}
+        return data
+
+    async def _poll(self) -> dict[str, Any]:
         previous = self.data or empty_data()
         was_online = bool(previous.get("online"))
         now = dt_util.utcnow()
@@ -337,3 +392,8 @@ class HpCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
 async def _none() -> None:
     return None
+
+
+def _delete(files: set[str]) -> None:
+    for file in files:
+        Path(file).unlink(missing_ok=True)

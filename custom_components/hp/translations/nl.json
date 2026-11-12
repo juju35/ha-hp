@@ -51,10 +51,12 @@
       "init": {
         "title": "Opties",
         "data": {
-          "scan_interval": "Vernieuwingsinterval van de status"
+          "scan_interval": "Vernieuwingsinterval van de status",
+          "scan_retention": "Niet-gedownloade scans bewaren"
         },
         "data_description": {
-          "scan_interval": "Hoe vaak de status wordt gelezen, in seconden. Paginatellers en inktniveaus worden elke 5 minuten en na elke taak gelezen."
+          "scan_interval": "Hoe vaak de status wordt gelezen, in seconden. Paginatellers en inktniveaus worden elke 5 minuten en na elke taak gelezen.",
+          "scan_retention": "Minuten voordat een niet-gedownload scanbestand wordt verwijderd (een gedownload bestand wordt meteen verwijderd). 0 bewaart ze."
         }
       }
     }

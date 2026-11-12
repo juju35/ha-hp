@@ -51,10 +51,12 @@
       "init": {
         "title": "Možnosti",
         "data": {
-          "scan_interval": "Interval obnovovania stavu"
+          "scan_interval": "Interval obnovovania stavu",
+          "scan_retention": "Ponechať nestiahnuté skeny"
         },
         "data_description": {
-          "scan_interval": "Ako často sa číta stav, v sekundách. Počítadlá strán a hladiny atramentu sa čítajú každých 5 minút a po každej úlohe."
+          "scan_interval": "Ako často sa číta stav, v sekundách. Počítadlá strán a hladiny atramentu sa čítajú každých 5 minút a po každej úlohe.",
+          "scan_retention": "Minúty do odstránenia nestiahnutého súboru skenu (stiahnutý sa odstráni hneď). 0 ich ponechá."
         }
       }
     }

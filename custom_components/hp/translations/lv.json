@@ -51,10 +51,12 @@
       "init": {
         "title": "Opcijas",
         "data": {
-          "scan_interval": "Statusa atsvaidzināšanas intervāls"
+          "scan_interval": "Statusa atsvaidzināšanas intervāls",
+          "scan_retention": "Saglabāt nelejupielādētos skenējumus"
         },
         "data_description": {
-          "scan_interval": "Cik bieži tiek nolasīts statuss, sekundēs. Lappušu skaitītāji un tintes līmeņi tiek nolasīti ik pēc 5 minūtēm un pēc katra darba."
+          "scan_interval": "Cik bieži tiek nolasīts statuss, sekundēs. Lappušu skaitītāji un tintes līmeņi tiek nolasīti ik pēc 5 minūtēm un pēc katra darba.",
+          "scan_retention": "Minūtes līdz nelejupielādēta skenējuma faila dzēšanai (lejupielādēts tiek dzēsts uzreiz). 0 tos saglabā."
         }
       }
     }

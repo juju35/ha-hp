@@ -51,10 +51,12 @@
       "init": {
         "title": "Opções",
         "data": {
-          "scan_interval": "Intervalo de atualização do estado"
+          "scan_interval": "Intervalo de atualização do estado",
+          "scan_retention": "Manter digitalizações não transferidas"
         },
         "data_description": {
-          "scan_interval": "Frequência de leitura do estado, em segundos. Os contadores de páginas e os níveis de tinta são lidos a cada 5 minutos e após cada trabalho."
+          "scan_interval": "Frequência de leitura do estado, em segundos. Os contadores de páginas e os níveis de tinta são lidos a cada 5 minutos e após cada trabalho.",
+          "scan_retention": "Minutos até um ficheiro de digitalização não transferido ser eliminado (um transferido é eliminado de imediato). 0 mantém-nos."
         }
       }
     }

@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import asyncio
 import io
+from datetime import timedelta
 from http import HTTPStatus
 from pathlib import Path
 from unittest.mock import patch
@@ -10,10 +12,16 @@ from unittest.mock import patch
 import pytest
 from homeassistant.core import HomeAssistant, State
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
+from homeassistant.helpers import device_registry as dr
 from PIL import Image
-from pytest_homeassistant_custom_component.common import MockConfigEntry, async_capture_events, mock_restore_cache
+from pytest_homeassistant_custom_component.common import (
+    MockConfigEntry,
+    async_capture_events,
+    async_fire_time_changed,
+    mock_restore_cache,
+)
 
-from custom_components.hp.const import DOMAIN
+from custom_components.hp.const import DOMAIN, SAVE_DELAY
 from custom_components.hp.document import read_pdf
 
 from .conftest import JOB, FakePrinter
@@ -51,6 +59,12 @@ async def _setup(hass: HomeAssistant, entry: MockConfigEntry) -> None:
     entry.add_to_hass(hass)
     assert await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done(wait_background_tasks=True)
+
+
+async def _view_done(hass: HomeAssistant) -> None:
+    for _ in range(20):
+        await asyncio.sleep(0.01)
+    await hass.async_block_till_done()
 
 
 async def _scan(hass: HomeAssistant, **data):
@@ -94,6 +108,7 @@ async def test_scan_pdf(hass: HomeAssistant, printer: FakePrinter, entry: MockCo
         "format": "pdf",
         "files": [str(path)],
         "media_ids": ["media-source://media_source/local/hp/invoice.pdf"],
+        "download_paths": [f"/api/hp/scans/{entry.entry_id}/0"],
         "pages": 1,
     }
     pages = read_pdf(path.read_bytes())
@@ -187,6 +202,18 @@ async def test_scanner_pdf_only(hass: HomeAssistant, printer: FakePrinter, entry
     assert Path(response["files"][0]).read_bytes() == PDF
     assert response["pages"] is None
     assert "<pwg:DocumentFormat>application/pdf</pwg:DocumentFormat>" in printer.scan_jobs[0].decode()
+
+
+async def test_scan_with_device_id(hass: HomeAssistant, printer: FakePrinter, entry: MockConfigEntry) -> None:
+    """The printer is found by its device."""
+    await _setup(hass, entry)
+    device = dr.async_entries_for_config_entry(dr.async_get(hass), entry.entry_id)[0]
+    printer.pages = [JPEG_1]
+    response = await _scan(hass, device_id=device.id)
+    assert response["pages"] == 1
+    with pytest.raises(ServiceValidationError) as err:
+        await _scan(hass, device_id="unknown")
+    assert err.value.translation_key == "device_not_found"
 
 
 async def test_scan_jpeg_feeder_duplex(
@@ -318,3 +345,123 @@ async def test_outside_media_no_media_id(
     printer.pages = [JPEG_1]
     response = await _scan(hass, directory=str(other))
     assert response["media_ids"] == []
+
+
+async def test_download_last_scan(
+    hass: HomeAssistant, printer: FakePrinter, entry: MockConfigEntry, hass_client, hass_client_no_auth
+) -> None:
+    """The last scan's PDF is downloaded through the integration (the media view does not serve PDFs)."""
+    await _setup(hass, entry)
+    printer.pages = [JPEG_1]
+    response = await _scan(hass, filename="letter")
+    path = response["download_paths"][0]
+    client = await hass_client()
+    resp = await client.get(path)
+    assert resp.status == HTTPStatus.OK
+    assert resp.headers["Content-Type"] == "application/pdf"
+    assert resp.headers["Content-Disposition"] == 'attachment; filename="letter.pdf"'
+    body = await resp.read()
+    assert body[:5] == b"%PDF-"
+    # Downloaded: the file is deleted and leaves the last scan (the view finishes after the body is sent).
+    await _view_done(hass)
+    assert not Path(response["files"][0]).exists()
+    last = hass.states.get(f"sensor.{P}_last_scan")
+    assert last.attributes["files"] == []
+    assert last.attributes["download_paths"] == []
+    assert (await client.get(path)).status == HTTPStatus.NOT_FOUND
+
+    # Several pages: each file downloaded goes, the others keep working links.
+    printer.pages = [JPEG_1, JPEG_2]
+    response = await _scan(hass, format="jpeg", source="feeder", filename="pages")
+    resp = await client.get(response["download_paths"][1])
+    assert await resp.read() == JPEG_2
+    await _view_done(hass)
+    last = hass.states.get(f"sensor.{P}_last_scan")
+    assert last.attributes["files"] == [response["files"][0]]
+    assert last.attributes["download_paths"] == [f"/api/hp/scans/{entry.entry_id}/0"]
+    resp = await client.get(last.attributes["download_paths"][0])
+    assert await resp.read() == JPEG_1
+
+    for other in (f"/api/hp/scans/{entry.entry_id}/5", f"/api/hp/scans/{entry.entry_id}/x", "/api/hp/scans/nope/0"):
+        assert (await client.get(other)).status == HTTPStatus.NOT_FOUND
+    anonymous = await hass_client_no_auth()
+    assert (await anonymous.get(path)).status == HTTPStatus.UNAUTHORIZED
+
+
+async def test_scans_not_downloaded_are_deleted(
+    hass: HomeAssistant, printer: FakePrinter, entry: MockConfigEntry, freezer
+) -> None:
+    """A scan not downloaded is deleted after 30 minutes and leaves the last scan."""
+    await _setup(hass, entry)
+    printer.pages = [JPEG_1]
+    file = Path((await _scan(hass, filename="kept"))["files"][0])
+    for minutes in (29, 2):
+        freezer.tick(timedelta(minutes=minutes))
+        async_fire_time_changed(hass)
+        await hass.async_block_till_done(wait_background_tasks=True)
+        if minutes == 29:
+            assert file.exists()
+    assert not file.exists()
+    last = hass.states.get(f"sensor.{P}_last_scan")
+    assert last.attributes["files"] == []
+    assert entry.runtime_data.data["scan_files"] == []
+
+
+async def test_scan_retention_option(
+    hass: HomeAssistant, printer: FakePrinter, entry: MockConfigEntry, freezer
+) -> None:
+    """0 keeps the scans."""
+    entry.add_to_hass(hass)
+    hass.config_entries.async_update_entry(entry, options={"scan_retention": 0})
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done(wait_background_tasks=True)
+    printer.pages = [JPEG_1]
+    file = Path((await _scan(hass))["files"][0])
+    freezer.tick(timedelta(days=2))
+    async_fire_time_changed(hass)
+    await hass.async_block_till_done(wait_background_tasks=True)
+    assert file.exists()
+
+
+async def test_scan_files_deleted_after_a_restart(
+    hass: HomeAssistant, printer: FakePrinter, entry: MockConfigEntry, freezer
+) -> None:
+    """Files of a scan made before a restart are still deleted once their time is over."""
+    await _setup(hass, entry)
+    printer.pages = [JPEG_1]
+    file = Path((await _scan(hass))["files"][0])
+    freezer.tick(timedelta(seconds=SAVE_DELAY + 1))
+    async_fire_time_changed(hass)
+    await hass.async_block_till_done(wait_background_tasks=True)
+    assert await hass.config_entries.async_unload(entry.entry_id)
+    freezer.tick(timedelta(hours=1))
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done(wait_background_tasks=True)
+    assert not file.exists()
+
+
+async def test_poll_keeps_a_scan_finished_meanwhile(
+    hass: HomeAssistant, printer: FakePrinter, entry: MockConfigEntry
+) -> None:
+    """A poll that started before a scan ended does not bring the old scan state back."""
+    await _setup(hass, entry)
+    coordinator = entry.runtime_data
+    release = asyncio.Event()
+    fetch = coordinator.client.fetch
+
+    async def slow_fetch(path):
+        await release.wait()
+        return await fetch(path)
+
+    printer.set_status("processing")  # a change, so the poll's data is new
+    with patch.object(coordinator.client, "fetch", slow_fetch):
+        poll = hass.async_create_task(coordinator.async_refresh())
+        await asyncio.sleep(0)
+        # The scan ends while the poll waits for the printer.
+        last = {"time": "2026-11-12T03:00:00+01:00", "format": "pdf", "files": ["/media/hp/x.pdf"], "pages": 1}
+        coordinator.async_set_scan(last, {"time": last["time"], "file": "/media/hp/x.pdf"})
+        release.set()
+        await poll
+    assert coordinator.data["status"] == "processing"
+    assert coordinator.data["last_scan"] == last
+    assert [f["file"] for f in coordinator.data["scan_files"]] == ["/media/hp/x.pdf"]
