@@ -94,7 +94,7 @@ async def test_setup_creates_entities(hass: HomeAssistant, printer: FakePrinter,
 async def test_offline_keeps_values(
     hass: HomeAssistant, printer: FakePrinter, entry: MockConfigEntry, freezer: FrozenDateTimeFactory
 ) -> None:
-    """A printer turned off keeps every value; only its status and online sensor change."""
+    """A printer turned off keeps its values; its status, online, network and cloud sensors turn off."""
     await _setup(hass, entry)
     printer.online = False
     await _tick(hass, freezer)
@@ -103,7 +103,8 @@ async def test_offline_keeps_values(
     assert _state(hass, f"{B}_online") == STATE_OFF
     assert _state(hass, f"{P}_printed_pages") == "1234"
     assert _state(hass, f"{P}_black_level") == "42"
-    assert _state(hass, f"{B}_wi_fi") == STATE_ON
+    assert _state(hass, f"{B}_wi_fi") == STATE_OFF
+    assert _state(hass, f"{B}_hp_cloud_registered") == STATE_OFF
     for entity in er.async_entries_for_config_entry(er.async_get(hass), entry.entry_id):
         # A button and the last scan have no state before they are used, printer on or off.
         never_used = entity.domain in ("button", "image") or entity.entity_id.endswith("_last_scan")
@@ -124,6 +125,9 @@ async def test_back_online_reads_everything(
     assert _state(hass, f"{P}_status") == "ready"
     assert _state(hass, f"{P}_printed_pages") == "1240"
     assert printer.count(DEVICE) == 2
+    # The network and cloud sensors show the printer's report again.
+    assert _state(hass, f"{B}_wi_fi") == STATE_ON
+    assert _state(hass, f"{B}_hp_cloud_registered") == STATE_ON
 
 
 async def test_lost_request_is_not_offline(
@@ -254,7 +258,7 @@ async def test_data_saved_and_restored_with_printer_off(
     assert _state(hass, f"{B}_online") == STATE_OFF
     assert _state(hass, f"{P}_printed_pages") == "1234"
     assert _state(hass, f"{P}_black_level") == "42"
-    assert _state(hass, f"{B}_wi_fi") == STATE_ON
+    assert _state(hass, f"{B}_wi_fi") == STATE_OFF
     assert entry.runtime_data.last_seen is not None
 
 

@@ -39,7 +39,7 @@ Home Assistant integration for HP printers, fully local: status, ink or toner le
 
 | | Core `hp_printer` | `hp` (this integration) |
 |---|---|---|
-| Printer off or asleep | Every entity **unavailable** | Last values kept, status `off`, **Online** off |
+| Printer off or asleep | Every entity **unavailable** | Last values kept, status `off`; **Online**, Wi-Fi, Ethernet and HP cloud sensors off |
 | Restart with the printer off | Setup retried, no entity | Entities at once with their last values |
 | Unknown status | `unknown` | `other` + the printer's status in an attribute |
 | Requests per poll (every minute) | All documents | Status only; the rest when it can have changed |

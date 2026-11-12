@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.1 (2026-11-12)
+
+### Fixes
+- While the printer is off or unreachable, the **Wi-Fi**, **Ethernet**, **USB** and **HP cloud** sensors are off instead of keeping their last value (connected, registered). They show the printer's report again as soon as it answers.
+
 ## 1.2.0 (2026-11-12)
 
 ### Fixes
