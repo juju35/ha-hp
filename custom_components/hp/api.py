@@ -259,7 +259,8 @@ def _percent(element: Element | None, path: str) -> int | float | None:
 
 
 def _snake(value: str) -> str:
-    return re.sub(r"(?<!^)(?=[A-Z])", "_", value.replace(" ", "")).lower()
+    """newGenuineHP → new_genuine_hp, veryLow → very_low (an acronym stays one word)."""
+    return re.sub(r"(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])", "_", value.replace(" ", "")).lower()
 
 
 def _root(document: Element | dict[str, Any], tag: str) -> Element | None:
@@ -271,20 +272,52 @@ def _root(document: Element | dict[str, Any], tag: str) -> Element | None:
 # --- Parsers: each returns the part of the snapshot it covers ---------------------------------
 
 
+# When the printer reports several statuses, the one shown: a stop first, then work, then rest.
+STATUS_PRIORITY = (
+    "paper_jam",
+    "close_door_or_cover",
+    "tray_empty",
+    "cancel_job",
+    "processing",
+    "copying",
+    "scan_processing",
+    "initializing",
+    "shutting_down",
+    "in_power_save",
+    "ready",
+    "off",
+)
+
+
 def parse_status(document: Element | dict[str, Any]) -> dict[str, Any]:
-    """Status category, message and alert IDs from ProductStatusDyn."""
+    """Status category, message and alert IDs from ProductStatusDyn.
+
+    A printer can list several statuses, informative ones first (``genuineHP``, "Cart. HP Instant
+    Ink"…): the one shown is the most important known one, and an unknown one only when none is known.
+    """
     root = _root(document, "ProductStatusDyn")
     if root is None:
         raise HpError("ProductStatusDyn: unexpected document")
-    statuses = root.findall("Status")
-    raw = _text(statuses[0], "StatusCategory") if statuses else None
-    message = _text(statuses[0], "LocString") if statuses else None
-    alerts = [
-        alert_id
-        for alert in root.findall("AlertTable/Alert")
-        if (alert_id := _text(alert, "ProductStatusAlertID") or _text(alert, "AlertID"))
+    entries = [
+        (map_status(raw), raw, _text(entry, "LocString"))
+        for entry in root.findall("Status")
+        if (raw := _text(entry, "StatusCategory"))
     ]
-    return {"status": map_status(raw), "raw_status": raw, "status_message": message, "alerts": alerts}
+    known = [entry for entry in entries if entry[0] in STATUS_PRIORITY]
+    if known:
+        status, raw, message = min(known, key=lambda entry: STATUS_PRIORITY.index(entry[0]))
+    elif entries:
+        status, raw, message = entries[0]
+    else:
+        status, raw, message = "other", None, None
+    alerts = list(
+        dict.fromkeys(
+            alert_id
+            for alert in root.findall("AlertTable/Alert")
+            if (alert_id := _text(alert, "ProductStatusAlertID") or _text(alert, "AlertID"))
+        )
+    )
+    return {"status": status, "raw_status": raw, "status_message": message, "alerts": alerts}
 
 
 def map_status(raw: str | None) -> str:

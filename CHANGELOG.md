@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.1 (2026-11-12)
+
+### Fixes
+- Status `other` (unknown state on the card) on printers that list several statuses, an informative one first: an OfficeJet Pro 9010 reports `genuineHP` ("Cart. HP Instant Ink") before `ready`. The status shown is now the most important known one (a stop, then work, then rest), with its message; `other` only when none is known. Alerts are listed once each.
+- Cartridge states keep acronyms whole: `new_genuine_hp` instead of `new_genuine_h_p`.
+
 ## 1.0.0 (2026-11-12)
 
 First release: a local integration for HP printers, built to replace the core HP Printer integration where it is fragile.
