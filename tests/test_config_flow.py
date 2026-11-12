@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+from collections.abc import Generator
 from ipaddress import ip_address
+from unittest.mock import patch
 
+import pytest
 from homeassistant.config_entries import SOURCE_USER, SOURCE_ZEROCONF
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
@@ -13,6 +16,14 @@ from pytest_homeassistant_custom_component.common import MockConfigEntry
 from custom_components.hp.const import DOMAIN
 
 from .conftest import HOST, MODEL, SERIAL, FakePrinter
+
+
+@pytest.fixture(autouse=True)
+def no_entry_setup() -> Generator[None]:
+    """The flows only: an entry created or reloaded is not set up (no platforms, no timers left behind)."""
+    with patch("custom_components.hp.async_setup_entry", return_value=True):
+        yield
+
 
 DISCOVERY = ZeroconfServiceInfo(
     ip_address=ip_address("192.168.1.77"),
