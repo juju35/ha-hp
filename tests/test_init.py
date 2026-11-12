@@ -37,6 +37,13 @@ async def _tick(hass: HomeAssistant, freezer: FrozenDateTimeFactory, seconds: fl
     await hass.async_block_till_done(wait_background_tasks=True)
 
 
+def _device(hass: HomeAssistant, entry: MockConfigEntry) -> dr.DeviceEntry:
+    devices = dr.async_entries_for_config_entry(dr.async_get(hass), entry.entry_id)
+    assert len(devices) == 1
+    assert devices[0].identifiers == {(DOMAIN, SERIAL)}
+    return devices[0]
+
+
 def _state(hass: HomeAssistant, entity_id: str) -> str:
     state = hass.states.get(entity_id)
     assert state is not None, entity_id
@@ -78,7 +85,7 @@ async def test_setup_creates_entities(hass: HomeAssistant, printer: FakePrinter,
     assert _state(hass, f"{B}_ethernet") == STATE_OFF
     assert _state(hass, f"{B}_hp_cloud_registered") == STATE_ON
 
-    device = dr.async_get(hass).async_get_device(identifiers={(DOMAIN, SERIAL)})
+    device = _device(hass, entry)
     assert device.model == "HP OfficeJet Pro 9010 series"
     assert device.sw_version == "TAPP1FN2318CR"
     assert device.serial_number == SERIAL
@@ -284,7 +291,7 @@ async def test_firmware_update_followed(
     await _setup(hass, entry)
     printer.replace(DEVICE, "TAPP1FN2318CR", "TAPP1FN2420AR")
     await _tick(hass, freezer, 6 * 3600 + 1)
-    device = dr.async_get(hass).async_get_device(identifiers={(DOMAIN, SERIAL)})
+    device = _device(hass, entry)
     assert device.sw_version == "TAPP1FN2420AR"
 
 

@@ -39,9 +39,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: HpConfigEntry) -> bool:
         """Follow firmware updates in the device registry."""
         device = coordinator.data["device"]
         registry = dr.async_get(hass)
-        entry_device = registry.async_get_device(identifiers={(DOMAIN, entry.unique_id or entry.entry_id)})
-        if entry_device is None:
+        # Looked up by config entry: identifiers are no longer unique across entries (HA 2026.10).
+        devices = dr.async_entries_for_config_entry(registry, entry.entry_id)
+        if not devices:
             return
+        entry_device = devices[0]
         changes = {
             attr: value
             for attr, value in (("sw_version", device.get("firmware")), ("model", device.get("model")))
