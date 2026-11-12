@@ -171,7 +171,8 @@ async def test_unchanged_documents_not_parsed_again(
     await _setup(hass, entry)
     await _tick(hass, freezer, 301)
     assert USAGE in printer.not_modified
-    assert STATUS in printer.not_modified
+    # The status is always read in full: a firmware with a wrong ETag must never freeze it.
+    assert STATUS not in printer.not_modified
     assert _state(hass, f"{P}_printed_pages") == "1234"
 
 
@@ -252,7 +253,7 @@ async def test_data_saved_and_restored_with_printer_off(
     assert _state(hass, f"{P}_printed_pages") == "1234"
     assert _state(hass, f"{P}_black_level") == "42"
     assert _state(hass, f"{B}_wi_fi") == STATE_ON
-    assert _state(hass, f"{P}_last_seen") not in (STATE_UNKNOWN, STATE_UNAVAILABLE)
+    assert entry.runtime_data.last_seen is not None
 
 
 async def test_stored_data_of_another_printer_ignored(
@@ -325,3 +326,106 @@ async def test_remove_entry_deletes_saved_data(
     await hass.config_entries.async_remove(entry.entry_id)
     await hass.async_block_till_done(wait_background_tasks=True)
     assert f"{DOMAIN}.{entry.entry_id}" not in hass_storage
+
+
+async def test_unchanged_poll_writes_nothing(
+    hass: HomeAssistant, printer: FakePrinter, entry: MockConfigEntry, freezer: FrozenDateTimeFactory
+) -> None:
+    """A poll that finds nothing new writes no entity (no state change, nothing recorded)."""
+    await _setup(hass, entry)
+    before = {state.entity_id: state.last_updated for state in hass.states.async_all()}
+    await _tick(hass, freezer)
+    await _tick(hass, freezer)
+    assert {state.entity_id: state.last_updated for state in hass.states.async_all()} == before
+    assert printer.count(STATUS) == 3
+
+
+async def test_last_seen_sensor_follows_every_answer(
+    hass: HomeAssistant, printer: FakePrinter, entry: MockConfigEntry, freezer: FrozenDateTimeFactory
+) -> None:
+    """The last-seen sensor, disabled by default, is the one entity written at every answer."""
+    entity_id = f"{P}_last_seen"
+    registry = er.async_get(hass)
+    registry.async_get_or_create("sensor", DOMAIN, f"{SERIAL}_last_seen", suggested_object_id=entity_id[7:])
+    registry.async_update_entity(entity_id, disabled_by=None)
+    await _setup(hass, entry)
+    first = _state(hass, entity_id)
+    await _tick(hass, freezer)
+    second = _state(hass, entity_id)
+    assert second != first
+    printer.online = False
+    await _tick(hass, freezer)
+    assert _state(hass, entity_id) == second
+
+
+async def test_offline_not_retried(
+    hass: HomeAssistant, printer: FakePrinter, entry: MockConfigEntry, freezer: FrozenDateTimeFactory
+) -> None:
+    """A printer already off gets one attempt per poll, and its data is not saved again."""
+    await _setup(hass, entry)
+    printer.online = False
+    await _tick(hass, freezer)
+    attempts = printer.attempts
+    await _tick(hass, freezer)
+    assert printer.attempts == attempts + 1
+
+
+async def test_counters_never_go_down(
+    hass: HomeAssistant, printer: FakePrinter, entry: MockConfigEntry, freezer: FrozenDateTimeFactory
+) -> None:
+    """A counter reported lower (firmware glitch) keeps its value: no false reset in statistics."""
+    await _setup(hass, entry)
+    printer.replace(USAGE, ">1234<", ">0<")
+    await _tick(hass, freezer, 301)
+    assert _state(hass, f"{P}_printed_pages") == "1234"
+
+
+async def test_no_usage_read_while_initializing(
+    hass: HomeAssistant, printer: FakePrinter, entry: MockConfigEntry, freezer: FrozenDateTimeFactory
+) -> None:
+    """Counters and ink are not read while the printer starts up."""
+    await _setup(hass, entry)
+    printer.set_status("initializing")
+    await _tick(hass, freezer, 301)
+    assert printer.count(USAGE) == 1
+    printer.set_status("ready")
+    await _tick(hass, freezer)
+    assert printer.count(USAGE) == 2
+
+
+async def test_missing_cartridge_still_in_usage(
+    hass: HomeAssistant, printer: FakePrinter, entry: MockConfigEntry, freezer: FrozenDateTimeFactory
+) -> None:
+    """A cartridge reported "missing" is not installed, even when the usage document still lists it."""
+    await _setup(hass, entry)
+    printer.replace(
+        CONSUMABLES, "<dd:ConsumableState>ok</dd:ConsumableState>", "<dd:ConsumableState>missing</dd:ConsumableState>"
+    )
+    printer.replace(
+        CONSUMABLES, "<dd:ConsumablePercentageLevelRemaining>42<", "<dd:ConsumablePercentageLevelRemaining>-1<"
+    )
+    await _tick(hass, freezer, 301)
+    black = hass.states.get(f"{P}_black_level")
+    assert black.state == "42"
+    assert black.attributes["installed"] is False
+    assert black.attributes["state"] == "missing"
+
+
+async def test_wrong_printer_not_read_every_poll(
+    hass: HomeAssistant, printer: FakePrinter, entry: MockConfigEntry, freezer: FrozenDateTimeFactory
+) -> None:
+    """Another printer at the address is checked every few minutes only, then this one is followed again."""
+    await _setup(hass, entry)
+    printer.online = False
+    await _tick(hass, freezer)
+    printer.replace(DEVICE, SERIAL, "CN9ZZ9ZZ9Z")
+    printer.online = True
+    await _tick(hass, freezer)
+    usage, device = printer.count(USAGE), printer.count(DEVICE)
+    await _tick(hass, freezer)
+    await _tick(hass, freezer)
+    assert (printer.count(USAGE), printer.count(DEVICE)) == (usage, device)
+    printer.replace(DEVICE, "CN9ZZ9ZZ9Z", SERIAL)
+    await _tick(hass, freezer, 301)
+    assert _state(hass, f"{P}_status") == "ready"
+    assert printer.count(DEVICE) == device + 1

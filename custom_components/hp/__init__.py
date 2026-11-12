@@ -9,7 +9,7 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .api import HpClient
 from .const import DOMAIN
-from .coordinator import HpConfigEntry, HpCoordinator
+from .coordinator import HpConfigEntry, HpCoordinator, store_for
 
 PLATFORMS: list[Platform] = [Platform.BINARY_SENSOR, Platform.SENSOR]
 
@@ -69,5 +69,4 @@ async def async_unload_entry(hass: HomeAssistant, entry: HpConfigEntry) -> bool:
 
 async def async_remove_entry(hass: HomeAssistant, entry: HpConfigEntry) -> None:
     """Delete the saved data of a removed printer."""
-    client = HpClient(host=entry.data[CONF_HOST], session=async_get_clientsession(hass))
-    await HpCoordinator(hass, entry, client).async_remove_store()
+    await store_for(hass, entry.entry_id).async_remove()

@@ -11,6 +11,7 @@ from __future__ import annotations
 import asyncio
 import json
 import re
+import time
 from dataclasses import dataclass, field
 from typing import Any
 from xml.etree.ElementTree import Element, ParseError, fromstring
@@ -93,11 +94,19 @@ class HpUnsupportedError(HpError):
     """The printer does not publish this document."""
 
 
+# Documents never asked with a condition: the status is tiny and must never be stale.
+UNCONDITIONAL = frozenset({STATUS})
+# A cached document is fetched in full again after this long, in case a firmware gives an ETag
+# that does not follow its content.
+CACHE_MAX_AGE = 1800.0
+
+
 @dataclass
 class _Cached:
     etag: str | None
     last_modified: str | None
     document: Any
+    stored_at: float
 
 
 @dataclass
@@ -136,6 +145,8 @@ class HpClient:
     async def fetch(self, path: str) -> Element | dict[str, Any]:
         """Return the parsed document at ``path`` (XML root without namespaces, or JSON object)."""
         cached = self._cache.get(path)
+        if cached is not None and time.monotonic() - cached.stored_at > CACHE_MAX_AGE:
+            cached = None
         headers = {}
         if cached is not None:
             if cached.etag:
@@ -165,8 +176,8 @@ class HpClient:
             raise HpError(f"{path}: {err}") from err
 
         document = _parse_body(path, body, content_type)
-        if etag or last_modified:
-            self._cache[path] = _Cached(etag, last_modified, document)
+        if (etag or last_modified) and path not in UNCONDITIONAL:
+            self._cache[path] = _Cached(etag, last_modified, document, time.monotonic())
         else:
             self._cache.pop(path, None)
         return document
@@ -338,6 +349,20 @@ def parse_consumables(
                     entry[key] = value
 
     return {color: data for color, data in consumables.items() if data}
+
+
+def installed_colors(config: Element | dict[str, Any]) -> set[str]:
+    """Colors of the cartridges ConsumableConfigDyn lists as present (not "missing")."""
+    root = _root(config, "ConsumableConfigDyn")
+    if root is None:
+        return set()
+    colors = set()
+    for item in root.findall("ConsumableInfo"):
+        color = LABEL_COLORS.get(_text(item, "ConsumableLabelCode") or "")
+        state = (_text(item, "ConsumableLifeState/ConsumableState") or "").lower()
+        if color is not None and state != "missing":
+            colors.add(color)
+    return colors
 
 
 def parse_counters(document: Element | dict[str, Any]) -> dict[str, int]:

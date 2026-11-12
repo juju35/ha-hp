@@ -18,9 +18,11 @@ Home Assistant integration for HP printers, fully local: status, ink or toner le
 
 - **Never unavailable**: a printer that is off keeps every value it last reported (ink levels, counters, network); only the **Status** turns `off` and the **Online** sensor turns off
 - **Survives restarts**: the last values are saved, so after a restart with the printer off the entities come back at once with them, and Home Assistant does not wait for the printer to start
-- **No false "off"**: a lost request is tried again before the printer counts as off
+- **No false "off"**: a lost request is tried again before the printer counts as off; a printer already off is not tried twice per poll
+- **Clean statistics**: page counters never go down (a lower value from the firmware is ignored instead of being taken as a reset), and counters and ink are not read while the printer starts up or shuts down, when firmwares report zeros
 - **Light on the printer**: the status is read at every poll (30 s by default), the page counters and ink levels every 5 minutes **and right after each job**, the network every 30 minutes, the identity every 6 hours and when the printer comes back
-- **Unchanged documents not downloaded again**: documents are asked with their ETag, so an unchanged one costs a short `304` and no parsing
+- **Nothing written when nothing changes**: a poll that finds nothing new writes no entity, so the recorder stores nothing
+- **Unchanged documents not downloaded again**: counters, ink, identity and network are asked with their ETag, so an unchanged one costs a short `304` and no parsing (the status is always read in full, and cached documents are read in full again every 30 minutes, in case a firmware's ETags do not follow its content)
 - **Unsupported documents not asked again and again**: a document the printer does not publish is asked again every 6 hours only
 - **At most two requests at a time** to the printer's small web server
 - **No dependency**: no Python package to install, nothing to conflict with Home Assistant
@@ -40,6 +42,7 @@ Home Assistant integration for HP printers, fully local: status, ink or toner le
 | Restart with the printer off | Setup retried, no entity | Entities at once with their last values |
 | Unknown status | `unknown` | `other` + the printer's status in an attribute |
 | Requests per poll (every minute) | All documents | Status only; the rest when it can have changed |
+| Entity writes per poll | Every entity | None unless a value changed |
 | Unchanged documents | Downloaded and parsed again | `304` with ETags |
 | Cartridge taken out | Unavailable | Last level kept, `installed: false` |
 | Address change | Remove and add the printer again | Reconfigure, or followed by discovery |
@@ -110,7 +113,7 @@ Entities are named after the printer model, for example `sensor.hp_officejet_pro
 | `sensor.<printer>_scanned_pages`, `_copied_pages`, `_faxed_pages` | When the printer has a scanner, copier or fax |
 | `sensor.<printer>_printed_single_sided_sheets`, `_printed_double_sided_sheets`, `_scanned_pages_from_document_feeder`, `_scanned_pages_from_glass`, `_scanned_double_sided_sheets` | Disabled by default |
 | `sensor.<printer>_paper_jams`, `_paper_mispicks`, `_scanner_jams`, `_scanner_mispicks` | Diagnostic; mispicks and scanner counters disabled by default |
-| `sensor.<printer>_last_seen` | Diagnostic: when the printer last answered |
+| `sensor.<printer>_last_seen` | Diagnostic, disabled by default: when the printer last answered (it changes at every poll, so it is the only entity written every 30 s) |
 | `binary_sensor.<printer>_ethernet`, `_wi_fi`, `_usb` | Diagnostic: adapter connected (USB disabled by default) |
 | `binary_sensor.<printer>_hp_cloud_registered`, `_hp_cloud_services` | Diagnostic |
 
@@ -147,8 +150,9 @@ actions:
 ## How it works
 
 - Documents: `ProductStatusDyn` (status), `ConsumableConfigDyn` and `ProductUsageDyn` (cartridges and counters), `ProductConfigDyn` (identity), `/IoMgmt/Adapters` and `ePrintConfigDyn` (network), over HTTP on port 80 (HTTPS optional, self-signed certificates accepted)
-- A poll reads the status; when it does not answer twice in a row, the printer is off: the status turns `off`, the other values stay, and everything is read again when it answers
-- The data is saved in `.storage/hp.<entry id>` when it changes (and every 10 minutes for the last-seen time), and removed with the printer
+- A poll reads the status; when it does not answer twice in a row, the printer is off: the status turns `off`, the other values stay, and everything is read again when it answers. While it is off, one attempt per poll
+- Another printer answering at the address (DHCP) is detected by its serial number: this printer counts as off and keeps its values, and the address is checked again every 5 minutes
+- The data is saved in `.storage/hp.<entry id>` when it changes (and every 10 minutes for the last-seen time while the printer is on), and removed with the printer
 
 ## Development
 

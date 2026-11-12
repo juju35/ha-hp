@@ -15,7 +15,6 @@ from homeassistant.components.sensor import (
 from homeassistant.const import PERCENTAGE, EntityCategory
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
-from homeassistant.util import dt as dt_util
 
 from .const import STATUSES
 from .coordinator import HpConfigEntry, HpCoordinator
@@ -90,6 +89,7 @@ LAST_SEEN = SensorEntityDescription(
     translation_key="last_seen",
     device_class=SensorDeviceClass.TIMESTAMP,
     entity_category=EntityCategory.DIAGNOSTIC,
+    entity_registry_enabled_default=False,
 )
 
 
@@ -155,7 +155,11 @@ class HpStatusSensor(HpEntity, SensorEntity):
 
 
 class HpLastSeenSensor(HpEntity, SensorEntity):
-    """When the printer last answered."""
+    """When the printer last answered.
+
+    Disabled by default: it changes at every poll, so it is the only entity written (and
+    recorded) every 30 s. The others are only written when a value changes.
+    """
 
     entity_description = LAST_SEEN
 
@@ -163,11 +167,17 @@ class HpLastSeenSensor(HpEntity, SensorEntity):
         """Initialize the sensor."""
         super().__init__(coordinator, LAST_SEEN.key)
 
+    async def async_added_to_hass(self) -> None:
+        """Follow every answer of the printer, not only data changes."""
+        await super().async_added_to_hass()
+        listeners = self.coordinator.answer_listeners
+        listeners.append(self.async_write_ha_state)
+        self.async_on_remove(lambda: listeners.remove(self.async_write_ha_state))
+
     @property
     def native_value(self) -> datetime | None:
         """Return the time of the last answer."""
-        value = self.coordinator.data.get("last_seen")
-        return dt_util.parse_datetime(value) if value else None
+        return self.coordinator.last_seen
 
 
 class HpCounterSensor(HpEntity, SensorEntity):

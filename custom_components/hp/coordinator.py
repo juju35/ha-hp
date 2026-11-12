@@ -3,12 +3,17 @@
 The printer being off is a normal state, not an error: the update never fails for it. The
 entities keep the last values the printer reported (saved to disk, so they also survive a
 restart with the printer off), the status turns ``off`` and the online sensor turns off.
+
+``data`` only holds what the printer reports, so a poll that finds nothing new leaves it equal
+and the entities are not written again (``always_update=False``). The time of the last answer,
+which changes at every poll, is kept beside it in ``last_seen``.
 """
 
 from __future__ import annotations
 
 import asyncio
 import time
+from collections.abc import Callable
 from copy import deepcopy
 from datetime import datetime, timedelta
 from typing import Any
@@ -29,6 +34,7 @@ from .api import (
     HpClient,
     HpError,
     HpUnsupportedError,
+    installed_colors,
     parse_adapters,
     parse_consumables,
     parse_counters,
@@ -47,13 +53,15 @@ from .const import (
     RETRY_DELAY,
     SAVE_DELAY,
     STORAGE_VERSION,
+    UNSETTLED_STATUSES,
     UNSUPPORTED_RETRY,
     USAGE_INTERVAL,
+    WRONG_PRINTER_RETRY,
 )
 
 type HpConfigEntry = ConfigEntry[HpCoordinator]
 
-# The saved data is also written at least this often while it only differs by "last_seen".
+# While online and unchanged, the last-seen time is still saved this often.
 SAVE_LAST_SEEN_EVERY = 600
 
 
@@ -61,7 +69,6 @@ def empty_data() -> dict[str, Any]:
     """Return the data of a printer never seen yet."""
     return {
         "online": False,
-        "last_seen": None,
         "device": {},
         "status": "off",
         "raw_status": None,
@@ -71,6 +78,11 @@ def empty_data() -> dict[str, Any]:
         "consumables": {},
         "connectivity": {},
     }
+
+
+def store_for(hass: HomeAssistant, entry_id: str) -> Store[dict[str, Any]]:
+    """Return the store of a printer's saved data."""
+    return Store(hass, STORAGE_VERSION, f"{DOMAIN}.{entry_id}")
 
 
 class HpCoordinator(DataUpdateCoordinator[dict[str, Any]]):
@@ -89,21 +101,28 @@ class HpCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             always_update=False,
         )
         self.client = client
-        self._store: Store[dict[str, Any]] = Store(hass, STORAGE_VERSION, f"{DOMAIN}.{entry.entry_id}")
+        self.last_seen: datetime | None = None
+        # Called after every poll that got an answer, even when data did not change.
+        self.answer_listeners: list[Callable[[], None]] = []
+        self._store = store_for(hass, entry.entry_id)
         self._due: dict[str, datetime] = {}
         self._unsupported: dict[str, datetime] = {}
         self._last_saved = 0.0
-        self._wrong_printer_logged = False
+        # Serial number answering at the address when it is not this printer's (DHCP).
+        self._wrong_printer: str | None = None
 
     async def async_load(self) -> bool:
         """Load the data saved by a previous run; return whether there was some for this printer."""
         stored = await self._store.async_load()
         if not stored or stored.get("serial_number") != self.config_entry.unique_id:
             return False
-        data = empty_data()
+        saved = dict(stored.get("data") or {})
+        last_seen = stored.get("last_seen") or saved.get("last_seen")
+        self.last_seen = dt_util.parse_datetime(last_seen) if last_seen else None
         # Shown as saved (online and status included, so a restart does not flip them) until the
         # first poll, which runs right after setup and reads everything.
-        data.update(stored.get("data") or {})
+        data = empty_data()
+        data.update({key: value for key, value in saved.items() if key in data})
         self.data = data
         return True
 
@@ -112,17 +131,15 @@ class HpCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         """Return the documents the printer does not publish."""
         return list(self._unsupported)
 
-    async def async_remove_store(self) -> None:
-        """Delete the saved data (entry removed)."""
-        await self._store.async_remove()
-
-    def _save(self, force: bool) -> None:
-        now = time.monotonic()
-        if not force and now - self._last_saved < SAVE_LAST_SEEN_EVERY:
-            return
-        self._last_saved = now
+    def _save(self) -> None:
+        self._last_saved = time.monotonic()
         self._store.async_delay_save(
-            lambda: {"serial_number": self.config_entry.unique_id, "data": self.data}, SAVE_DELAY
+            lambda: {
+                "serial_number": self.config_entry.unique_id,
+                "last_seen": self.last_seen.isoformat() if self.last_seen else None,
+                "data": self.data,
+            },
+            SAVE_DELAY,
         )
 
     def _is_due(self, group: str, now: datetime) -> bool:
@@ -144,44 +161,52 @@ class HpCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self._unsupported.pop(path, None)
         return document
 
-    async def _status(self) -> dict[str, Any]:
+    async def _status(self, retry: bool) -> dict[str, Any]:
         try:
             return parse_status(await self.client.fetch(STATUS))
         except HpUnsupportedError:
             raise
         except HpError:
-            # One lost request is not a printer turned off.
+            # One lost request is not a printer turned off. A printer already off is not tried
+            # twice: that would only double the wait on a host that is not there.
+            if not retry:
+                raise
             await asyncio.sleep(RETRY_DELAY)
             return parse_status(await self.client.fetch(STATUS))
 
     async def _async_update_data(self) -> dict[str, Any]:
         previous = self.data or empty_data()
-        data = deepcopy(previous)
+        was_online = bool(previous.get("online"))
         now = dt_util.utcnow()
 
         try:
-            status = await self._status()
+            status = await self._status(retry=was_online)
         except HpError as err:
-            if not previous.get("last_seen"):
+            if self.last_seen is None:
                 # Never seen: nothing to show yet, setup is retried later.
                 raise UpdateFailed(f"{self.client.host} does not answer: {err}") from err
-            if previous.get("online"):
+            if was_online:
                 LOGGER.info("%s is offline (%s), keeping its last values", self.client.host, err)
-            self._go_offline(data)
-            self._save(force=previous.get("online", False))
-            return data
+            return self._offline(previous)
 
-        came_back = not previous.get("online")
+        if self._wrong_printer is not None and not self._is_due("device", now):
+            # Another printer still holds the address: nothing read before the next check.
+            return previous
+
+        data = deepcopy(previous)
+        came_back = not was_online
         if came_back:
             self._due.clear()
         was_busy = previous.get("status") in BUSY_STATUSES
         data.update(status)
         data["online"] = True
-        data["last_seen"] = now.isoformat()
 
+        # Counters and ink are read right after a job, but not while the printer starts or shuts
+        # down: firmwares report zeros then.
+        settled = data["status"] not in UNSETTLED_STATUSES
         job_ended = was_busy and data["status"] not in BUSY_STATUSES
         read_device = self._is_due("device", now)
-        read_usage = job_ended or self._is_due("usage", now)
+        read_usage = settled and (job_ended or self._is_due("usage", now))
         read_network = self._is_due("network", now)
 
         device, usage, consumables, adapters, eprint = await asyncio.gather(
@@ -200,19 +225,20 @@ class HpCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             else:
                 serial = identity.get("serial_number")
                 if serial and self.config_entry.unique_id and serial != self.config_entry.unique_id:
-                    # The address now belongs to another printer (DHCP): this one is not there.
-                    if not self._wrong_printer_logged:
+                    if self._wrong_printer != serial:
                         LOGGER.warning(
                             "%s is now printer %s, not %s: give this printer a fixed address or reconfigure it",
                             self.client.host,
                             serial,
                             self.config_entry.unique_id,
                         )
-                        self._wrong_printer_logged = True
-                    data = deepcopy(previous)
-                    self._go_offline(data)
-                    return data
-                self._wrong_printer_logged = False
+                    self._wrong_printer = serial
+                    offline = self._offline(previous)
+                    self._due["device"] = now + WRONG_PRINTER_RETRY
+                    return offline
+                if self._wrong_printer is not None:
+                    LOGGER.info("%s is printer %s again", self.client.host, serial)
+                    self._wrong_printer = None
                 data["device"] = {**data["device"], **identity}
                 self._due["device"] = now + DEVICE_INTERVAL
 
@@ -234,31 +260,47 @@ class HpCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
         if came_back:
             LOGGER.info("%s is online", self.client.host)
-        changed = {k: v for k, v in data.items() if k != "last_seen"} != {
-            k: v for k, v in previous.items() if k != "last_seen"
-        }
-        self._save(force=changed)
+        self.last_seen = now
+        for listener in self.answer_listeners:
+            listener()
+        if data != previous or time.monotonic() - self._last_saved >= SAVE_LAST_SEEN_EVERY:
+            self._save()
         return data
 
     def _merge_usage(self, data: dict[str, Any], usage: Any, config: Any) -> None:
         if usage is not None:
             try:
-                data["counters"] = {**data["counters"], **parse_counters(usage)}
+                fresh_counters = parse_counters(usage)
             except HpError as err:
                 LOGGER.debug("%s: %s", self.client.host, err)
+            else:
+                counters = dict(data["counters"])
+                for key, value in fresh_counters.items():
+                    # Page counters never go down: a lower value is a firmware glitch, and taken
+                    # as a reset it would break the long-term statistics.
+                    if value >= counters.get(key, 0):
+                        counters[key] = value
+                    else:
+                        LOGGER.debug("%s: %s went down (%s → %s), ignored", self.client.host, key, counters[key], value)
+                data["counters"] = counters
         if usage is None and config is None:
             return
         fresh = parse_consumables(config, usage)
+        installed = installed_colors(config) if config is not None else None
         merged: dict[str, dict[str, Any]] = {}
         for color in {*data["consumables"], *fresh}:
             entry = {**data["consumables"].get(color, {}), **fresh.get(color, {})}
-            # A cartridge the printer stops listing (taken out) keeps its last values.
-            if config is not None:
-                entry["installed"] = color in fresh
+            # A cartridge taken out keeps its last values, marked as not installed.
+            if installed is not None:
+                entry["installed"] = color in installed
             merged[color] = entry
         data["consumables"] = dict(sorted(merged.items()))
 
-    def _go_offline(self, data: dict[str, Any]) -> None:
+    def _offline(self, previous: dict[str, Any]) -> dict[str, Any]:
+        """Return the data of a printer that does not answer; saved once, when it goes off."""
+        if not previous.get("online"):
+            return previous
+        data = deepcopy(previous)
         data["online"] = False
         data["status"] = "off"
         data["raw_status"] = None
@@ -267,6 +309,8 @@ class HpCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         # Its ETags restart with it, and everything is read again when it answers.
         self.client.clear_cache()
         self._due.clear()
+        self._save()
+        return data
 
 
 async def _none() -> None:

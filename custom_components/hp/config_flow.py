@@ -90,8 +90,8 @@ class HpConfigFlow(ConfigFlow, domain=DOMAIN):
         if not device.get("serial_number"):
             return self.async_abort(reason="missing_serial_number")
         await self.async_set_unique_id(device["serial_number"])
-        # A known printer at a new address is followed there.
-        self._abort_if_unique_id_configured(updates={CONF_HOST: self._host})
+        # A known printer at a new address is followed there (the entry's update listener reloads).
+        self._abort_if_unique_id_configured(updates={CONF_HOST: self._host}, reload_on_update=False)
         self._title = device.get("model") or self._host
         self.context["title_placeholders"] = {"name": self._title}
         return await self.async_step_zeroconf_confirm()

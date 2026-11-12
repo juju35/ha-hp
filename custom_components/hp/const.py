@@ -40,6 +40,10 @@ STORAGE_VERSION: Final = 1
 
 # Statuses of a printer at work: when the status leaves one of these, the counters are read again.
 BUSY_STATUSES: Final = frozenset({"processing", "copying", "scan_processing", "cancel_job"})
+# Statuses during which firmwares report zeros: counters and ink are not read then.
+UNSETTLED_STATUSES: Final = frozenset({"initializing", "shutting_down"})
+# Another printer answering at the address is checked again this often (DHCP).
+WRONG_PRINTER_RETRY: Final = timedelta(minutes=5)
 
 # Status sensor values. The keys of the core integration are kept, so its automations keep working;
 # "other" stands for a status this integration does not know (the raw one is in an attribute).

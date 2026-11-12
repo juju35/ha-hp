@@ -55,6 +55,7 @@ class FakePrinter:
         self.fail_next = 0
         self.requests: list[str] = []
         self.not_modified: list[str] = []
+        self.attempts = 0
 
     def set_status(self, category: str) -> None:
         body = (FIXTURES / "ProductStatusDyn.xml").read_text()
@@ -71,6 +72,7 @@ class FakePrinter:
     @asynccontextmanager
     async def get(self, url: Any, headers: dict[str, str] | None = None, **_: Any):
         path = url.path
+        self.attempts += 1
         if not self.online:
             raise aiohttp.ClientConnectionError("host unreachable")
         if self.fail_next:
