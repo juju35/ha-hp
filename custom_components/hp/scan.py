@@ -104,7 +104,8 @@ async def async_scan_to_files(
     if not coordinator.data.get("online"):
         raise HomeAssistantError(translation_domain=DOMAIN, translation_key="printer_offline")
     folder = Path(directory) if directory else default_directory(hass)
-    if not hass.config.is_allowed_path(str(folder)):
+    # is_allowed_path reads the disk: not in the event loop.
+    if not await hass.async_add_executor_job(hass.config.is_allowed_path, str(folder)):
         raise ServiceValidationError(
             translation_domain=DOMAIN,
             translation_key="directory_not_allowed",
@@ -139,14 +140,27 @@ async def async_scan_to_files(
         ) from err
     LOGGER.info("%s: scan saved to %s", coordinator.client.host, ", ".join(files))
 
-    last_scan = {"time": now.isoformat(), "format": settings.format, "files": files, "pages": pages}
-    coordinator.async_set_scan(last_scan, {"time": now.isoformat(), "file": files[0]})
+    result_data = {
+        "format": settings.format,
+        "files": files,
+        "media_ids": media_ids(hass, files),
+        "pages": pages,
+    }
+    coordinator.async_set_scan({"time": now.isoformat(), **result_data}, {"time": now.isoformat(), "file": files[0]})
+    hass.bus.async_fire(EVENT_SCAN_COMPLETED, {"device_id": _device_id(hass, coordinator), **result_data})
+    return result_data
 
-    hass.bus.async_fire(
-        EVENT_SCAN_COMPLETED,
-        {"device_id": _device_id(hass, coordinator), "format": settings.format, "files": files, "pages": pages},
-    )
-    return {"format": settings.format, "files": files, "pages": pages}
+
+def media_ids(hass: HomeAssistant, files: list[str]) -> list[str]:
+    """Media source IDs of the files in a media folder (to show or download them), in the files' order."""
+    ids = []
+    for file in files:
+        path = Path(file)
+        for key, root in hass.config.media_dirs.items():
+            if path.is_relative_to(root):
+                ids.append(f"media-source://media_source/{key}/{path.relative_to(root).as_posix()}")
+                break
+    return ids
 
 
 def _device_id(hass: HomeAssistant, coordinator: HpCoordinator) -> str | None:

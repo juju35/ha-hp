@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.0 (2026-11-12)
+
+### Improvements
+- Scans in a media folder get their media source ID (`media_ids`) in the `hp.scan` response, the `hp_scan_completed` event and the **Last scan** sensor, which also gives the number of `pages`: a dashboard card can show or download the file (ha-printer-card 2.12 does).
+
+### Fixes
+- The scan folder is checked outside Home Assistant's event loop (the check reads the disk).
+
 ## 1.0.1 (2026-11-12)
 
 ### Fixes

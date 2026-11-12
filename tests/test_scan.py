@@ -90,7 +90,12 @@ async def test_scan_pdf(hass: HomeAssistant, printer: FakePrinter, entry: MockCo
     printer.pages = [JPEG_1]
     response = await _scan(hass, filename="invoice")
     path = media / "hp" / "invoice.pdf"
-    assert response == {"format": "pdf", "files": [str(path)], "pages": 1}
+    assert response == {
+        "format": "pdf",
+        "files": [str(path)],
+        "media_ids": ["media-source://media_source/local/hp/invoice.pdf"],
+        "pages": 1,
+    }
     pages = read_pdf(path.read_bytes())
     assert [page[0] for page in pages] == [JPEG_1]
     # 2480 x 3508 pixels at 300 dpi: an A4 page.
@@ -109,6 +114,8 @@ async def test_scan_pdf(hass: HomeAssistant, printer: FakePrinter, entry: MockCo
     last = hass.states.get(f"sensor.{P}_last_scan")
     assert last.state != "unknown"
     assert last.attributes["files"] == [str(path)]
+    assert last.attributes["media_ids"] == ["media-source://media_source/local/hp/invoice.pdf"]
+    assert last.attributes["pages"] == 1
     assert events[0].data["files"] == [str(path)]
     assert events[0].data["pages"] == 1
     assert events[0].data["device_id"]
@@ -130,7 +137,8 @@ async def test_add_pages_to_pdf(
     await hass.services.async_call("button", "press", {"entity_id": f"button.{P}_scan_and_add_page"}, blocking=True)
     printer.pages = [JPEG_1]
     response = await _scan(hass, append=True)
-    assert response == {"format": "pdf", "files": first["files"], "pages": 3}
+    assert response["files"] == first["files"]
+    assert response["pages"] == 3
     pages = read_pdf(Path(first["files"][0]).read_bytes())
     assert [page[0] for page in pages] == [JPEG_1, JPEG_2, JPEG_1]
     assert sorted(p.name for p in (media / "hp").iterdir()) == ["contract.pdf"]
@@ -297,3 +305,16 @@ async def test_two_printers_need_a_device(hass: HomeAssistant, printer: FakePrin
     with pytest.raises(ServiceValidationError) as err:
         await _scan(hass)
     assert err.value.translation_key == "device_required"
+
+
+async def test_outside_media_no_media_id(
+    hass: HomeAssistant, printer: FakePrinter, entry: MockConfigEntry, tmp_path: Path
+) -> None:
+    """A file saved outside the media folders has no media source ID."""
+    other = tmp_path.parent / f"{tmp_path.name}_scans"
+    other.mkdir()
+    hass.config.allowlist_external_dirs.add(str(other))
+    await _setup(hass, entry)
+    printer.pages = [JPEG_1]
+    response = await _scan(hass, directory=str(other))
+    assert response["media_ids"] == []
