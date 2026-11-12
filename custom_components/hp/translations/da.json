@@ -1,0 +1,175 @@
+{
+  "config": {
+    "flow_title": "{name}",
+    "step": {
+      "user": {
+        "title": "HP-printer",
+        "description": "Indtast printerens adresse. Giv den en fast IP-adresse i din router.",
+        "data": {
+          "host": "Vært",
+          "port": "Port",
+          "ssl": "Brug HTTPS"
+        },
+        "data_description": {
+          "host": "Printerens IP-adresse eller værtsnavn, for eksempel 192.168.1.12.",
+          "port": "Lad være tom for standardporten (80, eller 443 med HTTPS).",
+          "ssl": "Kun for printere, hvis webserver kun svarer via HTTPS."
+        }
+      },
+      "zeroconf_confirm": {
+        "title": "HP-printer fundet",
+        "description": "Tilføj {name} ({host})?"
+      },
+      "reconfigure": {
+        "title": "Skift printerens adresse",
+        "description": "Printeren skal være tændt for at kontrollere dens nye adresse.",
+        "data": {
+          "host": "Vært",
+          "port": "Port",
+          "ssl": "Brug HTTPS"
+        },
+        "data_description": {
+          "host": "Printerens IP-adresse eller værtsnavn, for eksempel 192.168.1.12.",
+          "port": "Lad være tom for standardporten (80, eller 443 med HTTPS).",
+          "ssl": "Kun for printere, hvis webserver kun svarer via HTTPS."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Printeren svarer ikke. Kontrollér, at den er tændt, og at adressen er korrekt."
+    },
+    "abort": {
+      "already_configured": "Denne printer er allerede konfigureret.",
+      "cannot_connect": "Printeren svarer ikke.",
+      "missing_serial_number": "Printeren oplyser intet serienummer: den kan ikke tilføjes.",
+      "wrong_printer": "En anden printer svarer på denne adresse.",
+      "reconfigure_successful": "Printerens adresse er opdateret."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Indstillinger",
+        "data": {
+          "scan_interval": "Opdateringsinterval for status"
+        },
+        "data_description": {
+          "scan_interval": "Hvor ofte status læses, i sekunder. Sidetællere og blækniveauer læses hvert 5. minut og efter hvert job."
+        }
+      }
+    }
+  },
+  "services": {
+    "scan": {
+      "name": "Scan",
+      "description": "Scanner et dokument fra printerens glasplade eller dokumentføder og gemmer det som PDF- eller JPEG-fil. Indstillinger, der ikke angives, er printerens scanningsvalg-enheders.",
+      "fields": {
+        "device_id": {
+          "name": "Printer",
+          "description": "Printeren der skal scannes med. Valgfri, når der kun er én."
+        },
+        "format": {
+          "name": "Format",
+          "description": "PDF (én fil med alle sider) eller JPEG (ét billede pr. side)."
+        },
+        "source": {
+          "name": "Kilde",
+          "description": "Glasplade eller dokumentføder."
+        },
+        "resolution": {
+          "name": "Opløsning",
+          "description": "Punkter pr. tomme. 300 passer til dokumenter."
+        },
+        "color_mode": {
+          "name": "Farvetilstand",
+          "description": "Farve, gråtoner eller sort-hvid."
+        },
+        "page_size": {
+          "name": "Sidestørrelse",
+          "description": "Scannet område. Hele glaspladen scanner kildens største område."
+        },
+        "directory": {
+          "name": "Mappe",
+          "description": "Hvor filerne gemmes. Standard: mappen hp i de lokale medier. Den skal være i allowlist_external_dirs."
+        },
+        "filename": {
+          "name": "Filnavn",
+          "description": "Uden filtype. Standard: scan_ efterfulgt af dato og klokkeslæt."
+        },
+        "append": {
+          "name": "Tilføj til seneste PDF",
+          "description": "Scan én side mere og tilføj den til den senest scannede PDF i stedet for at starte en ny fil: til et dokument, der scannes side for side på glaspladen."
+        }
+      }
+    }
+  },
+  "selector": {
+    "scan_format": {
+      "options": {
+        "pdf": "PDF",
+        "jpeg": "JPEG",
+        "png": "PNG"
+      }
+    },
+    "scan_source": {
+      "options": {
+        "flatbed": "Glasplade",
+        "feeder": "Dokumentføder",
+        "feeder_duplex": "Dokumentføder, dobbeltsidet"
+      }
+    },
+    "scan_color_mode": {
+      "options": {
+        "color": "Farve",
+        "grayscale": "Gråtoner",
+        "black_and_white": "Sort-hvid"
+      }
+    },
+    "scan_page_size": {
+      "options": {
+        "a4": "A4",
+        "letter": "Letter",
+        "legal": "Legal",
+        "max": "Hele glaspladen"
+      }
+    }
+  },
+  "exceptions": {
+    "printer_offline": {
+      "message": "Printeren er slukket eller svarer ikke."
+    },
+    "no_scanner": {
+      "message": "Denne printer har ingen scanner, eller dens scanner svarer ikke via eSCL (AirScan)."
+    },
+    "scanner_busy": {
+      "message": "Scanneren er optaget. Prøv igen om lidt."
+    },
+    "feeder_empty": {
+      "message": "Dokumentføderen er tom."
+    },
+    "unsupported_source": {
+      "message": "Scanneren tilbyder ikke denne kilde."
+    },
+    "unsupported_format": {
+      "message": "Scanneren tilbyder ikke dette format."
+    },
+    "unsupported_resolution": {
+      "message": "Scanneren tilbyder ikke denne opløsning."
+    },
+    "unsupported_color_mode": {
+      "message": "Scanneren tilbyder ikke denne farvetilstand."
+    },
+    "scan_failed": {
+      "message": "Scanningen mislykkedes: {error}"
+    },
+    "directory_not_allowed": {
+      "message": "Mappen {directory} er ikke tilladt: tilføj den til allowlist_external_dirs."
+    },
+    "device_not_found": {
+      "message": "Denne enhed er ikke en printer fra denne integration."
+    },
+    "device_required": {
+      "message": "Flere HP-printere er konfigureret: vælg en."
+    }
+  }
+}

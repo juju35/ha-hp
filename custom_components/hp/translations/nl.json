@@ -1,0 +1,175 @@
+{
+  "config": {
+    "flow_title": "{name}",
+    "step": {
+      "user": {
+        "title": "HP-printer",
+        "description": "Voer het adres van de printer in. Geef hem een vast IP-adres in je router.",
+        "data": {
+          "host": "Host",
+          "port": "Poort",
+          "ssl": "HTTPS gebruiken"
+        },
+        "data_description": {
+          "host": "IP-adres of hostnaam van de printer, bijvoorbeeld 192.168.1.12.",
+          "port": "Leeg laten voor de standaardpoort (80, of 443 met HTTPS).",
+          "ssl": "Alleen voor printers waarvan de webserver alleen via HTTPS antwoordt."
+        }
+      },
+      "zeroconf_confirm": {
+        "title": "HP-printer gevonden",
+        "description": "{name} ({host}) toevoegen?"
+      },
+      "reconfigure": {
+        "title": "Printeradres wijzigen",
+        "description": "De printer moet aan staan om het nieuwe adres te controleren.",
+        "data": {
+          "host": "Host",
+          "port": "Poort",
+          "ssl": "HTTPS gebruiken"
+        },
+        "data_description": {
+          "host": "IP-adres of hostnaam van de printer, bijvoorbeeld 192.168.1.12.",
+          "port": "Leeg laten voor de standaardpoort (80, of 443 met HTTPS).",
+          "ssl": "Alleen voor printers waarvan de webserver alleen via HTTPS antwoordt."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "De printer antwoordt niet. Controleer of hij aan staat en of het adres klopt."
+    },
+    "abort": {
+      "already_configured": "Deze printer is al geconfigureerd.",
+      "cannot_connect": "De printer antwoordt niet.",
+      "missing_serial_number": "De printer geeft geen serienummer: hij kan niet worden toegevoegd.",
+      "wrong_printer": "Op dit adres antwoordt een andere printer.",
+      "reconfigure_successful": "Het printeradres is bijgewerkt."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opties",
+        "data": {
+          "scan_interval": "Vernieuwingsinterval van de status"
+        },
+        "data_description": {
+          "scan_interval": "Hoe vaak de status wordt gelezen, in seconden. Paginatellers en inktniveaus worden elke 5 minuten en na elke taak gelezen."
+        }
+      }
+    }
+  },
+  "services": {
+    "scan": {
+      "name": "Scannen",
+      "description": "Scant een document vanaf de glasplaat of documentinvoer van de printer en slaat het op als PDF- of JPEG-bestand. Niet opgegeven instellingen komen van de scan-selectie-entiteiten van de printer.",
+      "fields": {
+        "device_id": {
+          "name": "Printer",
+          "description": "De printer om mee te scannen. Optioneel als er maar één is."
+        },
+        "format": {
+          "name": "Formaat",
+          "description": "PDF (één bestand met alle pagina's) of JPEG (één afbeelding per pagina)."
+        },
+        "source": {
+          "name": "Bron",
+          "description": "Glasplaat of documentinvoer."
+        },
+        "resolution": {
+          "name": "Resolutie",
+          "description": "Punten per inch. 300 past bij documenten."
+        },
+        "color_mode": {
+          "name": "Kleurmodus",
+          "description": "Kleur, grijstinten of zwart-wit."
+        },
+        "page_size": {
+          "name": "Paginaformaat",
+          "description": "Gescand gebied. Hele glasplaat scant het grootste gebied van de bron."
+        },
+        "directory": {
+          "name": "Map",
+          "description": "Waar de bestanden worden opgeslagen. Standaard: de map hp van de lokale media. Deze moet in allowlist_external_dirs staan."
+        },
+        "filename": {
+          "name": "Bestandsnaam",
+          "description": "Zonder extensie. Standaard: scan_ gevolgd door datum en tijd."
+        },
+        "append": {
+          "name": "Toevoegen aan laatste PDF",
+          "description": "Nog een pagina scannen en toevoegen aan de laatst gescande PDF in plaats van een nieuw bestand te maken: voor een document dat pagina voor pagina op de glasplaat wordt gescand."
+        }
+      }
+    }
+  },
+  "selector": {
+    "scan_format": {
+      "options": {
+        "pdf": "PDF",
+        "jpeg": "JPEG",
+        "png": "PNG"
+      }
+    },
+    "scan_source": {
+      "options": {
+        "flatbed": "Glasplaat",
+        "feeder": "Documentinvoer",
+        "feeder_duplex": "Documentinvoer, dubbelzijdig"
+      }
+    },
+    "scan_color_mode": {
+      "options": {
+        "color": "Kleur",
+        "grayscale": "Grijstinten",
+        "black_and_white": "Zwart-wit"
+      }
+    },
+    "scan_page_size": {
+      "options": {
+        "a4": "A4",
+        "letter": "Letter",
+        "legal": "Legal",
+        "max": "Hele glasplaat"
+      }
+    }
+  },
+  "exceptions": {
+    "printer_offline": {
+      "message": "De printer staat uit of antwoordt niet."
+    },
+    "no_scanner": {
+      "message": "Deze printer heeft geen scanner, of de scanner antwoordt niet via eSCL (AirScan)."
+    },
+    "scanner_busy": {
+      "message": "De scanner is bezig. Probeer het zo opnieuw."
+    },
+    "feeder_empty": {
+      "message": "De documentinvoer is leeg."
+    },
+    "unsupported_source": {
+      "message": "De scanner biedt deze bron niet aan."
+    },
+    "unsupported_format": {
+      "message": "De scanner biedt dit formaat niet aan."
+    },
+    "unsupported_resolution": {
+      "message": "De scanner biedt deze resolutie niet aan."
+    },
+    "unsupported_color_mode": {
+      "message": "De scanner biedt deze kleurmodus niet aan."
+    },
+    "scan_failed": {
+      "message": "Het scannen is mislukt: {error}"
+    },
+    "directory_not_allowed": {
+      "message": "De map {directory} is niet toegestaan: voeg hem toe aan allowlist_external_dirs."
+    },
+    "device_not_found": {
+      "message": "Dit apparaat is geen printer van deze integratie."
+    },
+    "device_required": {
+      "message": "Er zijn meerdere HP-printers ingesteld: kies er een."
+    }
+  }
+}

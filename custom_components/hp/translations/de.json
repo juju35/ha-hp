@@ -1,0 +1,175 @@
+{
+  "config": {
+    "flow_title": "{name}",
+    "step": {
+      "user": {
+        "title": "HP-Drucker",
+        "description": "Geben Sie die Adresse des Druckers ein. Weisen Sie ihm in Ihrem Router eine feste IP-Adresse zu.",
+        "data": {
+          "host": "Host",
+          "port": "Port",
+          "ssl": "HTTPS verwenden"
+        },
+        "data_description": {
+          "host": "IP-Adresse oder Hostname des Druckers, zum Beispiel 192.168.1.12.",
+          "port": "Leer lassen für den Standardport (80, oder 443 mit HTTPS).",
+          "ssl": "Nur für Drucker, deren Webserver ausschließlich über HTTPS antwortet."
+        }
+      },
+      "zeroconf_confirm": {
+        "title": "HP-Drucker gefunden",
+        "description": "{name} ({host}) hinzufügen?"
+      },
+      "reconfigure": {
+        "title": "Druckeradresse ändern",
+        "description": "Der Drucker muss eingeschaltet sein, um seine neue Adresse zu prüfen.",
+        "data": {
+          "host": "Host",
+          "port": "Port",
+          "ssl": "HTTPS verwenden"
+        },
+        "data_description": {
+          "host": "IP-Adresse oder Hostname des Druckers, zum Beispiel 192.168.1.12.",
+          "port": "Leer lassen für den Standardport (80, oder 443 mit HTTPS).",
+          "ssl": "Nur für Drucker, deren Webserver ausschließlich über HTTPS antwortet."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Der Drucker antwortet nicht. Prüfen Sie, ob er eingeschaltet und seine Adresse korrekt ist."
+    },
+    "abort": {
+      "already_configured": "Dieser Drucker ist bereits eingerichtet.",
+      "cannot_connect": "Der Drucker antwortet nicht.",
+      "missing_serial_number": "Der Drucker meldet keine Seriennummer: Er kann nicht hinzugefügt werden.",
+      "wrong_printer": "Unter dieser Adresse antwortet ein anderer Drucker.",
+      "reconfigure_successful": "Die Druckeradresse wurde aktualisiert."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Optionen",
+        "data": {
+          "scan_interval": "Aktualisierungsintervall des Status"
+        },
+        "data_description": {
+          "scan_interval": "Wie oft der Status gelesen wird, in Sekunden. Seitenzähler und Tintenstände werden alle 5 Minuten und nach jedem Auftrag gelesen."
+        }
+      }
+    }
+  },
+  "services": {
+    "scan": {
+      "name": "Scannen",
+      "description": "Scannt ein Dokument vom Vorlagenglas oder Dokumenteneinzug des Druckers und speichert es als PDF- oder JPEG-Datei. Nicht angegebene Einstellungen stammen aus den Scan-Auswahlentitäten des Druckers.",
+      "fields": {
+        "device_id": {
+          "name": "Drucker",
+          "description": "Der zu verwendende Drucker. Optional, wenn nur einer eingerichtet ist."
+        },
+        "format": {
+          "name": "Format",
+          "description": "PDF (eine Datei mit allen Seiten) oder JPEG (ein Bild pro Seite)."
+        },
+        "source": {
+          "name": "Quelle",
+          "description": "Vorlagenglas oder Dokumenteneinzug."
+        },
+        "resolution": {
+          "name": "Auflösung",
+          "description": "Punkte pro Zoll. 300 eignet sich für Dokumente."
+        },
+        "color_mode": {
+          "name": "Farbmodus",
+          "description": "Farbe, Graustufen oder Schwarzweiß."
+        },
+        "page_size": {
+          "name": "Seitenformat",
+          "description": "Gescannter Bereich. Ganzes Glas scannt den größten Bereich der Quelle."
+        },
+        "directory": {
+          "name": "Ordner",
+          "description": "Wo die Dateien gespeichert werden. Standard: der Ordner hp der lokalen Medien. Er muss in allowlist_external_dirs stehen."
+        },
+        "filename": {
+          "name": "Dateiname",
+          "description": "Ohne Endung. Standard: scan_ gefolgt von Datum und Uhrzeit."
+        },
+        "append": {
+          "name": "Zum letzten PDF hinzufügen",
+          "description": "Eine weitere Seite scannen und dem zuletzt gescannten PDF hinzufügen, statt eine neue Datei zu beginnen: für ein Dokument, das Seite für Seite auf dem Vorlagenglas gescannt wird."
+        }
+      }
+    }
+  },
+  "selector": {
+    "scan_format": {
+      "options": {
+        "pdf": "PDF",
+        "jpeg": "JPEG",
+        "png": "PNG"
+      }
+    },
+    "scan_source": {
+      "options": {
+        "flatbed": "Vorlagenglas",
+        "feeder": "Dokumenteneinzug",
+        "feeder_duplex": "Dokumenteneinzug, beidseitig"
+      }
+    },
+    "scan_color_mode": {
+      "options": {
+        "color": "Farbe",
+        "grayscale": "Graustufen",
+        "black_and_white": "Schwarzweiß"
+      }
+    },
+    "scan_page_size": {
+      "options": {
+        "a4": "A4",
+        "letter": "Letter",
+        "legal": "Legal",
+        "max": "Ganzes Glas"
+      }
+    }
+  },
+  "exceptions": {
+    "printer_offline": {
+      "message": "Der Drucker ist aus oder antwortet nicht."
+    },
+    "no_scanner": {
+      "message": "Dieser Drucker hat keinen Scanner, oder sein Scanner antwortet nicht über eSCL (AirScan)."
+    },
+    "scanner_busy": {
+      "message": "Der Scanner ist beschäftigt. Versuchen Sie es gleich noch einmal."
+    },
+    "feeder_empty": {
+      "message": "Der Dokumenteneinzug ist leer."
+    },
+    "unsupported_source": {
+      "message": "Der Scanner bietet diese Quelle nicht an."
+    },
+    "unsupported_format": {
+      "message": "Der Scanner bietet dieses Format nicht an."
+    },
+    "unsupported_resolution": {
+      "message": "Der Scanner bietet diese Auflösung nicht an."
+    },
+    "unsupported_color_mode": {
+      "message": "Der Scanner bietet diesen Farbmodus nicht an."
+    },
+    "scan_failed": {
+      "message": "Der Scan ist fehlgeschlagen: {error}"
+    },
+    "directory_not_allowed": {
+      "message": "Der Ordner {directory} ist nicht erlaubt: Fügen Sie ihn zu allowlist_external_dirs hinzu."
+    },
+    "device_not_found": {
+      "message": "Dieses Gerät ist kein Drucker dieser Integration."
+    },
+    "device_required": {
+      "message": "Mehrere HP-Drucker sind eingerichtet: Wählen Sie einen aus."
+    }
+  }
+}

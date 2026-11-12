@@ -1,0 +1,175 @@
+{
+  "config": {
+    "flow_title": "{name}",
+    "step": {
+      "user": {
+        "title": "Tiskárna HP",
+        "description": "Zadejte adresu tiskárny. Přiřaďte jí pevnou IP adresu v routeru.",
+        "data": {
+          "host": "Hostitel",
+          "port": "Port",
+          "ssl": "Použít HTTPS"
+        },
+        "data_description": {
+          "host": "IP adresa nebo název hostitele tiskárny, například 192.168.1.12.",
+          "port": "Ponechte prázdné pro výchozí port (80, nebo 443 s HTTPS).",
+          "ssl": "Pouze pro tiskárny, jejichž webový server odpovídá jen přes HTTPS."
+        }
+      },
+      "zeroconf_confirm": {
+        "title": "Nalezena tiskárna HP",
+        "description": "Přidat {name} ({host})?"
+      },
+      "reconfigure": {
+        "title": "Změnit adresu tiskárny",
+        "description": "Tiskárna musí být zapnutá, aby se ověřila její nová adresa.",
+        "data": {
+          "host": "Hostitel",
+          "port": "Port",
+          "ssl": "Použít HTTPS"
+        },
+        "data_description": {
+          "host": "IP adresa nebo název hostitele tiskárny, například 192.168.1.12.",
+          "port": "Ponechte prázdné pro výchozí port (80, nebo 443 s HTTPS).",
+          "ssl": "Pouze pro tiskárny, jejichž webový server odpovídá jen přes HTTPS."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Tiskárna neodpovídá. Zkontrolujte, zda je zapnutá a zda je její adresa správná."
+    },
+    "abort": {
+      "already_configured": "Tato tiskárna je již nakonfigurována.",
+      "cannot_connect": "Tiskárna neodpovídá.",
+      "missing_serial_number": "Tiskárna neuvádí sériové číslo: nelze ji přidat.",
+      "wrong_printer": "Na této adrese odpovídá jiná tiskárna.",
+      "reconfigure_successful": "Adresa tiskárny byla aktualizována."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Možnosti",
+        "data": {
+          "scan_interval": "Interval obnovování stavu"
+        },
+        "data_description": {
+          "scan_interval": "Jak často se čte stav, v sekundách. Počítadla stran a hladiny inkoustu se čtou každých 5 minut a po každé úloze."
+        }
+      }
+    }
+  },
+  "services": {
+    "scan": {
+      "name": "Skenovat",
+      "description": "Naskenuje dokument ze skla nebo podavače tiskárny a uloží ho jako soubor PDF nebo JPEG. Nezadaná nastavení se přebírají z entit výběru skenování tiskárny.",
+      "fields": {
+        "device_id": {
+          "name": "Tiskárna",
+          "description": "Tiskárna pro skenování. Volitelné, pokud je jen jedna."
+        },
+        "format": {
+          "name": "Formát",
+          "description": "PDF (jeden soubor se všemi stránkami) nebo JPEG (jeden obrázek na stránku)."
+        },
+        "source": {
+          "name": "Zdroj",
+          "description": "Sklo nebo podavač dokumentů."
+        },
+        "resolution": {
+          "name": "Rozlišení",
+          "description": "Bodů na palec. 300 se hodí pro dokumenty."
+        },
+        "color_mode": {
+          "name": "Barevný režim",
+          "description": "Barevně, odstíny šedi nebo černobíle."
+        },
+        "page_size": {
+          "name": "Velikost stránky",
+          "description": "Skenovaná oblast. Celé sklo skenuje největší oblast zdroje."
+        },
+        "directory": {
+          "name": "Složka",
+          "description": "Kam se ukládají soubory. Výchozí: složka hp místních médií. Musí být v allowlist_external_dirs."
+        },
+        "filename": {
+          "name": "Název souboru",
+          "description": "Bez přípony. Výchozí: scan_ s datem a časem."
+        },
+        "append": {
+          "name": "Přidat do posledního PDF",
+          "description": "Naskenovat další stránku a přidat ji do posledního PDF místo vytvoření nového souboru: pro dokument skenovaný stránku po stránce na skle."
+        }
+      }
+    }
+  },
+  "selector": {
+    "scan_format": {
+      "options": {
+        "pdf": "PDF",
+        "jpeg": "JPEG",
+        "png": "PNG"
+      }
+    },
+    "scan_source": {
+      "options": {
+        "flatbed": "Sklo",
+        "feeder": "Podavač dokumentů",
+        "feeder_duplex": "Podavač dokumentů, oboustranně"
+      }
+    },
+    "scan_color_mode": {
+      "options": {
+        "color": "Barevně",
+        "grayscale": "Odstíny šedi",
+        "black_and_white": "Černobíle"
+      }
+    },
+    "scan_page_size": {
+      "options": {
+        "a4": "A4",
+        "letter": "Letter",
+        "legal": "Legal",
+        "max": "Celé sklo"
+      }
+    }
+  },
+  "exceptions": {
+    "printer_offline": {
+      "message": "Tiskárna je vypnutá nebo neodpovídá."
+    },
+    "no_scanner": {
+      "message": "Tato tiskárna nemá skener, nebo její skener neodpovídá přes eSCL (AirScan)."
+    },
+    "scanner_busy": {
+      "message": "Skener je zaneprázdněný. Zkuste to za chvíli znovu."
+    },
+    "feeder_empty": {
+      "message": "Podavač dokumentů je prázdný."
+    },
+    "unsupported_source": {
+      "message": "Skener nenabízí tento zdroj."
+    },
+    "unsupported_format": {
+      "message": "Skener nenabízí tento formát."
+    },
+    "unsupported_resolution": {
+      "message": "Skener nenabízí toto rozlišení."
+    },
+    "unsupported_color_mode": {
+      "message": "Skener nenabízí tento barevný režim."
+    },
+    "scan_failed": {
+      "message": "Skenování selhalo: {error}"
+    },
+    "directory_not_allowed": {
+      "message": "Složka {directory} není povolena: přidejte ji do allowlist_external_dirs."
+    },
+    "device_not_found": {
+      "message": "Toto zařízení není tiskárna této integrace."
+    },
+    "device_required": {
+      "message": "Je nastaveno více tiskáren HP: vyberte jednu."
+    }
+  }
+}

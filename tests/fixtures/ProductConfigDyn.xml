@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<prdcfgdyn2:ProductConfigDyn xmlns:prdcfgdyn2="http://www.hp.com/schemas/imaging/con/ledm/productconfigdyn/2009/03/16" xmlns:prdcfgdyn="http://www.hp.com/schemas/imaging/con/ledm/productconfigdyn/2007/11/05" xmlns:dd="http://www.hp.com/schemas/imaging/con/dictionaries/1.0/">
+  <dd:Version><dd:Revision>SVN-IPG-LEDM.1172</dd:Revision></dd:Version>
+  <prdcfgdyn:ProductInformation>
+    <dd:MakeAndModel>HP OfficeJet Pro 9010 series</dd:MakeAndModel>
+    <dd:Version><dd:Revision>TAPP1FN2318CR</dd:Revision><dd:Date>2023-05-02</dd:Date></dd:Version>
+    <dd:SerialNumber>TH0AB1C2DE</dd:SerialNumber>
+    <dd:ProductNumber>3UK83B</dd:ProductNumber>
+  </prdcfgdyn:ProductInformation>
+</prdcfgdyn2:ProductConfigDyn>

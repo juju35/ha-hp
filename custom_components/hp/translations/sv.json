@@ -1,0 +1,175 @@
+{
+  "config": {
+    "flow_title": "{name}",
+    "step": {
+      "user": {
+        "title": "HP-skrivare",
+        "description": "Ange skrivarens adress. Ge den en fast IP-adress i din router.",
+        "data": {
+          "host": "Värd",
+          "port": "Port",
+          "ssl": "Använd HTTPS"
+        },
+        "data_description": {
+          "host": "Skrivarens IP-adress eller värdnamn, till exempel 192.168.1.12.",
+          "port": "Lämna tomt för standardporten (80, eller 443 med HTTPS).",
+          "ssl": "Endast för skrivare vars webbserver bara svarar via HTTPS."
+        }
+      },
+      "zeroconf_confirm": {
+        "title": "HP-skrivare hittad",
+        "description": "Lägg till {name} ({host})?"
+      },
+      "reconfigure": {
+        "title": "Ändra skrivarens adress",
+        "description": "Skrivaren måste vara på för att kontrollera dess nya adress.",
+        "data": {
+          "host": "Värd",
+          "port": "Port",
+          "ssl": "Använd HTTPS"
+        },
+        "data_description": {
+          "host": "Skrivarens IP-adress eller värdnamn, till exempel 192.168.1.12.",
+          "port": "Lämna tomt för standardporten (80, eller 443 med HTTPS).",
+          "ssl": "Endast för skrivare vars webbserver bara svarar via HTTPS."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Skrivaren svarar inte. Kontrollera att den är på och att adressen är rätt."
+    },
+    "abort": {
+      "already_configured": "Den här skrivaren är redan konfigurerad.",
+      "cannot_connect": "Skrivaren svarar inte.",
+      "missing_serial_number": "Skrivaren rapporterar inget serienummer: den kan inte läggas till.",
+      "wrong_printer": "En annan skrivare svarar på den här adressen.",
+      "reconfigure_successful": "Skrivarens adress har uppdaterats."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Alternativ",
+        "data": {
+          "scan_interval": "Uppdateringsintervall för status"
+        },
+        "data_description": {
+          "scan_interval": "Hur ofta statusen läses, i sekunder. Sidräknare och bläcknivåer läses var 5:e minut och efter varje jobb."
+        }
+      }
+    }
+  },
+  "services": {
+    "scan": {
+      "name": "Skanna",
+      "description": "Skannar ett dokument från skrivarens glas eller dokumentmatare och sparar det som PDF- eller JPEG-fil. Inställningar som inte anges hämtas från skrivarens val-entiteter för skanning.",
+      "fields": {
+        "device_id": {
+          "name": "Skrivare",
+          "description": "Skrivaren att skanna med. Valfritt när det bara finns en."
+        },
+        "format": {
+          "name": "Format",
+          "description": "PDF (en fil med alla sidor) eller JPEG (en bild per sida)."
+        },
+        "source": {
+          "name": "Källa",
+          "description": "Glas eller dokumentmatare."
+        },
+        "resolution": {
+          "name": "Upplösning",
+          "description": "Punkter per tum. 300 passar dokument."
+        },
+        "color_mode": {
+          "name": "Färgläge",
+          "description": "Färg, gråskala eller svartvitt."
+        },
+        "page_size": {
+          "name": "Sidstorlek",
+          "description": "Skannat område. Hela glaset skannar källans största område."
+        },
+        "directory": {
+          "name": "Mapp",
+          "description": "Var filerna sparas. Standard: mappen hp i lokala media. Den måste finnas i allowlist_external_dirs."
+        },
+        "filename": {
+          "name": "Filnamn",
+          "description": "Utan filändelse. Standard: scan_ följt av datum och tid."
+        },
+        "append": {
+          "name": "Lägg till i senaste PDF",
+          "description": "Skanna en sida till och lägg till den i den senast skannade PDF:en i stället för att börja en ny fil: för ett dokument som skannas sida för sida på glaset."
+        }
+      }
+    }
+  },
+  "selector": {
+    "scan_format": {
+      "options": {
+        "pdf": "PDF",
+        "jpeg": "JPEG",
+        "png": "PNG"
+      }
+    },
+    "scan_source": {
+      "options": {
+        "flatbed": "Glas",
+        "feeder": "Dokumentmatare",
+        "feeder_duplex": "Dokumentmatare, dubbelsidigt"
+      }
+    },
+    "scan_color_mode": {
+      "options": {
+        "color": "Färg",
+        "grayscale": "Gråskala",
+        "black_and_white": "Svartvitt"
+      }
+    },
+    "scan_page_size": {
+      "options": {
+        "a4": "A4",
+        "letter": "Letter",
+        "legal": "Legal",
+        "max": "Hela glaset"
+      }
+    }
+  },
+  "exceptions": {
+    "printer_offline": {
+      "message": "Skrivaren är avstängd eller svarar inte."
+    },
+    "no_scanner": {
+      "message": "Den här skrivaren har ingen skanner, eller så svarar skannern inte via eSCL (AirScan)."
+    },
+    "scanner_busy": {
+      "message": "Skannern är upptagen. Försök igen om en stund."
+    },
+    "feeder_empty": {
+      "message": "Dokumentmataren är tom."
+    },
+    "unsupported_source": {
+      "message": "Skannern erbjuder inte den här källan."
+    },
+    "unsupported_format": {
+      "message": "Skannern erbjuder inte det här formatet."
+    },
+    "unsupported_resolution": {
+      "message": "Skannern erbjuder inte den här upplösningen."
+    },
+    "unsupported_color_mode": {
+      "message": "Skannern erbjuder inte det här färgläget."
+    },
+    "scan_failed": {
+      "message": "Skanningen misslyckades: {error}"
+    },
+    "directory_not_allowed": {
+      "message": "Mappen {directory} är inte tillåten: lägg till den i allowlist_external_dirs."
+    },
+    "device_not_found": {
+      "message": "Den här enheten är inte en skrivare i den här integrationen."
+    },
+    "device_required": {
+      "message": "Flera HP-skrivare är konfigurerade: välj en."
+    }
+  }
+}

@@ -1,0 +1,175 @@
+{
+  "config": {
+    "flow_title": "{name}",
+    "step": {
+      "user": {
+        "title": "Imprimantă HP",
+        "description": "Introduceți adresa imprimantei. Atribuiți-i o adresă IP fixă în router.",
+        "data": {
+          "host": "Gazdă",
+          "port": "Port",
+          "ssl": "Folosește HTTPS"
+        },
+        "data_description": {
+          "host": "Adresa IP sau numele de gazdă al imprimantei, de exemplu 192.168.1.12.",
+          "port": "Lăsați gol pentru portul implicit (80, sau 443 cu HTTPS).",
+          "ssl": "Doar pentru imprimantele al căror server web răspunde numai prin HTTPS."
+        }
+      },
+      "zeroconf_confirm": {
+        "title": "Imprimantă HP găsită",
+        "description": "Adăugați {name} ({host})?"
+      },
+      "reconfigure": {
+        "title": "Schimbați adresa imprimantei",
+        "description": "Imprimanta trebuie să fie pornită pentru a verifica noua adresă.",
+        "data": {
+          "host": "Gazdă",
+          "port": "Port",
+          "ssl": "Folosește HTTPS"
+        },
+        "data_description": {
+          "host": "Adresa IP sau numele de gazdă al imprimantei, de exemplu 192.168.1.12.",
+          "port": "Lăsați gol pentru portul implicit (80, sau 443 cu HTTPS).",
+          "ssl": "Doar pentru imprimantele al căror server web răspunde numai prin HTTPS."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Imprimanta nu răspunde. Verificați că este pornită și că adresa este corectă."
+    },
+    "abort": {
+      "already_configured": "Această imprimantă este deja configurată.",
+      "cannot_connect": "Imprimanta nu răspunde.",
+      "missing_serial_number": "Imprimanta nu raportează un număr de serie: nu poate fi adăugată.",
+      "wrong_printer": "La această adresă răspunde o altă imprimantă.",
+      "reconfigure_successful": "Adresa imprimantei a fost actualizată."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opțiuni",
+        "data": {
+          "scan_interval": "Interval de actualizare a stării"
+        },
+        "data_description": {
+          "scan_interval": "Cât de des este citită starea, în secunde. Contoarele de pagini și nivelurile de cerneală sunt citite la fiecare 5 minute și după fiecare lucrare."
+        }
+      }
+    }
+  },
+  "services": {
+    "scan": {
+      "name": "Scanează",
+      "description": "Scanează un document de pe geamul sau alimentatorul imprimantei și îl salvează ca fișier PDF sau JPEG. Setările neindicate sunt cele ale entităților de selecție pentru scanare ale imprimantei.",
+      "fields": {
+        "device_id": {
+          "name": "Imprimantă",
+          "description": "Imprimanta folosită. Opțional dacă există una singură."
+        },
+        "format": {
+          "name": "Format",
+          "description": "PDF (un fișier cu toate paginile) sau JPEG (o imagine pe pagină)."
+        },
+        "source": {
+          "name": "Sursă",
+          "description": "Geam sau alimentator de documente."
+        },
+        "resolution": {
+          "name": "Rezoluție",
+          "description": "Puncte pe inch. 300 se potrivește documentelor."
+        },
+        "color_mode": {
+          "name": "Mod culoare",
+          "description": "Color, tonuri de gri sau alb-negru."
+        },
+        "page_size": {
+          "name": "Dimensiune pagină",
+          "description": "Zona scanată. Geam întreg scanează cea mai mare zonă a sursei."
+        },
+        "directory": {
+          "name": "Folder",
+          "description": "Unde se salvează fișierele. Implicit: folderul hp din media locală. Trebuie să fie în allowlist_external_dirs."
+        },
+        "filename": {
+          "name": "Nume fișier",
+          "description": "Fără extensie. Implicit: scan_ urmat de dată și oră."
+        },
+        "append": {
+          "name": "Adaugă la ultimul PDF",
+          "description": "Scanează încă o pagină și adaug-o la ultimul PDF în loc să creezi un fișier nou: pentru un document scanat pagină cu pagină pe geam."
+        }
+      }
+    }
+  },
+  "selector": {
+    "scan_format": {
+      "options": {
+        "pdf": "PDF",
+        "jpeg": "JPEG",
+        "png": "PNG"
+      }
+    },
+    "scan_source": {
+      "options": {
+        "flatbed": "Geam",
+        "feeder": "Alimentator de documente",
+        "feeder_duplex": "Alimentator de documente, față-verso"
+      }
+    },
+    "scan_color_mode": {
+      "options": {
+        "color": "Color",
+        "grayscale": "Tonuri de gri",
+        "black_and_white": "Alb-negru"
+      }
+    },
+    "scan_page_size": {
+      "options": {
+        "a4": "A4",
+        "letter": "Letter",
+        "legal": "Legal",
+        "max": "Geam întreg"
+      }
+    }
+  },
+  "exceptions": {
+    "printer_offline": {
+      "message": "Imprimanta este oprită sau nu răspunde."
+    },
+    "no_scanner": {
+      "message": "Această imprimantă nu are scaner, sau scanerul nu răspunde prin eSCL (AirScan)."
+    },
+    "scanner_busy": {
+      "message": "Scanerul este ocupat. Încercați din nou în câteva momente."
+    },
+    "feeder_empty": {
+      "message": "Alimentatorul de documente este gol."
+    },
+    "unsupported_source": {
+      "message": "Scanerul nu oferă această sursă."
+    },
+    "unsupported_format": {
+      "message": "Scanerul nu oferă acest format."
+    },
+    "unsupported_resolution": {
+      "message": "Scanerul nu oferă această rezoluție."
+    },
+    "unsupported_color_mode": {
+      "message": "Scanerul nu oferă acest mod de culoare."
+    },
+    "scan_failed": {
+      "message": "Scanarea a eșuat: {error}"
+    },
+    "directory_not_allowed": {
+      "message": "Folderul {directory} nu este permis: adăugați-l în allowlist_external_dirs."
+    },
+    "device_not_found": {
+      "message": "Acest dispozitiv nu este o imprimantă a acestei integrări."
+    },
+    "device_required": {
+      "message": "Sunt configurate mai multe imprimante HP: alegeți una."
+    }
+  }
+}

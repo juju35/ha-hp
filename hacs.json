@@ -1,0 +1,8 @@
+{
+  "name": "HP Printer",
+  "content_in_root": false,
+  "render_readme": true,
+  "zip_release": true,
+  "filename": "hp.zip",
+  "homeassistant": "2025.8.0"
+}

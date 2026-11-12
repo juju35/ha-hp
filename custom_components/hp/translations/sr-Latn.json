@@ -1,0 +1,175 @@
+{
+  "config": {
+    "flow_title": "{name}",
+    "step": {
+      "user": {
+        "title": "HP štampač",
+        "description": "Unesite adresu štampača. Dodelite mu fiksnu IP adresu u ruteru.",
+        "data": {
+          "host": "Host",
+          "port": "Port",
+          "ssl": "Koristi HTTPS"
+        },
+        "data_description": {
+          "host": "IP adresa ili ime hosta štampača, na primer 192.168.1.12.",
+          "port": "Ostavite prazno za podrazumevani port (80, ili 443 sa HTTPS).",
+          "ssl": "Samo za štampače čiji veb server odgovara isključivo preko HTTPS."
+        }
+      },
+      "zeroconf_confirm": {
+        "title": "Pronađen HP štampač",
+        "description": "Dodati {name} ({host})?"
+      },
+      "reconfigure": {
+        "title": "Promeni adresu štampača",
+        "description": "Štampač mora biti uključen da bi se proverila njegova nova adresa.",
+        "data": {
+          "host": "Host",
+          "port": "Port",
+          "ssl": "Koristi HTTPS"
+        },
+        "data_description": {
+          "host": "IP adresa ili ime hosta štampača, na primer 192.168.1.12.",
+          "port": "Ostavite prazno za podrazumevani port (80, ili 443 sa HTTPS).",
+          "ssl": "Samo za štampače čiji veb server odgovara isključivo preko HTTPS."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Štampač ne odgovara. Proverite da li je uključen i da li je adresa ispravna."
+    },
+    "abort": {
+      "already_configured": "Ovaj štampač je već podešen.",
+      "cannot_connect": "Štampač ne odgovara.",
+      "missing_serial_number": "Štampač ne prijavljuje serijski broj: ne može se dodati.",
+      "wrong_printer": "Na ovoj adresi odgovara drugi štampač.",
+      "reconfigure_successful": "Adresa štampača je ažurirana."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opcije",
+        "data": {
+          "scan_interval": "Interval osvežavanja stanja"
+        },
+        "data_description": {
+          "scan_interval": "Koliko često se čita stanje, u sekundama. Brojači stranica i nivoi mastila se čitaju svakih 5 minuta i posle svakog posla."
+        }
+      }
+    }
+  },
+  "services": {
+    "scan": {
+      "name": "Skeniraj",
+      "description": "Skenira dokument sa stakla ili ulagača štampača i čuva ga kao PDF ili JPEG datoteku. Podešavanja koja nisu navedena uzimaju se iz entiteta za izbor skeniranja štampača.",
+      "fields": {
+        "device_id": {
+          "name": "Štampač",
+          "description": "Štampač za skeniranje. Opciono ako postoji samo jedan."
+        },
+        "format": {
+          "name": "Format",
+          "description": "PDF (jedna datoteka sa svim stranicama) ili JPEG (jedna slika po stranici)."
+        },
+        "source": {
+          "name": "Izvor",
+          "description": "Staklo ili ulagač dokumenata."
+        },
+        "resolution": {
+          "name": "Rezolucija",
+          "description": "Tačaka po inču. 300 odgovara dokumentima."
+        },
+        "color_mode": {
+          "name": "Režim boja",
+          "description": "U boji, nijanse sive ili crno-belo."
+        },
+        "page_size": {
+          "name": "Veličina stranice",
+          "description": "Skenirana oblast. Celo staklo skenira najveću oblast izvora."
+        },
+        "directory": {
+          "name": "Fascikla",
+          "description": "Gde se čuvaju datoteke. Podrazumevano: fascikla hp lokalnih medija. Mora biti u allowlist_external_dirs."
+        },
+        "filename": {
+          "name": "Ime datoteke",
+          "description": "Bez ekstenzije. Podrazumevano: scan_ sa datumom i vremenom."
+        },
+        "append": {
+          "name": "Dodaj u poslednji PDF",
+          "description": "Skeniraj još jednu stranicu i dodaj je u poslednji PDF umesto nove datoteke: za dokument koji se skenira stranicu po stranicu na staklu."
+        }
+      }
+    }
+  },
+  "selector": {
+    "scan_format": {
+      "options": {
+        "pdf": "PDF",
+        "jpeg": "JPEG",
+        "png": "PNG"
+      }
+    },
+    "scan_source": {
+      "options": {
+        "flatbed": "Staklo",
+        "feeder": "Ulagač dokumenata",
+        "feeder_duplex": "Ulagač dokumenata, dvostrano"
+      }
+    },
+    "scan_color_mode": {
+      "options": {
+        "color": "U boji",
+        "grayscale": "Nijanse sive",
+        "black_and_white": "Crno-belo"
+      }
+    },
+    "scan_page_size": {
+      "options": {
+        "a4": "A4",
+        "letter": "Pismo",
+        "legal": "Pravni",
+        "max": "Celo staklo"
+      }
+    }
+  },
+  "exceptions": {
+    "printer_offline": {
+      "message": "Štampač je isključen ili ne odgovara."
+    },
+    "no_scanner": {
+      "message": "Ovaj štampač nema skener, ili njegov skener ne odgovara preko eSCL (AirScan)."
+    },
+    "scanner_busy": {
+      "message": "Skener je zauzet. Pokušajte ponovo za trenutak."
+    },
+    "feeder_empty": {
+      "message": "Ulagač dokumenata je prazan."
+    },
+    "unsupported_source": {
+      "message": "Skener ne nudi ovaj izvor."
+    },
+    "unsupported_format": {
+      "message": "Skener ne nudi ovaj format."
+    },
+    "unsupported_resolution": {
+      "message": "Skener ne nudi ovu rezoluciju."
+    },
+    "unsupported_color_mode": {
+      "message": "Skener ne nudi ovaj režim boja."
+    },
+    "scan_failed": {
+      "message": "Skeniranje nije uspelo: {error}"
+    },
+    "directory_not_allowed": {
+      "message": "Fascikla {directory} nije dozvoljena: dodajte je u allowlist_external_dirs."
+    },
+    "device_not_found": {
+      "message": "Ovaj uređaj nije štampač ove integracije."
+    },
+    "device_required": {
+      "message": "Podešeno je više HP štampača: izaberite jedan."
+    }
+  }
+}

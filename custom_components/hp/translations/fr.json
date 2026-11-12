@@ -1,0 +1,175 @@
+{
+  "config": {
+    "flow_title": "{name}",
+    "step": {
+      "user": {
+        "title": "Imprimante HP",
+        "description": "Saisissez l'adresse de l'imprimante. Donnez-lui une adresse IP fixe dans votre box.",
+        "data": {
+          "host": "Hôte",
+          "port": "Port",
+          "ssl": "Utiliser HTTPS"
+        },
+        "data_description": {
+          "host": "Adresse IP ou nom d'hôte de l'imprimante, par exemple 192.168.1.12.",
+          "port": "Laissez vide pour le port par défaut (80, ou 443 en HTTPS).",
+          "ssl": "Uniquement pour les imprimantes dont le serveur web ne répond qu'en HTTPS."
+        }
+      },
+      "zeroconf_confirm": {
+        "title": "Imprimante HP trouvée",
+        "description": "Ajouter {name} ({host}) ?"
+      },
+      "reconfigure": {
+        "title": "Changer l'adresse de l'imprimante",
+        "description": "L'imprimante doit être allumée pour vérifier sa nouvelle adresse.",
+        "data": {
+          "host": "Hôte",
+          "port": "Port",
+          "ssl": "Utiliser HTTPS"
+        },
+        "data_description": {
+          "host": "Adresse IP ou nom d'hôte de l'imprimante, par exemple 192.168.1.12.",
+          "port": "Laissez vide pour le port par défaut (80, ou 443 en HTTPS).",
+          "ssl": "Uniquement pour les imprimantes dont le serveur web ne répond qu'en HTTPS."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "L'imprimante ne répond pas. Vérifiez qu'elle est allumée et que son adresse est correcte."
+    },
+    "abort": {
+      "already_configured": "Cette imprimante est déjà configurée.",
+      "cannot_connect": "L'imprimante ne répond pas.",
+      "missing_serial_number": "L'imprimante n'indique pas de numéro de série : elle ne peut pas être ajoutée.",
+      "wrong_printer": "Une autre imprimante répond à cette adresse.",
+      "reconfigure_successful": "L'adresse de l'imprimante a été mise à jour."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options",
+        "data": {
+          "scan_interval": "Intervalle de rafraîchissement de l'état"
+        },
+        "data_description": {
+          "scan_interval": "Fréquence de lecture de l'état, en secondes. Les compteurs de pages et niveaux d'encre sont lus toutes les 5 minutes et après chaque travail."
+        }
+      }
+    }
+  },
+  "services": {
+    "scan": {
+      "name": "Scanner",
+      "description": "Numérise un document depuis la vitre ou le chargeur de l'imprimante et l'enregistre en PDF ou JPEG. Les réglages non indiqués sont ceux des entités de sélection de scan de l'imprimante.",
+      "fields": {
+        "device_id": {
+          "name": "Imprimante",
+          "description": "L'imprimante à utiliser. Facultatif s'il n'y en a qu'une."
+        },
+        "format": {
+          "name": "Format",
+          "description": "PDF (un fichier avec toutes les pages) ou JPEG (une image par page)."
+        },
+        "source": {
+          "name": "Source",
+          "description": "Vitre ou chargeur de documents."
+        },
+        "resolution": {
+          "name": "Résolution",
+          "description": "Points par pouce. 300 convient aux documents."
+        },
+        "color_mode": {
+          "name": "Mode couleur",
+          "description": "Couleur, niveaux de gris ou noir et blanc."
+        },
+        "page_size": {
+          "name": "Format de page",
+          "description": "Zone numérisée. Vitre entière numérise la plus grande zone de la source."
+        },
+        "directory": {
+          "name": "Dossier",
+          "description": "Où les fichiers sont enregistrés. Par défaut : le dossier hp des médias locaux. Il doit figurer dans allowlist_external_dirs."
+        },
+        "filename": {
+          "name": "Nom du fichier",
+          "description": "Sans extension. Par défaut : scan_ suivi de la date et de l'heure."
+        },
+        "append": {
+          "name": "Ajouter au dernier PDF",
+          "description": "Numériser une page de plus et l'ajouter au dernier PDF au lieu de créer un nouveau fichier : pour un document numérisé page par page sur la vitre."
+        }
+      }
+    }
+  },
+  "selector": {
+    "scan_format": {
+      "options": {
+        "pdf": "PDF",
+        "jpeg": "JPEG",
+        "png": "PNG"
+      }
+    },
+    "scan_source": {
+      "options": {
+        "flatbed": "Vitre",
+        "feeder": "Chargeur de documents",
+        "feeder_duplex": "Chargeur de documents, recto verso"
+      }
+    },
+    "scan_color_mode": {
+      "options": {
+        "color": "Couleur",
+        "grayscale": "Niveaux de gris",
+        "black_and_white": "Noir et blanc"
+      }
+    },
+    "scan_page_size": {
+      "options": {
+        "a4": "A4",
+        "letter": "Lettre US",
+        "legal": "Légal US",
+        "max": "Vitre entière"
+      }
+    }
+  },
+  "exceptions": {
+    "printer_offline": {
+      "message": "L'imprimante est éteinte ou ne répond pas."
+    },
+    "no_scanner": {
+      "message": "Cette imprimante n'a pas de scanner, ou son scanner ne répond pas en eSCL (AirScan)."
+    },
+    "scanner_busy": {
+      "message": "Le scanner est occupé. Réessayez dans un instant."
+    },
+    "feeder_empty": {
+      "message": "Le chargeur de documents est vide."
+    },
+    "unsupported_source": {
+      "message": "Le scanner ne propose pas cette source."
+    },
+    "unsupported_format": {
+      "message": "Le scanner ne propose pas ce format."
+    },
+    "unsupported_resolution": {
+      "message": "Le scanner ne propose pas cette résolution."
+    },
+    "unsupported_color_mode": {
+      "message": "Le scanner ne propose pas ce mode couleur."
+    },
+    "scan_failed": {
+      "message": "Le scan a échoué : {error}"
+    },
+    "directory_not_allowed": {
+      "message": "Le dossier {directory} n'est pas autorisé : ajoutez-le à allowlist_external_dirs."
+    },
+    "device_not_found": {
+      "message": "Cet appareil n'est pas une imprimante de cette intégration."
+    },
+    "device_required": {
+      "message": "Plusieurs imprimantes HP sont configurées : choisissez-en une."
+    }
+  }
+}

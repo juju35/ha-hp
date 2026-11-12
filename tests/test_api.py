@@ -1,0 +1,72 @@
+"""Document parsers."""
+
+from __future__ import annotations
+
+import pytest
+
+from custom_components.hp.api import _parse_body as parse_body
+from custom_components.hp.api import map_status, parse_adapters, parse_consumables, parse_eprint
+
+
+@pytest.mark.parametrize(
+    ("raw", "status"),
+    [
+        ("ready", "ready"),
+        ("inPowerSave", "in_power_save"),
+        ("scanProcessing", "scan_processing"),
+        ("cancelJob", "cancel_job"),
+        ("trayEmpty", "tray_empty"),
+        ("jamInPrinter", "paper_jam"),
+        ("doorOpen", "close_door_or_cover"),
+        ("inkSystemInitializing", "initializing"),
+        ("somethingNew", "other"),
+        (None, "other"),
+    ],
+)
+def test_map_status(raw: str | None, status: str) -> None:
+    """HP categories map to the sensor's values, unknown ones to "other"."""
+    assert map_status(raw) == status
+
+
+def test_adapters_json() -> None:
+    """Some firmwares answer /IoMgmt/Adapters in JSON."""
+    document = parse_body(
+        "/IoMgmt/Adapters",
+        b'{"Adapters": {"Adapter": [{"HardwareConfig": {"Name": "wifi0", "IsConnected": "true"}},'
+        b' {"HardwareConfig": {"Name": "eth0", "IsConnected": "false"}}]}}',
+        "application/json",
+    )
+    assert parse_adapters(document) == {"wifi": True, "ethernet": False}
+
+
+def test_eprint_unregistered() -> None:
+    """Cloud registration and services."""
+    document = parse_body(
+        "/ePrint/ePrintConfigDyn.xml",
+        b"<ePrintConfigDyn><RegistrationState>unregistered</RegistrationState>"
+        b"<CloudServicesSwitch><Status>disabled</Status></CloudServicesSwitch></ePrintConfigDyn>",
+        "text/xml",
+    )
+    assert parse_eprint(document) == {"cloud_registered": False, "cloud_services": False}
+
+
+def test_toner_and_tri_color() -> None:
+    """Toner cartridges and tri-color ink cartridges, from either document."""
+    config = parse_body(
+        "/DevMgmt/ConsumableConfigDyn.xml",
+        b"<ConsumableConfigDyn><ConsumableInfo><ConsumableTypeEnum>toner</ConsumableTypeEnum>"
+        b"<ConsumableLabelCode>K</ConsumableLabelCode><ConsumablePercentageLevelRemaining>70"
+        b"</ConsumablePercentageLevelRemaining></ConsumableInfo></ConsumableConfigDyn>",
+        "text/xml",
+    )
+    usage = parse_body(
+        "/DevMgmt/ProductUsageDyn.xml",
+        b"<ProductUsageDyn><ConsumableSubunit><Consumable><MarkerColor>CyanMagentaYellow</MarkerColor>"
+        b"<ConsumableRawPercentageLevelRemaining>33</ConsumableRawPercentageLevelRemaining>"
+        b"</Consumable></ConsumableSubunit></ProductUsageDyn>",
+        "text/xml",
+    )
+    assert parse_consumables(config, usage) == {
+        "black": {"level": 70, "type": "toner"},
+        "tri_color": {"level": 33},
+    }

@@ -1,0 +1,175 @@
+{
+  "config": {
+    "flow_title": "{name}",
+    "step": {
+      "user": {
+        "title": "Drukarka HP",
+        "description": "Podaj adres drukarki. Przypisz jej stały adres IP w routerze.",
+        "data": {
+          "host": "Host",
+          "port": "Port",
+          "ssl": "Użyj HTTPS"
+        },
+        "data_description": {
+          "host": "Adres IP lub nazwa hosta drukarki, na przykład 192.168.1.12.",
+          "port": "Pozostaw puste dla domyślnego portu (80 lub 443 z HTTPS).",
+          "ssl": "Tylko dla drukarek, których serwer WWW odpowiada wyłącznie przez HTTPS."
+        }
+      },
+      "zeroconf_confirm": {
+        "title": "Znaleziono drukarkę HP",
+        "description": "Dodać {name} ({host})?"
+      },
+      "reconfigure": {
+        "title": "Zmień adres drukarki",
+        "description": "Drukarka musi być włączona, aby sprawdzić jej nowy adres.",
+        "data": {
+          "host": "Host",
+          "port": "Port",
+          "ssl": "Użyj HTTPS"
+        },
+        "data_description": {
+          "host": "Adres IP lub nazwa hosta drukarki, na przykład 192.168.1.12.",
+          "port": "Pozostaw puste dla domyślnego portu (80 lub 443 z HTTPS).",
+          "ssl": "Tylko dla drukarek, których serwer WWW odpowiada wyłącznie przez HTTPS."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Drukarka nie odpowiada. Sprawdź, czy jest włączona i czy jej adres jest poprawny."
+    },
+    "abort": {
+      "already_configured": "Ta drukarka jest już skonfigurowana.",
+      "cannot_connect": "Drukarka nie odpowiada.",
+      "missing_serial_number": "Drukarka nie podaje numeru seryjnego: nie można jej dodać.",
+      "wrong_printer": "Pod tym adresem odpowiada inna drukarka.",
+      "reconfigure_successful": "Adres drukarki został zaktualizowany."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opcje",
+        "data": {
+          "scan_interval": "Interwał odświeżania stanu"
+        },
+        "data_description": {
+          "scan_interval": "Jak często odczytywany jest stan, w sekundach. Liczniki stron i poziomy tuszu są odczytywane co 5 minut i po każdym zadaniu."
+        }
+      }
+    }
+  },
+  "services": {
+    "scan": {
+      "name": "Skanuj",
+      "description": "Skanuje dokument z szyby lub podajnika drukarki i zapisuje go jako plik PDF lub JPEG. Niepodane ustawienia pochodzą z encji wyboru skanowania drukarki.",
+      "fields": {
+        "device_id": {
+          "name": "Drukarka",
+          "description": "Drukarka do skanowania. Opcjonalnie, gdy jest tylko jedna."
+        },
+        "format": {
+          "name": "Format",
+          "description": "PDF (jeden plik ze wszystkimi stronami) lub JPEG (jeden obraz na stronę)."
+        },
+        "source": {
+          "name": "Źródło",
+          "description": "Szyba lub podajnik dokumentów."
+        },
+        "resolution": {
+          "name": "Rozdzielczość",
+          "description": "Punkty na cal. 300 nadaje się do dokumentów."
+        },
+        "color_mode": {
+          "name": "Tryb koloru",
+          "description": "Kolor, skala szarości lub czarno-biały."
+        },
+        "page_size": {
+          "name": "Rozmiar strony",
+          "description": "Skanowany obszar. Cała szyba skanuje największy obszar źródła."
+        },
+        "directory": {
+          "name": "Folder",
+          "description": "Gdzie zapisywane są pliki. Domyślnie: folder hp lokalnych multimediów. Musi być w allowlist_external_dirs."
+        },
+        "filename": {
+          "name": "Nazwa pliku",
+          "description": "Bez rozszerzenia. Domyślnie: scan_ z datą i godziną."
+        },
+        "append": {
+          "name": "Dodaj do ostatniego PDF",
+          "description": "Zeskanuj jeszcze jedną stronę i dodaj ją do ostatniego PDF zamiast tworzyć nowy plik: dla dokumentu skanowanego strona po stronie na szybie."
+        }
+      }
+    }
+  },
+  "selector": {
+    "scan_format": {
+      "options": {
+        "pdf": "PDF",
+        "jpeg": "JPEG",
+        "png": "PNG"
+      }
+    },
+    "scan_source": {
+      "options": {
+        "flatbed": "Szyba",
+        "feeder": "Podajnik dokumentów",
+        "feeder_duplex": "Podajnik dokumentów, dwustronnie"
+      }
+    },
+    "scan_color_mode": {
+      "options": {
+        "color": "Kolor",
+        "grayscale": "Skala szarości",
+        "black_and_white": "Czarno-biały"
+      }
+    },
+    "scan_page_size": {
+      "options": {
+        "a4": "A4",
+        "letter": "Letter",
+        "legal": "Legal",
+        "max": "Cała szyba"
+      }
+    }
+  },
+  "exceptions": {
+    "printer_offline": {
+      "message": "Drukarka jest wyłączona lub nie odpowiada."
+    },
+    "no_scanner": {
+      "message": "Ta drukarka nie ma skanera lub jej skaner nie odpowiada przez eSCL (AirScan)."
+    },
+    "scanner_busy": {
+      "message": "Skaner jest zajęty. Spróbuj ponownie za chwilę."
+    },
+    "feeder_empty": {
+      "message": "Podajnik dokumentów jest pusty."
+    },
+    "unsupported_source": {
+      "message": "Skaner nie oferuje tego źródła."
+    },
+    "unsupported_format": {
+      "message": "Skaner nie oferuje tego formatu."
+    },
+    "unsupported_resolution": {
+      "message": "Skaner nie oferuje tej rozdzielczości."
+    },
+    "unsupported_color_mode": {
+      "message": "Skaner nie oferuje tego trybu koloru."
+    },
+    "scan_failed": {
+      "message": "Skanowanie nie powiodło się: {error}"
+    },
+    "directory_not_allowed": {
+      "message": "Folder {directory} jest niedozwolony: dodaj go do allowlist_external_dirs."
+    },
+    "device_not_found": {
+      "message": "To urządzenie nie jest drukarką tej integracji."
+    },
+    "device_required": {
+      "message": "Skonfigurowano kilka drukarek HP: wybierz jedną."
+    }
+  }
+}

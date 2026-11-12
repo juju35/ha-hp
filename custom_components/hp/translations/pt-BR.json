@@ -1,0 +1,175 @@
+{
+  "config": {
+    "flow_title": "{name}",
+    "step": {
+      "user": {
+        "title": "Impressora HP",
+        "description": "Insira o endereço da impressora. Atribua a ela um endereço IP fixo no roteador.",
+        "data": {
+          "host": "Host",
+          "port": "Porta",
+          "ssl": "Usar HTTPS"
+        },
+        "data_description": {
+          "host": "Endereço IP ou nome do host da impressora, por exemplo 192.168.1.12.",
+          "port": "Deixe vazio para a porta padrão (80, ou 443 com HTTPS).",
+          "ssl": "Somente para impressoras cujo servidor web responde apenas em HTTPS."
+        }
+      },
+      "zeroconf_confirm": {
+        "title": "Impressora HP encontrada",
+        "description": "Adicionar {name} ({host})?"
+      },
+      "reconfigure": {
+        "title": "Alterar o endereço da impressora",
+        "description": "A impressora precisa estar ligada para verificar o novo endereço.",
+        "data": {
+          "host": "Host",
+          "port": "Porta",
+          "ssl": "Usar HTTPS"
+        },
+        "data_description": {
+          "host": "Endereço IP ou nome do host da impressora, por exemplo 192.168.1.12.",
+          "port": "Deixe vazio para a porta padrão (80, ou 443 com HTTPS).",
+          "ssl": "Somente para impressoras cujo servidor web responde apenas em HTTPS."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "A impressora não responde. Verifique se ela está ligada e se o endereço está correto."
+    },
+    "abort": {
+      "already_configured": "Esta impressora já está configurada.",
+      "cannot_connect": "A impressora não responde.",
+      "missing_serial_number": "A impressora não informa um número de série: ela não pode ser adicionada.",
+      "wrong_printer": "Outra impressora responde neste endereço.",
+      "reconfigure_successful": "O endereço da impressora foi atualizado."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opções",
+        "data": {
+          "scan_interval": "Intervalo de atualização do status"
+        },
+        "data_description": {
+          "scan_interval": "Frequência de leitura do status, em segundos. Os contadores de páginas e os níveis de tinta são lidos a cada 5 minutos e após cada trabalho."
+        }
+      }
+    }
+  },
+  "services": {
+    "scan": {
+      "name": "Digitalizar",
+      "description": "Digitaliza um documento do vidro ou do alimentador da impressora e salva como arquivo PDF ou JPEG. As configurações não informadas são as das entidades de seleção de digitalização da impressora.",
+      "fields": {
+        "device_id": {
+          "name": "Impressora",
+          "description": "A impressora a usar. Opcional se houver apenas uma."
+        },
+        "format": {
+          "name": "Formato",
+          "description": "PDF (um arquivo com todas as páginas) ou JPEG (uma imagem por página)."
+        },
+        "source": {
+          "name": "Origem",
+          "description": "Vidro ou alimentador de documentos."
+        },
+        "resolution": {
+          "name": "Resolução",
+          "description": "Pontos por polegada. 300 é adequado para documentos."
+        },
+        "color_mode": {
+          "name": "Modo de cor",
+          "description": "Colorido, tons de cinza ou preto e branco."
+        },
+        "page_size": {
+          "name": "Tamanho da página",
+          "description": "Área digitalizada. Vidro inteiro digitaliza a maior área da origem."
+        },
+        "directory": {
+          "name": "Pasta",
+          "description": "Onde os arquivos são salvos. Padrão: a pasta hp da mídia local. Ela deve estar em allowlist_external_dirs."
+        },
+        "filename": {
+          "name": "Nome do arquivo",
+          "description": "Sem extensão. Padrão: scan_ seguido da data e hora."
+        },
+        "append": {
+          "name": "Adicionar ao último PDF",
+          "description": "Digitalizar mais uma página e adicioná-la ao último PDF em vez de criar um novo arquivo: para um documento digitalizado página por página no vidro."
+        }
+      }
+    }
+  },
+  "selector": {
+    "scan_format": {
+      "options": {
+        "pdf": "PDF",
+        "jpeg": "JPEG",
+        "png": "PNG"
+      }
+    },
+    "scan_source": {
+      "options": {
+        "flatbed": "Vidro",
+        "feeder": "Alimentador de documentos",
+        "feeder_duplex": "Alimentador de documentos, frente e verso"
+      }
+    },
+    "scan_color_mode": {
+      "options": {
+        "color": "Colorido",
+        "grayscale": "Tons de cinza",
+        "black_and_white": "Preto e branco"
+      }
+    },
+    "scan_page_size": {
+      "options": {
+        "a4": "A4",
+        "letter": "Carta",
+        "legal": "Ofício",
+        "max": "Vidro inteiro"
+      }
+    }
+  },
+  "exceptions": {
+    "printer_offline": {
+      "message": "A impressora está desligada ou não responde."
+    },
+    "no_scanner": {
+      "message": "Esta impressora não tem scanner, ou o scanner não responde via eSCL (AirScan)."
+    },
+    "scanner_busy": {
+      "message": "O scanner está ocupado. Tente novamente em instantes."
+    },
+    "feeder_empty": {
+      "message": "O alimentador de documentos está vazio."
+    },
+    "unsupported_source": {
+      "message": "O scanner não oferece esta origem."
+    },
+    "unsupported_format": {
+      "message": "O scanner não oferece este formato."
+    },
+    "unsupported_resolution": {
+      "message": "O scanner não oferece esta resolução."
+    },
+    "unsupported_color_mode": {
+      "message": "O scanner não oferece este modo de cor."
+    },
+    "scan_failed": {
+      "message": "A digitalização falhou: {error}"
+    },
+    "directory_not_allowed": {
+      "message": "A pasta {directory} não é permitida: adicione-a a allowlist_external_dirs."
+    },
+    "device_not_found": {
+      "message": "Este dispositivo não é uma impressora desta integração."
+    },
+    "device_required": {
+      "message": "Várias impressoras HP estão configuradas: escolha uma."
+    }
+  }
+}

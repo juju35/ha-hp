@@ -1,0 +1,175 @@
+{
+  "config": {
+    "flow_title": "{name}",
+    "step": {
+      "user": {
+        "title": "Stampante HP",
+        "description": "Inserisci l'indirizzo della stampante. Assegnale un indirizzo IP fisso nel router.",
+        "data": {
+          "host": "Host",
+          "port": "Porta",
+          "ssl": "Usa HTTPS"
+        },
+        "data_description": {
+          "host": "Indirizzo IP o nome host della stampante, ad esempio 192.168.1.12.",
+          "port": "Lascia vuoto per la porta predefinita (80, o 443 con HTTPS).",
+          "ssl": "Solo per le stampanti il cui server web risponde solo in HTTPS."
+        }
+      },
+      "zeroconf_confirm": {
+        "title": "Stampante HP trovata",
+        "description": "Aggiungere {name} ({host})?"
+      },
+      "reconfigure": {
+        "title": "Cambia l'indirizzo della stampante",
+        "description": "La stampante deve essere accesa per verificare il nuovo indirizzo.",
+        "data": {
+          "host": "Host",
+          "port": "Porta",
+          "ssl": "Usa HTTPS"
+        },
+        "data_description": {
+          "host": "Indirizzo IP o nome host della stampante, ad esempio 192.168.1.12.",
+          "port": "Lascia vuoto per la porta predefinita (80, o 443 con HTTPS).",
+          "ssl": "Solo per le stampanti il cui server web risponde solo in HTTPS."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "La stampante non risponde. Verifica che sia accesa e che l'indirizzo sia corretto."
+    },
+    "abort": {
+      "already_configured": "Questa stampante è già configurata.",
+      "cannot_connect": "La stampante non risponde.",
+      "missing_serial_number": "La stampante non indica un numero di serie: non può essere aggiunta.",
+      "wrong_printer": "A questo indirizzo risponde un'altra stampante.",
+      "reconfigure_successful": "L'indirizzo della stampante è stato aggiornato."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opzioni",
+        "data": {
+          "scan_interval": "Intervallo di aggiornamento dello stato"
+        },
+        "data_description": {
+          "scan_interval": "Ogni quanto viene letto lo stato, in secondi. I contatori di pagine e i livelli d'inchiostro vengono letti ogni 5 minuti e dopo ogni lavoro."
+        }
+      }
+    }
+  },
+  "services": {
+    "scan": {
+      "name": "Scansiona",
+      "description": "Scansiona un documento dal vetro o dall'alimentatore della stampante e lo salva come file PDF o JPEG. Le impostazioni non indicate sono quelle delle entità di selezione di scansione della stampante.",
+      "fields": {
+        "device_id": {
+          "name": "Stampante",
+          "description": "La stampante da usare. Facoltativa se ce n'è una sola."
+        },
+        "format": {
+          "name": "Formato",
+          "description": "PDF (un file con tutte le pagine) o JPEG (un'immagine per pagina)."
+        },
+        "source": {
+          "name": "Origine",
+          "description": "Vetro o alimentatore di documenti."
+        },
+        "resolution": {
+          "name": "Risoluzione",
+          "description": "Punti per pollice. 300 è adatto ai documenti."
+        },
+        "color_mode": {
+          "name": "Modalità colore",
+          "description": "Colore, scala di grigi o bianco e nero."
+        },
+        "page_size": {
+          "name": "Formato pagina",
+          "description": "Area scansionata. Vetro intero scansiona l'area più grande dell'origine."
+        },
+        "directory": {
+          "name": "Cartella",
+          "description": "Dove vengono salvati i file. Predefinita: la cartella hp dei media locali. Deve essere in allowlist_external_dirs."
+        },
+        "filename": {
+          "name": "Nome file",
+          "description": "Senza estensione. Predefinito: scan_ seguito da data e ora."
+        },
+        "append": {
+          "name": "Aggiungi all'ultimo PDF",
+          "description": "Scansiona un'altra pagina e aggiungila all'ultimo PDF invece di creare un nuovo file: per un documento scansionato pagina per pagina sul vetro."
+        }
+      }
+    }
+  },
+  "selector": {
+    "scan_format": {
+      "options": {
+        "pdf": "PDF",
+        "jpeg": "JPEG",
+        "png": "PNG"
+      }
+    },
+    "scan_source": {
+      "options": {
+        "flatbed": "Vetro",
+        "feeder": "Alimentatore di documenti",
+        "feeder_duplex": "Alimentatore di documenti, fronte-retro"
+      }
+    },
+    "scan_color_mode": {
+      "options": {
+        "color": "Colore",
+        "grayscale": "Scala di grigi",
+        "black_and_white": "Bianco e nero"
+      }
+    },
+    "scan_page_size": {
+      "options": {
+        "a4": "A4",
+        "letter": "Lettera",
+        "legal": "Legale",
+        "max": "Vetro intero"
+      }
+    }
+  },
+  "exceptions": {
+    "printer_offline": {
+      "message": "La stampante è spenta o non risponde."
+    },
+    "no_scanner": {
+      "message": "Questa stampante non ha uno scanner, o il suo scanner non risponde tramite eSCL (AirScan)."
+    },
+    "scanner_busy": {
+      "message": "Lo scanner è occupato. Riprova tra un momento."
+    },
+    "feeder_empty": {
+      "message": "L'alimentatore di documenti è vuoto."
+    },
+    "unsupported_source": {
+      "message": "Lo scanner non offre questa origine."
+    },
+    "unsupported_format": {
+      "message": "Lo scanner non offre questo formato."
+    },
+    "unsupported_resolution": {
+      "message": "Lo scanner non offre questa risoluzione."
+    },
+    "unsupported_color_mode": {
+      "message": "Lo scanner non offre questa modalità colore."
+    },
+    "scan_failed": {
+      "message": "La scansione non è riuscita: {error}"
+    },
+    "directory_not_allowed": {
+      "message": "La cartella {directory} non è consentita: aggiungila ad allowlist_external_dirs."
+    },
+    "device_not_found": {
+      "message": "Questo dispositivo non è una stampante di questa integrazione."
+    },
+    "device_required": {
+      "message": "Sono configurate più stampanti HP: scegline una."
+    }
+  }
+}

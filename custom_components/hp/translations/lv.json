@@ -1,0 +1,175 @@
+{
+  "config": {
+    "flow_title": "{name}",
+    "step": {
+      "user": {
+        "title": "HP printeris",
+        "description": "Ievadiet printera adresi. Piešķiriet tam fiksētu IP adresi maršrutētājā.",
+        "data": {
+          "host": "Resursdators",
+          "port": "Ports",
+          "ssl": "Izmantot HTTPS"
+        },
+        "data_description": {
+          "host": "Printera IP adrese vai resursdatora nosaukums, piemēram, 192.168.1.12.",
+          "port": "Atstājiet tukšu noklusējuma portam (80 vai 443 ar HTTPS).",
+          "ssl": "Tikai printeriem, kuru tīmekļa serveris atbild tikai caur HTTPS."
+        }
+      },
+      "zeroconf_confirm": {
+        "title": "Atrasts HP printeris",
+        "description": "Pievienot {name} ({host})?"
+      },
+      "reconfigure": {
+        "title": "Mainīt printera adresi",
+        "description": "Printerim jābūt ieslēgtam, lai pārbaudītu tā jauno adresi.",
+        "data": {
+          "host": "Resursdators",
+          "port": "Ports",
+          "ssl": "Izmantot HTTPS"
+        },
+        "data_description": {
+          "host": "Printera IP adrese vai resursdatora nosaukums, piemēram, 192.168.1.12.",
+          "port": "Atstājiet tukšu noklusējuma portam (80 vai 443 ar HTTPS).",
+          "ssl": "Tikai printeriem, kuru tīmekļa serveris atbild tikai caur HTTPS."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Printeris neatbild. Pārbaudiet, vai tas ir ieslēgts un vai tā adrese ir pareiza."
+    },
+    "abort": {
+      "already_configured": "Šis printeris jau ir konfigurēts.",
+      "cannot_connect": "Printeris neatbild.",
+      "missing_serial_number": "Printeris nenorāda sērijas numuru: to nevar pievienot.",
+      "wrong_printer": "Šajā adresē atbild cits printeris.",
+      "reconfigure_successful": "Printera adrese ir atjaunināta."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opcijas",
+        "data": {
+          "scan_interval": "Statusa atsvaidzināšanas intervāls"
+        },
+        "data_description": {
+          "scan_interval": "Cik bieži tiek nolasīts statuss, sekundēs. Lappušu skaitītāji un tintes līmeņi tiek nolasīti ik pēc 5 minūtēm un pēc katra darba."
+        }
+      }
+    }
+  },
+  "services": {
+    "scan": {
+      "name": "Skenēt",
+      "description": "Skenē dokumentu no printera stikla vai padevēja un saglabā to kā PDF vai JPEG failu. Nenorādītie iestatījumi tiek ņemti no printera skenēšanas atlases entītijām.",
+      "fields": {
+        "device_id": {
+          "name": "Printeris",
+          "description": "Printeris skenēšanai. Nav obligāts, ja ir tikai viens."
+        },
+        "format": {
+          "name": "Formāts",
+          "description": "PDF (viens fails ar visām lapām) vai JPEG (viens attēls katrai lapai)."
+        },
+        "source": {
+          "name": "Avots",
+          "description": "Stikls vai dokumentu padevējs."
+        },
+        "resolution": {
+          "name": "Izšķirtspēja",
+          "description": "Punkti collā. 300 der dokumentiem."
+        },
+        "color_mode": {
+          "name": "Krāsu režīms",
+          "description": "Krāsains, pelēktoņu vai melnbalts."
+        },
+        "page_size": {
+          "name": "Lapas izmērs",
+          "description": "Skenētais laukums. Viss stikls skenē lielāko avota laukumu."
+        },
+        "directory": {
+          "name": "Mape",
+          "description": "Kur tiek saglabāti faili. Noklusējums: lokālo multivides failu mape hp. Tai jābūt allowlist_external_dirs."
+        },
+        "filename": {
+          "name": "Faila nosaukums",
+          "description": "Bez paplašinājuma. Noklusējums: scan_ ar datumu un laiku."
+        },
+        "append": {
+          "name": "Pievienot pēdējam PDF",
+          "description": "Noskenēt vēl vienu lapu un pievienot to pēdējam PDF, nevis veidot jaunu failu: dokumentam, ko skenē lapu pa lapai uz stikla."
+        }
+      }
+    }
+  },
+  "selector": {
+    "scan_format": {
+      "options": {
+        "pdf": "PDF",
+        "jpeg": "JPEG",
+        "png": "PNG"
+      }
+    },
+    "scan_source": {
+      "options": {
+        "flatbed": "Stikls",
+        "feeder": "Dokumentu padevējs",
+        "feeder_duplex": "Dokumentu padevējs, abpusēji"
+      }
+    },
+    "scan_color_mode": {
+      "options": {
+        "color": "Krāsains",
+        "grayscale": "Pelēktoņu",
+        "black_and_white": "Melnbalts"
+      }
+    },
+    "scan_page_size": {
+      "options": {
+        "a4": "A4",
+        "letter": "Letter",
+        "legal": "Legal",
+        "max": "Viss stikls"
+      }
+    }
+  },
+  "exceptions": {
+    "printer_offline": {
+      "message": "Printeris ir izslēgts vai neatbild."
+    },
+    "no_scanner": {
+      "message": "Šim printerim nav skenera, vai tā skeneris neatbild caur eSCL (AirScan)."
+    },
+    "scanner_busy": {
+      "message": "Skeneris ir aizņemts. Mēģiniet vēlreiz pēc brīža."
+    },
+    "feeder_empty": {
+      "message": "Dokumentu padevējs ir tukšs."
+    },
+    "unsupported_source": {
+      "message": "Skeneris nepiedāvā šo avotu."
+    },
+    "unsupported_format": {
+      "message": "Skeneris nepiedāvā šo formātu."
+    },
+    "unsupported_resolution": {
+      "message": "Skeneris nepiedāvā šo izšķirtspēju."
+    },
+    "unsupported_color_mode": {
+      "message": "Skeneris nepiedāvā šo krāsu režīmu."
+    },
+    "scan_failed": {
+      "message": "Skenēšana neizdevās: {error}"
+    },
+    "directory_not_allowed": {
+      "message": "Mape {directory} nav atļauta: pievienojiet to allowlist_external_dirs."
+    },
+    "device_not_found": {
+      "message": "Šī ierīce nav šīs integrācijas printeris."
+    },
+    "device_required": {
+      "message": "Ir iestatīti vairāki HP printeri: izvēlieties vienu."
+    }
+  }
+}
