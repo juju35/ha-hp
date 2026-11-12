@@ -1,12 +1,39 @@
 {
   "entity": {
     "binary_sensor": {
-      "online": { "default": "mdi:printer-off", "state": { "on": "mdi:printer-check" } },
-      "ethernet": { "default": "mdi:ethernet-off", "state": { "on": "mdi:ethernet" } },
-      "wifi": { "default": "mdi:wifi-off", "state": { "on": "mdi:wifi" } },
-      "usb": { "default": "mdi:usb" },
-      "cloud_registered": { "default": "mdi:cloud-off-outline", "state": { "on": "mdi:cloud-check-outline" } },
-      "cloud_services": { "default": "mdi:cloud-off-outline", "state": { "on": "mdi:cloud-outline" } }
+      "online": {
+        "default": "mdi:printer-off",
+        "state": {
+          "on": "mdi:printer-check"
+        }
+      },
+      "ethernet": {
+        "default": "mdi:ethernet-off",
+        "state": {
+          "on": "mdi:ethernet"
+        }
+      },
+      "wifi": {
+        "default": "mdi:wifi-off",
+        "state": {
+          "on": "mdi:wifi"
+        }
+      },
+      "usb": {
+        "default": "mdi:usb"
+      },
+      "cloud_registered": {
+        "default": "mdi:cloud-off-outline",
+        "state": {
+          "on": "mdi:cloud-check-outline"
+        }
+      },
+      "cloud_services": {
+        "default": "mdi:cloud-off-outline",
+        "state": {
+          "on": "mdi:cloud-outline"
+        }
+      }
     },
     "sensor": {
       "status": {
@@ -27,37 +54,146 @@
           "other": "mdi:printer-alert"
         }
       },
-      "last_seen": { "default": "mdi:clock-check-outline" },
-      "total_pages": { "default": "mdi:file-document-multiple" },
-      "monochrome_pages": { "default": "mdi:file-document-outline" },
-      "color_pages": { "default": "mdi:palette" },
-      "simplex_sheets": { "default": "mdi:file-outline" },
-      "duplex_sheets": { "default": "mdi:file-multiple-outline" },
-      "jams": { "default": "mdi:alert-octagon" },
-      "mispicks": { "default": "mdi:alert-circle-outline" },
-      "scanned_pages": { "default": "mdi:scanner" },
-      "scanned_adf_pages": { "default": "mdi:tray-full" },
-      "scanned_flatbed_pages": { "default": "mdi:scanner" },
-      "scanned_duplex_sheets": { "default": "mdi:file-multiple-outline" },
-      "scanner_jams": { "default": "mdi:alert-octagon" },
-      "scanner_mispicks": { "default": "mdi:alert-circle-outline" },
-      "copied_pages": { "default": "mdi:content-copy" },
-      "faxed_pages": { "default": "mdi:fax" },
-      "black_level": { "default": "mdi:water" },
-      "cyan_level": { "default": "mdi:water" },
-      "magenta_level": { "default": "mdi:water" },
-      "yellow_level": { "default": "mdi:water" },
-      "tri_color_level": { "default": "mdi:water" },
-      "black_pages_remaining": { "default": "mdi:file-clock-outline" },
-      "cyan_pages_remaining": { "default": "mdi:file-clock-outline" },
-      "magenta_pages_remaining": { "default": "mdi:file-clock-outline" },
-      "yellow_pages_remaining": { "default": "mdi:file-clock-outline" },
-      "tri_color_pages_remaining": { "default": "mdi:file-clock-outline" },
-      "black_pages_printed": { "default": "mdi:file-document-multiple-outline" },
-      "cyan_pages_printed": { "default": "mdi:file-document-multiple-outline" },
-      "magenta_pages_printed": { "default": "mdi:file-document-multiple-outline" },
-      "yellow_pages_printed": { "default": "mdi:file-document-multiple-outline" },
-      "tri_color_pages_printed": { "default": "mdi:file-document-multiple-outline" }
+      "last_seen": {
+        "default": "mdi:clock-check-outline"
+      },
+      "total_pages": {
+        "default": "mdi:file-document-multiple"
+      },
+      "monochrome_pages": {
+        "default": "mdi:file-document-outline"
+      },
+      "color_pages": {
+        "default": "mdi:palette"
+      },
+      "simplex_sheets": {
+        "default": "mdi:file-outline"
+      },
+      "duplex_sheets": {
+        "default": "mdi:file-multiple-outline"
+      },
+      "jams": {
+        "default": "mdi:alert-octagon"
+      },
+      "mispicks": {
+        "default": "mdi:alert-circle-outline"
+      },
+      "scanned_pages": {
+        "default": "mdi:scanner"
+      },
+      "scanned_adf_pages": {
+        "default": "mdi:tray-full"
+      },
+      "scanned_flatbed_pages": {
+        "default": "mdi:scanner"
+      },
+      "scanned_duplex_sheets": {
+        "default": "mdi:file-multiple-outline"
+      },
+      "scanner_jams": {
+        "default": "mdi:alert-octagon"
+      },
+      "scanner_mispicks": {
+        "default": "mdi:alert-circle-outline"
+      },
+      "copied_pages": {
+        "default": "mdi:content-copy"
+      },
+      "faxed_pages": {
+        "default": "mdi:fax"
+      },
+      "black_level": {
+        "default": "mdi:water"
+      },
+      "cyan_level": {
+        "default": "mdi:water"
+      },
+      "magenta_level": {
+        "default": "mdi:water"
+      },
+      "yellow_level": {
+        "default": "mdi:water"
+      },
+      "tri_color_level": {
+        "default": "mdi:water"
+      },
+      "black_pages_remaining": {
+        "default": "mdi:file-clock-outline"
+      },
+      "cyan_pages_remaining": {
+        "default": "mdi:file-clock-outline"
+      },
+      "magenta_pages_remaining": {
+        "default": "mdi:file-clock-outline"
+      },
+      "yellow_pages_remaining": {
+        "default": "mdi:file-clock-outline"
+      },
+      "tri_color_pages_remaining": {
+        "default": "mdi:file-clock-outline"
+      },
+      "black_pages_printed": {
+        "default": "mdi:file-document-multiple-outline"
+      },
+      "cyan_pages_printed": {
+        "default": "mdi:file-document-multiple-outline"
+      },
+      "magenta_pages_printed": {
+        "default": "mdi:file-document-multiple-outline"
+      },
+      "yellow_pages_printed": {
+        "default": "mdi:file-document-multiple-outline"
+      },
+      "tri_color_pages_printed": {
+        "default": "mdi:file-document-multiple-outline"
+      },
+      "last_scan": {
+        "default": "mdi:file-clock-outline"
+      }
+    },
+    "button": {
+      "scan": {
+        "default": "mdi:scanner"
+      }
+    },
+    "image": {
+      "last_scanned_image": {
+        "default": "mdi:image-outline"
+      }
+    },
+    "select": {
+      "scan_format": {
+        "default": "mdi:file-document-outline",
+        "state": {
+          "pdf": "mdi:file-pdf-box",
+          "jpeg": "mdi:file-jpg-box"
+        }
+      },
+      "scan_source": {
+        "default": "mdi:scanner",
+        "state": {
+          "feeder": "mdi:tray-full",
+          "feeder_duplex": "mdi:tray-full"
+        }
+      },
+      "scan_resolution": {
+        "default": "mdi:dots-grid"
+      },
+      "scan_color_mode": {
+        "default": "mdi:palette",
+        "state": {
+          "grayscale": "mdi:invert-colors",
+          "black_and_white": "mdi:contrast-box"
+        }
+      },
+      "scan_page_size": {
+        "default": "mdi:file-outline"
+      }
+    }
+  },
+  "services": {
+    "scan": {
+      "service": "mdi:scanner"
     }
   }
 }

@@ -58,5 +58,113 @@
         }
       }
     }
+  },
+  "services": {
+    "scan": {
+      "name": "Scan",
+      "description": "Scanner et dokument fra printerens glasplade eller dokumentføder og gemmer det som PDF- eller JPEG-fil. Indstillinger, der ikke angives, er printerens scanningsvalg-enheders.",
+      "fields": {
+        "device_id": {
+          "name": "Printer",
+          "description": "Printeren der skal scannes med. Valgfri, når der kun er én."
+        },
+        "format": {
+          "name": "Format",
+          "description": "PDF (én fil med alle sider) eller JPEG (ét billede pr. side)."
+        },
+        "source": {
+          "name": "Kilde",
+          "description": "Glasplade eller dokumentføder."
+        },
+        "resolution": {
+          "name": "Opløsning",
+          "description": "Punkter pr. tomme. 300 passer til dokumenter."
+        },
+        "color_mode": {
+          "name": "Farvetilstand",
+          "description": "Farve, gråtoner eller sort-hvid."
+        },
+        "page_size": {
+          "name": "Sidestørrelse",
+          "description": "Scannet område. Hele glaspladen scanner kildens største område."
+        },
+        "directory": {
+          "name": "Mappe",
+          "description": "Hvor filerne gemmes. Standard: mappen hp i de lokale medier. Den skal være i allowlist_external_dirs."
+        },
+        "filename": {
+          "name": "Filnavn",
+          "description": "Uden filtype. Standard: scan_ efterfulgt af dato og klokkeslæt."
+        }
+      }
+    }
+  },
+  "selector": {
+    "scan_format": {
+      "options": {
+        "pdf": "PDF",
+        "jpeg": "JPEG"
+      }
+    },
+    "scan_source": {
+      "options": {
+        "flatbed": "Glasplade",
+        "feeder": "Dokumentføder",
+        "feeder_duplex": "Dokumentføder, dobbeltsidet"
+      }
+    },
+    "scan_color_mode": {
+      "options": {
+        "color": "Farve",
+        "grayscale": "Gråtoner",
+        "black_and_white": "Sort-hvid"
+      }
+    },
+    "scan_page_size": {
+      "options": {
+        "a4": "A4",
+        "letter": "Letter",
+        "legal": "Legal",
+        "max": "Hele glaspladen"
+      }
+    }
+  },
+  "exceptions": {
+    "printer_offline": {
+      "message": "Printeren er slukket eller svarer ikke."
+    },
+    "no_scanner": {
+      "message": "Denne printer har ingen scanner, eller dens scanner svarer ikke via eSCL (AirScan)."
+    },
+    "scanner_busy": {
+      "message": "Scanneren er optaget. Prøv igen om lidt."
+    },
+    "feeder_empty": {
+      "message": "Dokumentføderen er tom."
+    },
+    "unsupported_source": {
+      "message": "Scanneren tilbyder ikke denne kilde."
+    },
+    "unsupported_format": {
+      "message": "Scanneren tilbyder ikke dette format."
+    },
+    "unsupported_resolution": {
+      "message": "Scanneren tilbyder ikke denne opløsning."
+    },
+    "unsupported_color_mode": {
+      "message": "Scanneren tilbyder ikke denne farvetilstand."
+    },
+    "scan_failed": {
+      "message": "Scanningen mislykkedes: {error}"
+    },
+    "directory_not_allowed": {
+      "message": "Mappen {directory} er ikke tilladt: tilføj den til allowlist_external_dirs."
+    },
+    "device_not_found": {
+      "message": "Denne enhed er ikke en printer fra denne integration."
+    },
+    "device_required": {
+      "message": "Flere HP-printere er konfigureret: vælg en."
+    }
   }
 }

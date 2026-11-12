@@ -58,5 +58,113 @@
         }
       }
     }
+  },
+  "services": {
+    "scan": {
+      "name": "Skenēt",
+      "description": "Skenē dokumentu no printera stikla vai padevēja un saglabā to kā PDF vai JPEG failu. Nenorādītie iestatījumi tiek ņemti no printera skenēšanas atlases entītijām.",
+      "fields": {
+        "device_id": {
+          "name": "Printeris",
+          "description": "Printeris skenēšanai. Nav obligāts, ja ir tikai viens."
+        },
+        "format": {
+          "name": "Formāts",
+          "description": "PDF (viens fails ar visām lapām) vai JPEG (viens attēls katrai lapai)."
+        },
+        "source": {
+          "name": "Avots",
+          "description": "Stikls vai dokumentu padevējs."
+        },
+        "resolution": {
+          "name": "Izšķirtspēja",
+          "description": "Punkti collā. 300 der dokumentiem."
+        },
+        "color_mode": {
+          "name": "Krāsu režīms",
+          "description": "Krāsains, pelēktoņu vai melnbalts."
+        },
+        "page_size": {
+          "name": "Lapas izmērs",
+          "description": "Skenētais laukums. Viss stikls skenē lielāko avota laukumu."
+        },
+        "directory": {
+          "name": "Mape",
+          "description": "Kur tiek saglabāti faili. Noklusējums: lokālo multivides failu mape hp. Tai jābūt allowlist_external_dirs."
+        },
+        "filename": {
+          "name": "Faila nosaukums",
+          "description": "Bez paplašinājuma. Noklusējums: scan_ ar datumu un laiku."
+        }
+      }
+    }
+  },
+  "selector": {
+    "scan_format": {
+      "options": {
+        "pdf": "PDF",
+        "jpeg": "JPEG"
+      }
+    },
+    "scan_source": {
+      "options": {
+        "flatbed": "Stikls",
+        "feeder": "Dokumentu padevējs",
+        "feeder_duplex": "Dokumentu padevējs, abpusēji"
+      }
+    },
+    "scan_color_mode": {
+      "options": {
+        "color": "Krāsains",
+        "grayscale": "Pelēktoņu",
+        "black_and_white": "Melnbalts"
+      }
+    },
+    "scan_page_size": {
+      "options": {
+        "a4": "A4",
+        "letter": "Letter",
+        "legal": "Legal",
+        "max": "Viss stikls"
+      }
+    }
+  },
+  "exceptions": {
+    "printer_offline": {
+      "message": "Printeris ir izslēgts vai neatbild."
+    },
+    "no_scanner": {
+      "message": "Šim printerim nav skenera, vai tā skeneris neatbild caur eSCL (AirScan)."
+    },
+    "scanner_busy": {
+      "message": "Skeneris ir aizņemts. Mēģiniet vēlreiz pēc brīža."
+    },
+    "feeder_empty": {
+      "message": "Dokumentu padevējs ir tukšs."
+    },
+    "unsupported_source": {
+      "message": "Skeneris nepiedāvā šo avotu."
+    },
+    "unsupported_format": {
+      "message": "Skeneris nepiedāvā šo formātu."
+    },
+    "unsupported_resolution": {
+      "message": "Skeneris nepiedāvā šo izšķirtspēju."
+    },
+    "unsupported_color_mode": {
+      "message": "Skeneris nepiedāvā šo krāsu režīmu."
+    },
+    "scan_failed": {
+      "message": "Skenēšana neizdevās: {error}"
+    },
+    "directory_not_allowed": {
+      "message": "Mape {directory} nav atļauta: pievienojiet to allowlist_external_dirs."
+    },
+    "device_not_found": {
+      "message": "Šī ierīce nav šīs integrācijas printeris."
+    },
+    "device_required": {
+      "message": "Ir iestatīti vairāki HP printeri: izvēlieties vienu."
+    }
   }
 }

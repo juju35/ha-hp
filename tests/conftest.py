@@ -28,7 +28,24 @@ DOCUMENTS = {
     "/DevMgmt/ProductUsageDyn.xml": "ProductUsageDyn.xml",
     "/IoMgmt/Adapters": "Adapters.xml",
     "/ePrint/ePrintConfigDyn.xml": "ePrintConfigDyn.xml",
+    "/eSCL/ScannerCapabilities": "ScannerCapabilities.xml",
 }
+JOB = "/eSCL/ScanJobs/1c852a4d-0001"
+
+
+def scanner_status(state: str = "Idle", adf: str = "ScannerAdfLoaded", job: str | None = None) -> bytes:
+    """An eSCL ScannerStatus document."""
+    jobs = (
+        f"<scan:Jobs><scan:JobInfo><pwg:JobUri>{job}</pwg:JobUri><pwg:JobState>Processing</pwg:JobState>"
+        "</scan:JobInfo></scan:Jobs>"
+        if job
+        else ""
+    )
+    return (
+        '<scan:ScannerStatus xmlns:scan="http://schemas.hp.com/imaging/escl/2011/05/03"'
+        ' xmlns:pwg="http://www.pwg.org/schemas/2010/12/sm">'
+        f"<pwg:State>{state}</pwg:State><scan:AdfState>{adf}</scan:AdfState>{jobs}</scan:ScannerStatus>"
+    ).encode()
 
 
 class FakeResponse:
@@ -56,6 +73,15 @@ class FakePrinter:
         self.requests: list[str] = []
         self.not_modified: list[str] = []
         self.attempts = 0
+        # Scanner: state, pages of the next job, posted settings, 503s before a page, job address given.
+        self.scanner_state = "Idle"
+        self.adf_state = "ScannerAdfLoaded"
+        self.pages: list[bytes] = []
+        self.scan_jobs: list[bytes] = []
+        self.busy_pages = 0
+        self.give_location = True
+        self.job_running = False
+        self.deleted: list[str] = []
 
     def set_status(self, category: str) -> None:
         body = (FIXTURES / "ProductStatusDyn.xml").read_text()
@@ -68,6 +94,39 @@ class FakePrinter:
 
     def count(self, path: str) -> int:
         return self.requests.count(path)
+
+    @asynccontextmanager
+    async def request(self, method: str, url: Any, data: bytes | None = None, **_: Any):
+        """eSCL requests: scanner status, scan jobs and their documents."""
+        path = url.path
+        self.attempts += 1
+        if not self.online:
+            raise aiohttp.ClientConnectionError("host unreachable")
+        if method == "GET" and path == "/eSCL/ScannerStatus":
+            job = JOB if self.job_running else None
+            yield FakeResponse(
+                200, scanner_status(self.scanner_state, self.adf_state, job), {"Content-Type": "text/xml"}
+            )
+        elif method == "POST" and path == "/eSCL/ScanJobs":
+            self.scan_jobs.append(data or b"")
+            self.job_running = True
+            headers = {"Location": f"http://printer.local:80{JOB}"} if self.give_location else {}
+            yield FakeResponse(201, b"", headers)
+        elif method == "GET" and path == f"{JOB}/NextDocument":
+            if self.busy_pages:
+                self.busy_pages -= 1
+                yield FakeResponse(503)
+            elif self.pages:
+                yield FakeResponse(200, self.pages.pop(0), {"Content-Type": "application/octet-stream"})
+            else:
+                self.job_running = False
+                yield FakeResponse(404)
+        elif method == "DELETE":
+            self.deleted.append(path)
+            self.job_running = False
+            yield FakeResponse(200)
+        else:
+            yield FakeResponse(404)
 
     @asynccontextmanager
     async def get(self, url: Any, headers: dict[str, str] | None = None, **_: Any):

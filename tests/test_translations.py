@@ -72,7 +72,7 @@ def test_translation_parity(language: str):
 
 
 # Serbian: brands, placeholders and identifiers stay in Latin script in the Cyrillic translation.
-_SR_LATIN_ALLOWED = re.compile(r"HTTPS|HP|IP|\{\w+\}")
+_SR_LATIN_ALLOWED = re.compile(r"HTTPS|HP|IP|PDF|JPEG|eSCL|AirScan|allowlist_external_dirs|scan_|A4|\bhp\b|\{\w+\}")
 
 
 @pytest.mark.parametrize(
@@ -94,13 +94,16 @@ def test_entity_names_not_translated(language: str):
 
 def test_every_translation_key_is_used() -> None:
     """Each entity translation key of en.json belongs to an entity, and the other way round."""
-    from custom_components.hp import binary_sensor, sensor
+    from custom_components.hp import binary_sensor, button, image, select, sensor
 
     english = json.loads((TRANSLATIONS / "en.json").read_text(encoding="utf-8"))["entity"]
     used = {
+        "button": {button.SCAN.translation_key},
+        "image": {image.LAST_IMAGE.translation_key},
+        "select": {d.translation_key for d in select.SCAN_SELECTS},
         "binary_sensor": {binary_sensor.ONLINE.translation_key}
         | {d.translation_key for d in binary_sensor.CONNECTIVITY},
-        "sensor": {sensor.STATUS.translation_key, sensor.LAST_SEEN.translation_key}
+        "sensor": {sensor.STATUS.translation_key, sensor.LAST_SEEN.translation_key, sensor.LAST_SCAN.translation_key}
         | {d.translation_key for d in sensor.COUNTERS}
         | {f"{color}_{d.key}" for color in sensor.COLORS for d in sensor.CONSUMABLE_SENSORS},
     }
@@ -112,3 +115,17 @@ def test_icons_match_translations() -> None:
     icons = json.loads((TRANSLATIONS.parent / "icons.json").read_text(encoding="utf-8"))["entity"]
     english = json.loads((TRANSLATIONS / "en.json").read_text(encoding="utf-8"))["entity"]
     assert {p: set(k) for p, k in icons.items()} == {p: set(k) for p, k in english.items()}
+
+
+def test_service_fields_translated() -> None:
+    """Every field of services.yaml has a name in en.json, and every selector translation key exists."""
+    import yaml
+
+    services = yaml.safe_load((TRANSLATIONS.parent / "services.yaml").read_text(encoding="utf-8"))
+    english = json.loads((TRANSLATIONS / "en.json").read_text(encoding="utf-8"))
+    for service, spec in services.items():
+        assert set(spec["fields"]) == set(english["services"][service]["fields"])
+        for field in spec["fields"].values():
+            if key := field["selector"].get("select", {}).get("translation_key"):
+                options = set(field["selector"]["select"]["options"])
+                assert set(english["selector"][key]["options"]) == options

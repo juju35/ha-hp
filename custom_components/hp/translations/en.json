@@ -302,7 +302,173 @@
       },
       "tri_color_pages_printed": {
         "name": "Tri-color pages printed"
+      },
+      "last_scan": {
+        "name": "Last scan",
+        "state_attributes": {
+          "format": {
+            "name": "Format"
+          },
+          "files": {
+            "name": "Files"
+          }
+        }
       }
+    },
+    "button": {
+      "scan": {
+        "name": "Scan"
+      }
+    },
+    "image": {
+      "last_scanned_image": {
+        "name": "Last scanned image"
+      }
+    },
+    "select": {
+      "scan_format": {
+        "name": "Scan format",
+        "state": {
+          "pdf": "PDF",
+          "jpeg": "JPEG"
+        }
+      },
+      "scan_source": {
+        "name": "Scan source",
+        "state": {
+          "flatbed": "Glass",
+          "feeder": "Document feeder",
+          "feeder_duplex": "Document feeder, double-sided"
+        }
+      },
+      "scan_resolution": {
+        "name": "Scan resolution"
+      },
+      "scan_color_mode": {
+        "name": "Scan color mode",
+        "state": {
+          "color": "Color",
+          "grayscale": "Grayscale",
+          "black_and_white": "Black and white"
+        }
+      },
+      "scan_page_size": {
+        "name": "Scan page size",
+        "state": {
+          "a4": "A4",
+          "letter": "Letter",
+          "legal": "Legal",
+          "max": "Whole glass"
+        }
+      }
+    }
+  },
+  "services": {
+    "scan": {
+      "name": "Scan",
+      "description": "Scans a document from the printer's glass or document feeder and saves it as a PDF or JPEG file. Settings not given are those of the printer's scan select entities.",
+      "fields": {
+        "device_id": {
+          "name": "Printer",
+          "description": "The printer to scan with. Optional when only one is set up."
+        },
+        "format": {
+          "name": "Format",
+          "description": "PDF (one file with every page) or JPEG (one image per page)."
+        },
+        "source": {
+          "name": "Source",
+          "description": "Glass or document feeder."
+        },
+        "resolution": {
+          "name": "Resolution",
+          "description": "Dots per inch. 300 suits documents."
+        },
+        "color_mode": {
+          "name": "Color mode",
+          "description": "Color, grayscale or black and white."
+        },
+        "page_size": {
+          "name": "Page size",
+          "description": "Area scanned. Whole glass scans the largest area of the source."
+        },
+        "directory": {
+          "name": "Folder",
+          "description": "Where the files are saved. Default: the hp folder of the local media. It must be in allowlist_external_dirs."
+        },
+        "filename": {
+          "name": "File name",
+          "description": "Without extension. Default: scan_ followed by the date and time."
+        }
+      }
+    }
+  },
+  "selector": {
+    "scan_format": {
+      "options": {
+        "pdf": "PDF",
+        "jpeg": "JPEG"
+      }
+    },
+    "scan_source": {
+      "options": {
+        "flatbed": "Glass",
+        "feeder": "Document feeder",
+        "feeder_duplex": "Document feeder, double-sided"
+      }
+    },
+    "scan_color_mode": {
+      "options": {
+        "color": "Color",
+        "grayscale": "Grayscale",
+        "black_and_white": "Black and white"
+      }
+    },
+    "scan_page_size": {
+      "options": {
+        "a4": "A4",
+        "letter": "Letter",
+        "legal": "Legal",
+        "max": "Whole glass"
+      }
+    }
+  },
+  "exceptions": {
+    "printer_offline": {
+      "message": "The printer is off or does not answer."
+    },
+    "no_scanner": {
+      "message": "This printer has no scanner, or its scanner does not answer through eSCL (AirScan)."
+    },
+    "scanner_busy": {
+      "message": "The scanner is busy. Try again in a moment."
+    },
+    "feeder_empty": {
+      "message": "The document feeder is empty."
+    },
+    "unsupported_source": {
+      "message": "The scanner does not offer this source."
+    },
+    "unsupported_format": {
+      "message": "The scanner does not offer this format."
+    },
+    "unsupported_resolution": {
+      "message": "The scanner does not offer this resolution."
+    },
+    "unsupported_color_mode": {
+      "message": "The scanner does not offer this color mode."
+    },
+    "scan_failed": {
+      "message": "The scan failed: {error}"
+    },
+    "directory_not_allowed": {
+      "message": "The folder {directory} is not allowed: add it to allowlist_external_dirs."
+    },
+    "device_not_found": {
+      "message": "This device is not a printer of this integration."
+    },
+    "device_required": {
+      "message": "Several HP printers are set up: choose one."
     }
   }
 }

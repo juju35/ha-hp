@@ -58,5 +58,113 @@
         }
       }
     }
+  },
+  "services": {
+    "scan": {
+      "name": "Скенирај",
+      "description": "Скенира документ са стакла или улагача штампача и чува га као PDF или JPEG датотеку. Подешавања која нису наведена узимају се из ентитета за избор скенирања штампача.",
+      "fields": {
+        "device_id": {
+          "name": "Штампач",
+          "description": "Штампач за скенирање. Опционо ако постоји само један."
+        },
+        "format": {
+          "name": "Формат",
+          "description": "PDF (једна датотека са свим страницама) или JPEG (једна слика по страници)."
+        },
+        "source": {
+          "name": "Извор",
+          "description": "Стакло или улагач докумената."
+        },
+        "resolution": {
+          "name": "Резолуција",
+          "description": "Тачака по инчу. 300 одговара документима."
+        },
+        "color_mode": {
+          "name": "Режим боја",
+          "description": "У боји, нијансе сиве или црно-бело."
+        },
+        "page_size": {
+          "name": "Величина странице",
+          "description": "Скенирана област. Цело стакло скенира највећу област извора."
+        },
+        "directory": {
+          "name": "Фасцикла",
+          "description": "Где се чувају датотеке. Подразумевано: фасцикла hp локалних медија. Мора бити у allowlist_external_dirs."
+        },
+        "filename": {
+          "name": "Име датотеке",
+          "description": "Без екстензије. Подразумевано: scan_ са датумом и временом."
+        }
+      }
+    }
+  },
+  "selector": {
+    "scan_format": {
+      "options": {
+        "pdf": "PDF",
+        "jpeg": "JPEG"
+      }
+    },
+    "scan_source": {
+      "options": {
+        "flatbed": "Стакло",
+        "feeder": "Улагач докумената",
+        "feeder_duplex": "Улагач докумената, двострано"
+      }
+    },
+    "scan_color_mode": {
+      "options": {
+        "color": "У боји",
+        "grayscale": "Нијансе сиве",
+        "black_and_white": "Црно-бело"
+      }
+    },
+    "scan_page_size": {
+      "options": {
+        "a4": "A4",
+        "letter": "Писмо",
+        "legal": "Правни",
+        "max": "Цело стакло"
+      }
+    }
+  },
+  "exceptions": {
+    "printer_offline": {
+      "message": "Штампач је искључен или не одговара."
+    },
+    "no_scanner": {
+      "message": "Овај штампач нема скенер, или његов скенер не одговара преко eSCL (AirScan)."
+    },
+    "scanner_busy": {
+      "message": "Скенер је заузет. Покушајте поново за тренутак."
+    },
+    "feeder_empty": {
+      "message": "Улагач докумената је празан."
+    },
+    "unsupported_source": {
+      "message": "Скенер не нуди овај извор."
+    },
+    "unsupported_format": {
+      "message": "Скенер не нуди овај формат."
+    },
+    "unsupported_resolution": {
+      "message": "Скенер не нуди ову резолуцију."
+    },
+    "unsupported_color_mode": {
+      "message": "Скенер не нуди овај режим боја."
+    },
+    "scan_failed": {
+      "message": "Скенирање није успело: {error}"
+    },
+    "directory_not_allowed": {
+      "message": "Фасцикла {directory} није дозвољена: додајте је у allowlist_external_dirs."
+    },
+    "device_not_found": {
+      "message": "Овај уређај није штампач ове интеграције."
+    },
+    "device_required": {
+      "message": "Подешено је више HP штампача: изаберите један."
+    }
   }
 }

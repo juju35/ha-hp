@@ -58,5 +58,113 @@
         }
       }
     }
+  },
+  "services": {
+    "scan": {
+      "name": "Skanuj",
+      "description": "Skanuje dokument z szyby lub podajnika drukarki i zapisuje go jako plik PDF lub JPEG. Niepodane ustawienia pochodzą z encji wyboru skanowania drukarki.",
+      "fields": {
+        "device_id": {
+          "name": "Drukarka",
+          "description": "Drukarka do skanowania. Opcjonalnie, gdy jest tylko jedna."
+        },
+        "format": {
+          "name": "Format",
+          "description": "PDF (jeden plik ze wszystkimi stronami) lub JPEG (jeden obraz na stronę)."
+        },
+        "source": {
+          "name": "Źródło",
+          "description": "Szyba lub podajnik dokumentów."
+        },
+        "resolution": {
+          "name": "Rozdzielczość",
+          "description": "Punkty na cal. 300 nadaje się do dokumentów."
+        },
+        "color_mode": {
+          "name": "Tryb koloru",
+          "description": "Kolor, skala szarości lub czarno-biały."
+        },
+        "page_size": {
+          "name": "Rozmiar strony",
+          "description": "Skanowany obszar. Cała szyba skanuje największy obszar źródła."
+        },
+        "directory": {
+          "name": "Folder",
+          "description": "Gdzie zapisywane są pliki. Domyślnie: folder hp lokalnych multimediów. Musi być w allowlist_external_dirs."
+        },
+        "filename": {
+          "name": "Nazwa pliku",
+          "description": "Bez rozszerzenia. Domyślnie: scan_ z datą i godziną."
+        }
+      }
+    }
+  },
+  "selector": {
+    "scan_format": {
+      "options": {
+        "pdf": "PDF",
+        "jpeg": "JPEG"
+      }
+    },
+    "scan_source": {
+      "options": {
+        "flatbed": "Szyba",
+        "feeder": "Podajnik dokumentów",
+        "feeder_duplex": "Podajnik dokumentów, dwustronnie"
+      }
+    },
+    "scan_color_mode": {
+      "options": {
+        "color": "Kolor",
+        "grayscale": "Skala szarości",
+        "black_and_white": "Czarno-biały"
+      }
+    },
+    "scan_page_size": {
+      "options": {
+        "a4": "A4",
+        "letter": "Letter",
+        "legal": "Legal",
+        "max": "Cała szyba"
+      }
+    }
+  },
+  "exceptions": {
+    "printer_offline": {
+      "message": "Drukarka jest wyłączona lub nie odpowiada."
+    },
+    "no_scanner": {
+      "message": "Ta drukarka nie ma skanera lub jej skaner nie odpowiada przez eSCL (AirScan)."
+    },
+    "scanner_busy": {
+      "message": "Skaner jest zajęty. Spróbuj ponownie za chwilę."
+    },
+    "feeder_empty": {
+      "message": "Podajnik dokumentów jest pusty."
+    },
+    "unsupported_source": {
+      "message": "Skaner nie oferuje tego źródła."
+    },
+    "unsupported_format": {
+      "message": "Skaner nie oferuje tego formatu."
+    },
+    "unsupported_resolution": {
+      "message": "Skaner nie oferuje tej rozdzielczości."
+    },
+    "unsupported_color_mode": {
+      "message": "Skaner nie oferuje tego trybu koloru."
+    },
+    "scan_failed": {
+      "message": "Skanowanie nie powiodło się: {error}"
+    },
+    "directory_not_allowed": {
+      "message": "Folder {directory} jest niedozwolony: dodaj go do allowlist_external_dirs."
+    },
+    "device_not_found": {
+      "message": "To urządzenie nie jest drukarką tej integracji."
+    },
+    "device_required": {
+      "message": "Skonfigurowano kilka drukarek HP: wybierz jedną."
+    }
   }
 }

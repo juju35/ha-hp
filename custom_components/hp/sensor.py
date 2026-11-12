@@ -15,6 +15,7 @@ from homeassistant.components.sensor import (
 from homeassistant.const import PERCENTAGE, EntityCategory
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
+from homeassistant.util import dt as dt_util
 
 from .const import STATUSES
 from .coordinator import HpConfigEntry, HpCoordinator
@@ -84,6 +85,11 @@ STATUS = SensorEntityDescription(
     device_class=SensorDeviceClass.ENUM,
     options=list(STATUSES),
 )
+LAST_SCAN = SensorEntityDescription(
+    key="last_scan",
+    translation_key="last_scan",
+    device_class=SensorDeviceClass.TIMESTAMP,
+)
 LAST_SEEN = SensorEntityDescription(
     key="last_seen",
     translation_key="last_seen",
@@ -109,6 +115,9 @@ async def async_setup_entry(
         if "status" not in known:
             entities += [HpStatusSensor(coordinator), HpLastSeenSensor(coordinator)]
             known.add("status")
+        if "last_scan" not in known and data["scanner"]:
+            entities.append(HpLastScanSensor(coordinator))
+            known.add("last_scan")
         for description in COUNTERS:
             if description.key not in known and description.key in data["counters"]:
                 known.add(description.key)
@@ -178,6 +187,28 @@ class HpLastSeenSensor(HpEntity, SensorEntity):
     def native_value(self) -> datetime | None:
         """Return the time of the last answer."""
         return self.coordinator.last_seen
+
+
+class HpLastScanSensor(HpEntity, SensorEntity):
+    """When the last scan was saved, with its files."""
+
+    entity_description = LAST_SCAN
+
+    def __init__(self, coordinator: HpCoordinator) -> None:
+        """Initialize the sensor."""
+        super().__init__(coordinator, LAST_SCAN.key)
+
+    @property
+    def native_value(self) -> datetime | None:
+        """Return the time of the last scan."""
+        last = self.coordinator.data.get("last_scan")
+        return dt_util.parse_datetime(last["time"]) if last else None
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return the format and files of the last scan."""
+        last = self.coordinator.data.get("last_scan") or {}
+        return {"format": last.get("format"), "files": last.get("files", [])}
 
 
 class HpCounterSensor(HpEntity, SensorEntity):

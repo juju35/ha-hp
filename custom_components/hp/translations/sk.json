@@ -58,5 +58,113 @@
         }
       }
     }
+  },
+  "services": {
+    "scan": {
+      "name": "Skenovať",
+      "description": "Naskenuje dokument zo skla alebo podávača tlačiarne a uloží ho ako súbor PDF alebo JPEG. Nezadané nastavenia sa preberajú z entít výberu skenovania tlačiarne.",
+      "fields": {
+        "device_id": {
+          "name": "Tlačiareň",
+          "description": "Tlačiareň na skenovanie. Voliteľné, ak je len jedna."
+        },
+        "format": {
+          "name": "Formát",
+          "description": "PDF (jeden súbor so všetkými stranami) alebo JPEG (jeden obrázok na stranu)."
+        },
+        "source": {
+          "name": "Zdroj",
+          "description": "Sklo alebo podávač dokumentov."
+        },
+        "resolution": {
+          "name": "Rozlíšenie",
+          "description": "Bodov na palec. 300 sa hodí pre dokumenty."
+        },
+        "color_mode": {
+          "name": "Farebný režim",
+          "description": "Farebne, odtiene sivej alebo čiernobielo."
+        },
+        "page_size": {
+          "name": "Veľkosť strany",
+          "description": "Skenovaná oblasť. Celé sklo skenuje najväčšiu oblasť zdroja."
+        },
+        "directory": {
+          "name": "Priečinok",
+          "description": "Kam sa ukladajú súbory. Predvolene: priečinok hp lokálnych médií. Musí byť v allowlist_external_dirs."
+        },
+        "filename": {
+          "name": "Názov súboru",
+          "description": "Bez prípony. Predvolene: scan_ s dátumom a časom."
+        }
+      }
+    }
+  },
+  "selector": {
+    "scan_format": {
+      "options": {
+        "pdf": "PDF",
+        "jpeg": "JPEG"
+      }
+    },
+    "scan_source": {
+      "options": {
+        "flatbed": "Sklo",
+        "feeder": "Podávač dokumentov",
+        "feeder_duplex": "Podávač dokumentov, obojstranne"
+      }
+    },
+    "scan_color_mode": {
+      "options": {
+        "color": "Farebne",
+        "grayscale": "Odtiene sivej",
+        "black_and_white": "Čiernobielo"
+      }
+    },
+    "scan_page_size": {
+      "options": {
+        "a4": "A4",
+        "letter": "Letter",
+        "legal": "Legal",
+        "max": "Celé sklo"
+      }
+    }
+  },
+  "exceptions": {
+    "printer_offline": {
+      "message": "Tlačiareň je vypnutá alebo neodpovedá."
+    },
+    "no_scanner": {
+      "message": "Táto tlačiareň nemá skener, alebo jej skener neodpovedá cez eSCL (AirScan)."
+    },
+    "scanner_busy": {
+      "message": "Skener je zaneprázdnený. Skúste to o chvíľu znova."
+    },
+    "feeder_empty": {
+      "message": "Podávač dokumentov je prázdny."
+    },
+    "unsupported_source": {
+      "message": "Skener neponúka tento zdroj."
+    },
+    "unsupported_format": {
+      "message": "Skener neponúka tento formát."
+    },
+    "unsupported_resolution": {
+      "message": "Skener neponúka toto rozlíšenie."
+    },
+    "unsupported_color_mode": {
+      "message": "Skener neponúka tento farebný režim."
+    },
+    "scan_failed": {
+      "message": "Skenovanie zlyhalo: {error}"
+    },
+    "directory_not_allowed": {
+      "message": "Priečinok {directory} nie je povolený: pridajte ho do allowlist_external_dirs."
+    },
+    "device_not_found": {
+      "message": "Toto zariadenie nie je tlačiareň tejto integrácie."
+    },
+    "device_required": {
+      "message": "Je nastavených viac tlačiarní HP: vyberte jednu."
+    }
   }
 }

@@ -58,5 +58,113 @@
         }
       }
     }
+  },
+  "services": {
+    "scan": {
+      "name": "Сканувати",
+      "description": "Сканує документ зі скла або автоподавача принтера й зберігає його у файл PDF або JPEG. Невказані параметри беруться з об'єктів вибору сканування принтера.",
+      "fields": {
+        "device_id": {
+          "name": "Принтер",
+          "description": "Принтер для сканування. Необов'язково, якщо він один."
+        },
+        "format": {
+          "name": "Формат",
+          "description": "PDF (один файл з усіма сторінками) або JPEG (одне зображення на сторінку)."
+        },
+        "source": {
+          "name": "Джерело",
+          "description": "Скло або автоподавач документів."
+        },
+        "resolution": {
+          "name": "Роздільна здатність",
+          "description": "Точок на дюйм. 300 підходить для документів."
+        },
+        "color_mode": {
+          "name": "Колірний режим",
+          "description": "Кольоровий, відтінки сірого або чорно-білий."
+        },
+        "page_size": {
+          "name": "Розмір сторінки",
+          "description": "Область сканування. Усе скло сканує найбільшу область джерела."
+        },
+        "directory": {
+          "name": "Тека",
+          "description": "Куди зберігаються файли. Типово: тека hp локальних медіа. Вона має бути в allowlist_external_dirs."
+        },
+        "filename": {
+          "name": "Ім'я файлу",
+          "description": "Без розширення. Типово: scan_ з датою і часом."
+        }
+      }
+    }
+  },
+  "selector": {
+    "scan_format": {
+      "options": {
+        "pdf": "PDF",
+        "jpeg": "JPEG"
+      }
+    },
+    "scan_source": {
+      "options": {
+        "flatbed": "Скло",
+        "feeder": "Автоподавач",
+        "feeder_duplex": "Автоподавач, двобічний"
+      }
+    },
+    "scan_color_mode": {
+      "options": {
+        "color": "Кольоровий",
+        "grayscale": "Відтінки сірого",
+        "black_and_white": "Чорно-білий"
+      }
+    },
+    "scan_page_size": {
+      "options": {
+        "a4": "A4",
+        "letter": "Letter",
+        "legal": "Legal",
+        "max": "Усе скло"
+      }
+    }
+  },
+  "exceptions": {
+    "printer_offline": {
+      "message": "Принтер вимкнений або не відповідає."
+    },
+    "no_scanner": {
+      "message": "Цей принтер не має сканера, або сканер не відповідає через eSCL (AirScan)."
+    },
+    "scanner_busy": {
+      "message": "Сканер зайнятий. Спробуйте ще раз за мить."
+    },
+    "feeder_empty": {
+      "message": "Автоподавач документів порожній."
+    },
+    "unsupported_source": {
+      "message": "Сканер не підтримує це джерело."
+    },
+    "unsupported_format": {
+      "message": "Сканер не підтримує цей формат."
+    },
+    "unsupported_resolution": {
+      "message": "Сканер не підтримує цю роздільну здатність."
+    },
+    "unsupported_color_mode": {
+      "message": "Сканер не підтримує цей колірний режим."
+    },
+    "scan_failed": {
+      "message": "Сканування не вдалося: {error}"
+    },
+    "directory_not_allowed": {
+      "message": "Тека {directory} не дозволена: додайте її до allowlist_external_dirs."
+    },
+    "device_not_found": {
+      "message": "Цей пристрій не є принтером цієї інтеграції."
+    },
+    "device_required": {
+      "message": "Налаштовано кілька принтерів HP: виберіть один."
+    }
   }
 }

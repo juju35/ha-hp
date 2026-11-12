@@ -58,5 +58,113 @@
         }
       }
     }
+  },
+  "services": {
+    "scan": {
+      "name": "Scannen",
+      "description": "Scannt ein Dokument vom Vorlagenglas oder Dokumenteneinzug des Druckers und speichert es als PDF- oder JPEG-Datei. Nicht angegebene Einstellungen stammen aus den Scan-Auswahlentitäten des Druckers.",
+      "fields": {
+        "device_id": {
+          "name": "Drucker",
+          "description": "Der zu verwendende Drucker. Optional, wenn nur einer eingerichtet ist."
+        },
+        "format": {
+          "name": "Format",
+          "description": "PDF (eine Datei mit allen Seiten) oder JPEG (ein Bild pro Seite)."
+        },
+        "source": {
+          "name": "Quelle",
+          "description": "Vorlagenglas oder Dokumenteneinzug."
+        },
+        "resolution": {
+          "name": "Auflösung",
+          "description": "Punkte pro Zoll. 300 eignet sich für Dokumente."
+        },
+        "color_mode": {
+          "name": "Farbmodus",
+          "description": "Farbe, Graustufen oder Schwarzweiß."
+        },
+        "page_size": {
+          "name": "Seitenformat",
+          "description": "Gescannter Bereich. Ganzes Glas scannt den größten Bereich der Quelle."
+        },
+        "directory": {
+          "name": "Ordner",
+          "description": "Wo die Dateien gespeichert werden. Standard: der Ordner hp der lokalen Medien. Er muss in allowlist_external_dirs stehen."
+        },
+        "filename": {
+          "name": "Dateiname",
+          "description": "Ohne Endung. Standard: scan_ gefolgt von Datum und Uhrzeit."
+        }
+      }
+    }
+  },
+  "selector": {
+    "scan_format": {
+      "options": {
+        "pdf": "PDF",
+        "jpeg": "JPEG"
+      }
+    },
+    "scan_source": {
+      "options": {
+        "flatbed": "Vorlagenglas",
+        "feeder": "Dokumenteneinzug",
+        "feeder_duplex": "Dokumenteneinzug, beidseitig"
+      }
+    },
+    "scan_color_mode": {
+      "options": {
+        "color": "Farbe",
+        "grayscale": "Graustufen",
+        "black_and_white": "Schwarzweiß"
+      }
+    },
+    "scan_page_size": {
+      "options": {
+        "a4": "A4",
+        "letter": "Letter",
+        "legal": "Legal",
+        "max": "Ganzes Glas"
+      }
+    }
+  },
+  "exceptions": {
+    "printer_offline": {
+      "message": "Der Drucker ist aus oder antwortet nicht."
+    },
+    "no_scanner": {
+      "message": "Dieser Drucker hat keinen Scanner, oder sein Scanner antwortet nicht über eSCL (AirScan)."
+    },
+    "scanner_busy": {
+      "message": "Der Scanner ist beschäftigt. Versuchen Sie es gleich noch einmal."
+    },
+    "feeder_empty": {
+      "message": "Der Dokumenteneinzug ist leer."
+    },
+    "unsupported_source": {
+      "message": "Der Scanner bietet diese Quelle nicht an."
+    },
+    "unsupported_format": {
+      "message": "Der Scanner bietet dieses Format nicht an."
+    },
+    "unsupported_resolution": {
+      "message": "Der Scanner bietet diese Auflösung nicht an."
+    },
+    "unsupported_color_mode": {
+      "message": "Der Scanner bietet diesen Farbmodus nicht an."
+    },
+    "scan_failed": {
+      "message": "Der Scan ist fehlgeschlagen: {error}"
+    },
+    "directory_not_allowed": {
+      "message": "Der Ordner {directory} ist nicht erlaubt: Fügen Sie ihn zu allowlist_external_dirs hinzu."
+    },
+    "device_not_found": {
+      "message": "Dieses Gerät ist kein Drucker dieser Integration."
+    },
+    "device_required": {
+      "message": "Mehrere HP-Drucker sind eingerichtet: Wählen Sie einen aus."
+    }
   }
 }

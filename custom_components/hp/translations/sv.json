@@ -58,5 +58,113 @@
         }
       }
     }
+  },
+  "services": {
+    "scan": {
+      "name": "Skanna",
+      "description": "Skannar ett dokument från skrivarens glas eller dokumentmatare och sparar det som PDF- eller JPEG-fil. Inställningar som inte anges hämtas från skrivarens val-entiteter för skanning.",
+      "fields": {
+        "device_id": {
+          "name": "Skrivare",
+          "description": "Skrivaren att skanna med. Valfritt när det bara finns en."
+        },
+        "format": {
+          "name": "Format",
+          "description": "PDF (en fil med alla sidor) eller JPEG (en bild per sida)."
+        },
+        "source": {
+          "name": "Källa",
+          "description": "Glas eller dokumentmatare."
+        },
+        "resolution": {
+          "name": "Upplösning",
+          "description": "Punkter per tum. 300 passar dokument."
+        },
+        "color_mode": {
+          "name": "Färgläge",
+          "description": "Färg, gråskala eller svartvitt."
+        },
+        "page_size": {
+          "name": "Sidstorlek",
+          "description": "Skannat område. Hela glaset skannar källans största område."
+        },
+        "directory": {
+          "name": "Mapp",
+          "description": "Var filerna sparas. Standard: mappen hp i lokala media. Den måste finnas i allowlist_external_dirs."
+        },
+        "filename": {
+          "name": "Filnamn",
+          "description": "Utan filändelse. Standard: scan_ följt av datum och tid."
+        }
+      }
+    }
+  },
+  "selector": {
+    "scan_format": {
+      "options": {
+        "pdf": "PDF",
+        "jpeg": "JPEG"
+      }
+    },
+    "scan_source": {
+      "options": {
+        "flatbed": "Glas",
+        "feeder": "Dokumentmatare",
+        "feeder_duplex": "Dokumentmatare, dubbelsidigt"
+      }
+    },
+    "scan_color_mode": {
+      "options": {
+        "color": "Färg",
+        "grayscale": "Gråskala",
+        "black_and_white": "Svartvitt"
+      }
+    },
+    "scan_page_size": {
+      "options": {
+        "a4": "A4",
+        "letter": "Letter",
+        "legal": "Legal",
+        "max": "Hela glaset"
+      }
+    }
+  },
+  "exceptions": {
+    "printer_offline": {
+      "message": "Skrivaren är avstängd eller svarar inte."
+    },
+    "no_scanner": {
+      "message": "Den här skrivaren har ingen skanner, eller så svarar skannern inte via eSCL (AirScan)."
+    },
+    "scanner_busy": {
+      "message": "Skannern är upptagen. Försök igen om en stund."
+    },
+    "feeder_empty": {
+      "message": "Dokumentmataren är tom."
+    },
+    "unsupported_source": {
+      "message": "Skannern erbjuder inte den här källan."
+    },
+    "unsupported_format": {
+      "message": "Skannern erbjuder inte det här formatet."
+    },
+    "unsupported_resolution": {
+      "message": "Skannern erbjuder inte den här upplösningen."
+    },
+    "unsupported_color_mode": {
+      "message": "Skannern erbjuder inte det här färgläget."
+    },
+    "scan_failed": {
+      "message": "Skanningen misslyckades: {error}"
+    },
+    "directory_not_allowed": {
+      "message": "Mappen {directory} är inte tillåten: lägg till den i allowlist_external_dirs."
+    },
+    "device_not_found": {
+      "message": "Den här enheten är inte en skrivare i den här integrationen."
+    },
+    "device_required": {
+      "message": "Flera HP-skrivare är konfigurerade: välj en."
+    }
   }
 }

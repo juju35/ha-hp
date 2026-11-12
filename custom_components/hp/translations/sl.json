@@ -58,5 +58,113 @@
         }
       }
     }
+  },
+  "services": {
+    "scan": {
+      "name": "Optično preberi",
+      "description": "Optično prebere dokument s stekla ali podajalnika tiskalnika in ga shrani kot datoteko PDF ali JPEG. Nenavedene nastavitve so tiste iz entitet za izbiro skeniranja tiskalnika.",
+      "fields": {
+        "device_id": {
+          "name": "Tiskalnik",
+          "description": "Tiskalnik za skeniranje. Neobvezno, če je samo eden."
+        },
+        "format": {
+          "name": "Oblika",
+          "description": "PDF (ena datoteka z vsemi stranmi) ali JPEG (ena slika na stran)."
+        },
+        "source": {
+          "name": "Vir",
+          "description": "Steklo ali podajalnik dokumentov."
+        },
+        "resolution": {
+          "name": "Ločljivost",
+          "description": "Pik na palec. 300 je primerna za dokumente."
+        },
+        "color_mode": {
+          "name": "Barvni način",
+          "description": "Barvno, sivine ali črno-belo."
+        },
+        "page_size": {
+          "name": "Velikost strani",
+          "description": "Skenirano območje. Celotno steklo skenira največje območje vira."
+        },
+        "directory": {
+          "name": "Mapa",
+          "description": "Kam se shranijo datoteke. Privzeto: mapa hp lokalnih medijev. Biti mora v allowlist_external_dirs."
+        },
+        "filename": {
+          "name": "Ime datoteke",
+          "description": "Brez končnice. Privzeto: scan_ z datumom in uro."
+        }
+      }
+    }
+  },
+  "selector": {
+    "scan_format": {
+      "options": {
+        "pdf": "PDF",
+        "jpeg": "JPEG"
+      }
+    },
+    "scan_source": {
+      "options": {
+        "flatbed": "Steklo",
+        "feeder": "Podajalnik dokumentov",
+        "feeder_duplex": "Podajalnik dokumentov, obojestransko"
+      }
+    },
+    "scan_color_mode": {
+      "options": {
+        "color": "Barvno",
+        "grayscale": "Sivine",
+        "black_and_white": "Črno-belo"
+      }
+    },
+    "scan_page_size": {
+      "options": {
+        "a4": "A4",
+        "letter": "Letter",
+        "legal": "Legal",
+        "max": "Celotno steklo"
+      }
+    }
+  },
+  "exceptions": {
+    "printer_offline": {
+      "message": "Tiskalnik je izklopljen ali se ne odziva."
+    },
+    "no_scanner": {
+      "message": "Ta tiskalnik nima optičnega bralnika ali se ta ne odziva prek eSCL (AirScan)."
+    },
+    "scanner_busy": {
+      "message": "Optični bralnik je zaseden. Poskusite znova čez trenutek."
+    },
+    "feeder_empty": {
+      "message": "Podajalnik dokumentov je prazen."
+    },
+    "unsupported_source": {
+      "message": "Optični bralnik ne ponuja tega vira."
+    },
+    "unsupported_format": {
+      "message": "Optični bralnik ne ponuja te oblike."
+    },
+    "unsupported_resolution": {
+      "message": "Optični bralnik ne ponuja te ločljivosti."
+    },
+    "unsupported_color_mode": {
+      "message": "Optični bralnik ne ponuja tega barvnega načina."
+    },
+    "scan_failed": {
+      "message": "Skeniranje ni uspelo: {error}"
+    },
+    "directory_not_allowed": {
+      "message": "Mapa {directory} ni dovoljena: dodajte jo v allowlist_external_dirs."
+    },
+    "device_not_found": {
+      "message": "Ta naprava ni tiskalnik te integracije."
+    },
+    "device_required": {
+      "message": "Nastavljenih je več tiskalnikov HP: izberite enega."
+    }
   }
 }

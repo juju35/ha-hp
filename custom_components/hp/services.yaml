@@ -1,0 +1,46 @@
+scan:
+  fields:
+    device_id:
+      required: false
+      selector:
+        device:
+          integration: hp
+    format:
+      required: false
+      selector:
+        select:
+          options: ["pdf", "jpeg"]
+          translation_key: scan_format
+    source:
+      required: false
+      selector:
+        select:
+          options: ["flatbed", "feeder", "feeder_duplex"]
+          translation_key: scan_source
+    resolution:
+      required: false
+      selector:
+        select:
+          options: ["75", "100", "150", "200", "300", "600"]
+    color_mode:
+      required: false
+      selector:
+        select:
+          options: ["color", "grayscale", "black_and_white"]
+          translation_key: scan_color_mode
+    page_size:
+      required: false
+      selector:
+        select:
+          options: ["a4", "letter", "legal", "max"]
+          translation_key: scan_page_size
+    directory:
+      required: false
+      example: /media/hp
+      selector:
+        text:
+    filename:
+      required: false
+      example: invoice_2026_11
+      selector:
+        text:

@@ -58,5 +58,113 @@
         }
       }
     }
+  },
+  "services": {
+    "scan": {
+      "name": "Szkennelés",
+      "description": "Beszkennel egy dokumentumot a nyomtató üveglapjáról vagy lapadagolójából, és PDF vagy JPEG fájlként menti. A meg nem adott beállítások a nyomtató szkennelési választó entitásaiból jönnek.",
+      "fields": {
+        "device_id": {
+          "name": "Nyomtató",
+          "description": "A szkenneléshez használt nyomtató. Elhagyható, ha csak egy van."
+        },
+        "format": {
+          "name": "Formátum",
+          "description": "PDF (egy fájl az összes oldallal) vagy JPEG (oldalanként egy kép)."
+        },
+        "source": {
+          "name": "Forrás",
+          "description": "Üveglap vagy lapadagoló."
+        },
+        "resolution": {
+          "name": "Felbontás",
+          "description": "Pont per hüvelyk. A 300 dokumentumokhoz megfelelő."
+        },
+        "color_mode": {
+          "name": "Színmód",
+          "description": "Színes, szürkeárnyalatos vagy fekete-fehér."
+        },
+        "page_size": {
+          "name": "Oldalméret",
+          "description": "A szkennelt terület. A teljes üveglap a forrás legnagyobb területét szkenneli."
+        },
+        "directory": {
+          "name": "Mappa",
+          "description": "Hová kerülnek a fájlok. Alapértelmezés: a helyi média hp mappája. Szerepelnie kell az allowlist_external_dirs listában."
+        },
+        "filename": {
+          "name": "Fájlnév",
+          "description": "Kiterjesztés nélkül. Alapértelmezés: scan_ és a dátum, idő."
+        }
+      }
+    }
+  },
+  "selector": {
+    "scan_format": {
+      "options": {
+        "pdf": "PDF",
+        "jpeg": "JPEG"
+      }
+    },
+    "scan_source": {
+      "options": {
+        "flatbed": "Üveglap",
+        "feeder": "Lapadagoló",
+        "feeder_duplex": "Lapadagoló, kétoldalas"
+      }
+    },
+    "scan_color_mode": {
+      "options": {
+        "color": "Színes",
+        "grayscale": "Szürkeárnyalatos",
+        "black_and_white": "Fekete-fehér"
+      }
+    },
+    "scan_page_size": {
+      "options": {
+        "a4": "A4",
+        "letter": "Letter",
+        "legal": "Legal",
+        "max": "Teljes üveglap"
+      }
+    }
+  },
+  "exceptions": {
+    "printer_offline": {
+      "message": "A nyomtató ki van kapcsolva, vagy nem válaszol."
+    },
+    "no_scanner": {
+      "message": "Ennek a nyomtatónak nincs szkennere, vagy a szkenner nem válaszol eSCL-en (AirScan)."
+    },
+    "scanner_busy": {
+      "message": "A szkenner foglalt. Próbálja újra egy pillanat múlva."
+    },
+    "feeder_empty": {
+      "message": "A lapadagoló üres."
+    },
+    "unsupported_source": {
+      "message": "A szkenner nem kínálja ezt a forrást."
+    },
+    "unsupported_format": {
+      "message": "A szkenner nem kínálja ezt a formátumot."
+    },
+    "unsupported_resolution": {
+      "message": "A szkenner nem kínálja ezt a felbontást."
+    },
+    "unsupported_color_mode": {
+      "message": "A szkenner nem kínálja ezt a színmódot."
+    },
+    "scan_failed": {
+      "message": "A szkennelés nem sikerült: {error}"
+    },
+    "directory_not_allowed": {
+      "message": "A(z) {directory} mappa nem engedélyezett: adja hozzá az allowlist_external_dirs listához."
+    },
+    "device_not_found": {
+      "message": "Ez az eszköz nem ennek az integrációnak a nyomtatója."
+    },
+    "device_required": {
+      "message": "Több HP nyomtató van beállítva: válasszon egyet."
+    }
   }
 }

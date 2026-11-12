@@ -58,5 +58,113 @@
         }
       }
     }
+  },
+  "services": {
+    "scan": {
+      "name": "Сканиране",
+      "description": "Сканира документ от стъклото или подаващото устройство на принтера и го записва като PDF или JPEG файл. Незададените настройки са тези на обектите за избор на сканиране на принтера.",
+      "fields": {
+        "device_id": {
+          "name": "Принтер",
+          "description": "Принтерът за сканиране. По избор, ако има само един."
+        },
+        "format": {
+          "name": "Формат",
+          "description": "PDF (един файл с всички страници) или JPEG (едно изображение на страница)."
+        },
+        "source": {
+          "name": "Източник",
+          "description": "Стъкло или устройство за подаване на документи."
+        },
+        "resolution": {
+          "name": "Резолюция",
+          "description": "Точки на инч. 300 е подходяща за документи."
+        },
+        "color_mode": {
+          "name": "Цветови режим",
+          "description": "Цветно, нюанси на сивото или черно-бяло."
+        },
+        "page_size": {
+          "name": "Размер на страницата",
+          "description": "Сканирана област. Цялото стъкло сканира най-голямата област на източника."
+        },
+        "directory": {
+          "name": "Папка",
+          "description": "Къде се записват файловете. По подразбиране: папката hp на локалните медии. Тя трябва да е в allowlist_external_dirs."
+        },
+        "filename": {
+          "name": "Име на файла",
+          "description": "Без разширение. По подразбиране: scan_ последвано от дата и час."
+        }
+      }
+    }
+  },
+  "selector": {
+    "scan_format": {
+      "options": {
+        "pdf": "PDF",
+        "jpeg": "JPEG"
+      }
+    },
+    "scan_source": {
+      "options": {
+        "flatbed": "Стъкло",
+        "feeder": "Устройство за подаване",
+        "feeder_duplex": "Устройство за подаване, двустранно"
+      }
+    },
+    "scan_color_mode": {
+      "options": {
+        "color": "Цветно",
+        "grayscale": "Нюанси на сивото",
+        "black_and_white": "Черно-бяло"
+      }
+    },
+    "scan_page_size": {
+      "options": {
+        "a4": "A4",
+        "letter": "Letter",
+        "legal": "Legal",
+        "max": "Цялото стъкло"
+      }
+    }
+  },
+  "exceptions": {
+    "printer_offline": {
+      "message": "Принтерът е изключен или не отговаря."
+    },
+    "no_scanner": {
+      "message": "Този принтер няма скенер или скенерът му не отговаря чрез eSCL (AirScan)."
+    },
+    "scanner_busy": {
+      "message": "Скенерът е зает. Опитайте отново след малко."
+    },
+    "feeder_empty": {
+      "message": "Устройството за подаване на документи е празно."
+    },
+    "unsupported_source": {
+      "message": "Скенерът не предлага този източник."
+    },
+    "unsupported_format": {
+      "message": "Скенерът не предлага този формат."
+    },
+    "unsupported_resolution": {
+      "message": "Скенерът не предлага тази резолюция."
+    },
+    "unsupported_color_mode": {
+      "message": "Скенерът не предлага този цветови режим."
+    },
+    "scan_failed": {
+      "message": "Сканирането не успя: {error}"
+    },
+    "directory_not_allowed": {
+      "message": "Папката {directory} не е разрешена: добавете я в allowlist_external_dirs."
+    },
+    "device_not_found": {
+      "message": "Това устройство не е принтер от тази интеграция."
+    },
+    "device_required": {
+      "message": "Настроени са няколко принтера HP: изберете един."
+    }
   }
 }

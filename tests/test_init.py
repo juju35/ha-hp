@@ -105,7 +105,9 @@ async def test_offline_keeps_values(
     assert _state(hass, f"{P}_black_level") == "42"
     assert _state(hass, f"{B}_wi_fi") == STATE_ON
     for entity in er.async_entries_for_config_entry(er.async_get(hass), entry.entry_id):
-        if entity.disabled_by is None:
+        # A button and the last scan have no state before they are used, printer on or off.
+        never_used = entity.domain in ("button", "image") or entity.entity_id.endswith("_last_scan")
+        if entity.disabled_by is None and not never_used:
             assert _state(hass, entity.entity_id) not in (STATE_UNAVAILABLE, STATE_UNKNOWN), entity.entity_id
 
 

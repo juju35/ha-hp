@@ -58,5 +58,113 @@
         }
       }
     }
+  },
+  "services": {
+    "scan": {
+      "name": "Scannen",
+      "description": "Scant een document vanaf de glasplaat of documentinvoer van de printer en slaat het op als PDF- of JPEG-bestand. Niet opgegeven instellingen komen van de scan-selectie-entiteiten van de printer.",
+      "fields": {
+        "device_id": {
+          "name": "Printer",
+          "description": "De printer om mee te scannen. Optioneel als er maar één is."
+        },
+        "format": {
+          "name": "Formaat",
+          "description": "PDF (één bestand met alle pagina's) of JPEG (één afbeelding per pagina)."
+        },
+        "source": {
+          "name": "Bron",
+          "description": "Glasplaat of documentinvoer."
+        },
+        "resolution": {
+          "name": "Resolutie",
+          "description": "Punten per inch. 300 past bij documenten."
+        },
+        "color_mode": {
+          "name": "Kleurmodus",
+          "description": "Kleur, grijstinten of zwart-wit."
+        },
+        "page_size": {
+          "name": "Paginaformaat",
+          "description": "Gescand gebied. Hele glasplaat scant het grootste gebied van de bron."
+        },
+        "directory": {
+          "name": "Map",
+          "description": "Waar de bestanden worden opgeslagen. Standaard: de map hp van de lokale media. Deze moet in allowlist_external_dirs staan."
+        },
+        "filename": {
+          "name": "Bestandsnaam",
+          "description": "Zonder extensie. Standaard: scan_ gevolgd door datum en tijd."
+        }
+      }
+    }
+  },
+  "selector": {
+    "scan_format": {
+      "options": {
+        "pdf": "PDF",
+        "jpeg": "JPEG"
+      }
+    },
+    "scan_source": {
+      "options": {
+        "flatbed": "Glasplaat",
+        "feeder": "Documentinvoer",
+        "feeder_duplex": "Documentinvoer, dubbelzijdig"
+      }
+    },
+    "scan_color_mode": {
+      "options": {
+        "color": "Kleur",
+        "grayscale": "Grijstinten",
+        "black_and_white": "Zwart-wit"
+      }
+    },
+    "scan_page_size": {
+      "options": {
+        "a4": "A4",
+        "letter": "Letter",
+        "legal": "Legal",
+        "max": "Hele glasplaat"
+      }
+    }
+  },
+  "exceptions": {
+    "printer_offline": {
+      "message": "De printer staat uit of antwoordt niet."
+    },
+    "no_scanner": {
+      "message": "Deze printer heeft geen scanner, of de scanner antwoordt niet via eSCL (AirScan)."
+    },
+    "scanner_busy": {
+      "message": "De scanner is bezig. Probeer het zo opnieuw."
+    },
+    "feeder_empty": {
+      "message": "De documentinvoer is leeg."
+    },
+    "unsupported_source": {
+      "message": "De scanner biedt deze bron niet aan."
+    },
+    "unsupported_format": {
+      "message": "De scanner biedt dit formaat niet aan."
+    },
+    "unsupported_resolution": {
+      "message": "De scanner biedt deze resolutie niet aan."
+    },
+    "unsupported_color_mode": {
+      "message": "De scanner biedt deze kleurmodus niet aan."
+    },
+    "scan_failed": {
+      "message": "Het scannen is mislukt: {error}"
+    },
+    "directory_not_allowed": {
+      "message": "De map {directory} is niet toegestaan: voeg hem toe aan allowlist_external_dirs."
+    },
+    "device_not_found": {
+      "message": "Dit apparaat is geen printer van deze integratie."
+    },
+    "device_required": {
+      "message": "Er zijn meerdere HP-printers ingesteld: kies er een."
+    }
   }
 }

@@ -58,5 +58,113 @@
         }
       }
     }
+  },
+  "services": {
+    "scan": {
+      "name": "Escanear",
+      "description": "Escanea un documento desde el cristal o el alimentador de la impresora y lo guarda como archivo PDF o JPEG. Los ajustes no indicados son los de las entidades de selección de escaneo de la impresora.",
+      "fields": {
+        "device_id": {
+          "name": "Impresora",
+          "description": "La impresora que se usará. Opcional si solo hay una."
+        },
+        "format": {
+          "name": "Formato",
+          "description": "PDF (un archivo con todas las páginas) o JPEG (una imagen por página)."
+        },
+        "source": {
+          "name": "Origen",
+          "description": "Cristal o alimentador de documentos."
+        },
+        "resolution": {
+          "name": "Resolución",
+          "description": "Puntos por pulgada. 300 es adecuado para documentos."
+        },
+        "color_mode": {
+          "name": "Modo de color",
+          "description": "Color, escala de grises o blanco y negro."
+        },
+        "page_size": {
+          "name": "Tamaño de página",
+          "description": "Zona escaneada. Cristal completo escanea la zona más grande del origen."
+        },
+        "directory": {
+          "name": "Carpeta",
+          "description": "Dónde se guardan los archivos. Por defecto: la carpeta hp de los medios locales. Debe estar en allowlist_external_dirs."
+        },
+        "filename": {
+          "name": "Nombre de archivo",
+          "description": "Sin extensión. Por defecto: scan_ seguido de la fecha y la hora."
+        }
+      }
+    }
+  },
+  "selector": {
+    "scan_format": {
+      "options": {
+        "pdf": "PDF",
+        "jpeg": "JPEG"
+      }
+    },
+    "scan_source": {
+      "options": {
+        "flatbed": "Cristal",
+        "feeder": "Alimentador de documentos",
+        "feeder_duplex": "Alimentador de documentos, a doble cara"
+      }
+    },
+    "scan_color_mode": {
+      "options": {
+        "color": "Color",
+        "grayscale": "Escala de grises",
+        "black_and_white": "Blanco y negro"
+      }
+    },
+    "scan_page_size": {
+      "options": {
+        "a4": "A4",
+        "letter": "Carta",
+        "legal": "Legal",
+        "max": "Cristal completo"
+      }
+    }
+  },
+  "exceptions": {
+    "printer_offline": {
+      "message": "La impresora está apagada o no responde."
+    },
+    "no_scanner": {
+      "message": "Esta impresora no tiene escáner, o su escáner no responde por eSCL (AirScan)."
+    },
+    "scanner_busy": {
+      "message": "El escáner está ocupado. Inténtalo de nuevo en un momento."
+    },
+    "feeder_empty": {
+      "message": "El alimentador de documentos está vacío."
+    },
+    "unsupported_source": {
+      "message": "El escáner no ofrece este origen."
+    },
+    "unsupported_format": {
+      "message": "El escáner no ofrece este formato."
+    },
+    "unsupported_resolution": {
+      "message": "El escáner no ofrece esta resolución."
+    },
+    "unsupported_color_mode": {
+      "message": "El escáner no ofrece este modo de color."
+    },
+    "scan_failed": {
+      "message": "El escaneo ha fallado: {error}"
+    },
+    "directory_not_allowed": {
+      "message": "La carpeta {directory} no está permitida: añádela a allowlist_external_dirs."
+    },
+    "device_not_found": {
+      "message": "Este dispositivo no es una impresora de esta integración."
+    },
+    "device_required": {
+      "message": "Hay varias impresoras HP configuradas: elige una."
+    }
   }
 }

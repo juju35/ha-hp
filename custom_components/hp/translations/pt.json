@@ -58,5 +58,113 @@
         }
       }
     }
+  },
+  "services": {
+    "scan": {
+      "name": "Digitalizar",
+      "description": "Digitaliza um documento a partir do vidro ou do alimentador da impressora e guarda-o como ficheiro PDF ou JPEG. As definições não indicadas são as das entidades de seleção de digitalização da impressora.",
+      "fields": {
+        "device_id": {
+          "name": "Impressora",
+          "description": "A impressora a utilizar. Opcional se houver apenas uma."
+        },
+        "format": {
+          "name": "Formato",
+          "description": "PDF (um ficheiro com todas as páginas) ou JPEG (uma imagem por página)."
+        },
+        "source": {
+          "name": "Origem",
+          "description": "Vidro ou alimentador de documentos."
+        },
+        "resolution": {
+          "name": "Resolução",
+          "description": "Pontos por polegada. 300 é adequado para documentos."
+        },
+        "color_mode": {
+          "name": "Modo de cor",
+          "description": "Cor, tons de cinzento ou preto e branco."
+        },
+        "page_size": {
+          "name": "Tamanho da página",
+          "description": "Área digitalizada. Vidro inteiro digitaliza a maior área da origem."
+        },
+        "directory": {
+          "name": "Pasta",
+          "description": "Onde os ficheiros são guardados. Predefinição: a pasta hp dos media locais. Tem de estar em allowlist_external_dirs."
+        },
+        "filename": {
+          "name": "Nome do ficheiro",
+          "description": "Sem extensão. Predefinição: scan_ seguido da data e hora."
+        }
+      }
+    }
+  },
+  "selector": {
+    "scan_format": {
+      "options": {
+        "pdf": "PDF",
+        "jpeg": "JPEG"
+      }
+    },
+    "scan_source": {
+      "options": {
+        "flatbed": "Vidro",
+        "feeder": "Alimentador de documentos",
+        "feeder_duplex": "Alimentador de documentos, frente e verso"
+      }
+    },
+    "scan_color_mode": {
+      "options": {
+        "color": "Cor",
+        "grayscale": "Tons de cinzento",
+        "black_and_white": "Preto e branco"
+      }
+    },
+    "scan_page_size": {
+      "options": {
+        "a4": "A4",
+        "letter": "Carta",
+        "legal": "Ofício",
+        "max": "Vidro inteiro"
+      }
+    }
+  },
+  "exceptions": {
+    "printer_offline": {
+      "message": "A impressora está desligada ou não responde."
+    },
+    "no_scanner": {
+      "message": "Esta impressora não tem digitalizador, ou o digitalizador não responde por eSCL (AirScan)."
+    },
+    "scanner_busy": {
+      "message": "O digitalizador está ocupado. Tente novamente dentro de momentos."
+    },
+    "feeder_empty": {
+      "message": "O alimentador de documentos está vazio."
+    },
+    "unsupported_source": {
+      "message": "O digitalizador não oferece esta origem."
+    },
+    "unsupported_format": {
+      "message": "O digitalizador não oferece este formato."
+    },
+    "unsupported_resolution": {
+      "message": "O digitalizador não oferece esta resolução."
+    },
+    "unsupported_color_mode": {
+      "message": "O digitalizador não oferece este modo de cor."
+    },
+    "scan_failed": {
+      "message": "A digitalização falhou: {error}"
+    },
+    "directory_not_allowed": {
+      "message": "A pasta {directory} não é permitida: adicione-a a allowlist_external_dirs."
+    },
+    "device_not_found": {
+      "message": "Este dispositivo não é uma impressora desta integração."
+    },
+    "device_required": {
+      "message": "Estão configuradas várias impressoras HP: escolha uma."
+    }
   }
 }

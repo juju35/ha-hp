@@ -14,4 +14,5 @@ First release: a local integration for HP printers, built to replace the core HP
 - Zeroconf discovery following address changes, reconfigure flow, detection of another printer at the address, firmware updates on the device page, diagnostics
 - Nothing written when a poll finds nothing new: no entity write and nothing recorded every 30 s; the **Last seen** sensor, the one value that changes at every poll, is disabled by default
 - Page counters never go down (a lower firmware value is ignored, so long-term statistics see no false reset); counters and ink not read while the printer starts up or shuts down
+- Scanning to PDF or JPEG through eSCL (AirScan): **Scan** button with format, source (glass, feeder, double-sided feeder), resolution, color mode and page size selects kept across restarts; `hp.scan` action with a response (saved files); files in the local media `hp` folder, never overwritten; **Last scan** sensor, **Last scanned image** and `hp_scan_completed` event
 - No Python dependency

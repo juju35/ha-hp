@@ -58,6 +58,7 @@ from .const import (
     USAGE_INTERVAL,
     WRONG_PRINTER_RETRY,
 )
+from .escl import CAPABILITIES, ScanSettings, parse_capabilities
 
 type HpConfigEntry = ConfigEntry[HpCoordinator]
 
@@ -77,6 +78,9 @@ def empty_data() -> dict[str, Any]:
         "counters": {},
         "consumables": {},
         "connectivity": {},
+        "scanner": {},
+        "last_scan": None,
+        "last_image": None,
     }
 
 
@@ -108,6 +112,9 @@ class HpCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self._due: dict[str, datetime] = {}
         self._unsupported: dict[str, datetime] = {}
         self._last_saved = 0.0
+        # Settings of the Scan button and defaults of the scan action, kept by the select entities.
+        self.scan_settings = ScanSettings()
+        self.scan_lock = asyncio.Lock()
         # Serial number answering at the address when it is not this printer's (DHCP).
         self._wrong_printer: str | None = None
 
@@ -144,6 +151,15 @@ class HpCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
     def _is_due(self, group: str, now: datetime) -> bool:
         return now >= self._due.get(group, now)
+
+    def async_set_scan(self, last_scan: dict[str, Any], last_image: dict[str, Any] | None) -> None:
+        """Record a finished scan: written to the entities and saved."""
+        data = deepcopy(self.data)
+        data["last_scan"] = last_scan
+        if last_image is not None:
+            data["last_image"] = last_image
+        self.async_set_updated_data(data)
+        self._save()
 
     async def _optional(self, path: str, now: datetime) -> Any:
         """Fetch a document the printer may not publish; None when it doesn't or fails this time."""
@@ -209,8 +225,9 @@ class HpCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         read_usage = settled and (job_ended or self._is_due("usage", now))
         read_network = self._is_due("network", now)
 
-        device, usage, consumables, adapters, eprint = await asyncio.gather(
+        device, scanner, usage, consumables, adapters, eprint = await asyncio.gather(
             self._optional(DEVICE, now) if read_device else _none(),
+            self._optional(CAPABILITIES, now) if read_device else _none(),
             self._optional(USAGE, now) if read_usage else _none(),
             self._optional(CONSUMABLES, now) if read_usage else _none(),
             self._optional(ADAPTERS, now) if read_network else _none(),
@@ -241,6 +258,11 @@ class HpCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                     self._wrong_printer = None
                 data["device"] = {**data["device"], **identity}
                 self._due["device"] = now + DEVICE_INTERVAL
+                if scanner is not None:
+                    try:
+                        data["scanner"] = parse_capabilities(scanner)
+                    except HpError as err:
+                        LOGGER.debug("%s: %s", self.client.host, err)
 
         if read_usage:
             self._merge_usage(data, usage, consumables)

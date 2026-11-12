@@ -58,5 +58,113 @@
         }
       }
     }
+  },
+  "services": {
+    "scan": {
+      "name": "Scansiona",
+      "description": "Scansiona un documento dal vetro o dall'alimentatore della stampante e lo salva come file PDF o JPEG. Le impostazioni non indicate sono quelle delle entità di selezione di scansione della stampante.",
+      "fields": {
+        "device_id": {
+          "name": "Stampante",
+          "description": "La stampante da usare. Facoltativa se ce n'è una sola."
+        },
+        "format": {
+          "name": "Formato",
+          "description": "PDF (un file con tutte le pagine) o JPEG (un'immagine per pagina)."
+        },
+        "source": {
+          "name": "Origine",
+          "description": "Vetro o alimentatore di documenti."
+        },
+        "resolution": {
+          "name": "Risoluzione",
+          "description": "Punti per pollice. 300 è adatto ai documenti."
+        },
+        "color_mode": {
+          "name": "Modalità colore",
+          "description": "Colore, scala di grigi o bianco e nero."
+        },
+        "page_size": {
+          "name": "Formato pagina",
+          "description": "Area scansionata. Vetro intero scansiona l'area più grande dell'origine."
+        },
+        "directory": {
+          "name": "Cartella",
+          "description": "Dove vengono salvati i file. Predefinita: la cartella hp dei media locali. Deve essere in allowlist_external_dirs."
+        },
+        "filename": {
+          "name": "Nome file",
+          "description": "Senza estensione. Predefinito: scan_ seguito da data e ora."
+        }
+      }
+    }
+  },
+  "selector": {
+    "scan_format": {
+      "options": {
+        "pdf": "PDF",
+        "jpeg": "JPEG"
+      }
+    },
+    "scan_source": {
+      "options": {
+        "flatbed": "Vetro",
+        "feeder": "Alimentatore di documenti",
+        "feeder_duplex": "Alimentatore di documenti, fronte-retro"
+      }
+    },
+    "scan_color_mode": {
+      "options": {
+        "color": "Colore",
+        "grayscale": "Scala di grigi",
+        "black_and_white": "Bianco e nero"
+      }
+    },
+    "scan_page_size": {
+      "options": {
+        "a4": "A4",
+        "letter": "Lettera",
+        "legal": "Legale",
+        "max": "Vetro intero"
+      }
+    }
+  },
+  "exceptions": {
+    "printer_offline": {
+      "message": "La stampante è spenta o non risponde."
+    },
+    "no_scanner": {
+      "message": "Questa stampante non ha uno scanner, o il suo scanner non risponde tramite eSCL (AirScan)."
+    },
+    "scanner_busy": {
+      "message": "Lo scanner è occupato. Riprova tra un momento."
+    },
+    "feeder_empty": {
+      "message": "L'alimentatore di documenti è vuoto."
+    },
+    "unsupported_source": {
+      "message": "Lo scanner non offre questa origine."
+    },
+    "unsupported_format": {
+      "message": "Lo scanner non offre questo formato."
+    },
+    "unsupported_resolution": {
+      "message": "Lo scanner non offre questa risoluzione."
+    },
+    "unsupported_color_mode": {
+      "message": "Lo scanner non offre questa modalità colore."
+    },
+    "scan_failed": {
+      "message": "La scansione non è riuscita: {error}"
+    },
+    "directory_not_allowed": {
+      "message": "La cartella {directory} non è consentita: aggiungila ad allowlist_external_dirs."
+    },
+    "device_not_found": {
+      "message": "Questo dispositivo non è una stampante di questa integrazione."
+    },
+    "device_required": {
+      "message": "Sono configurate più stampanti HP: scegline una."
+    }
   }
 }

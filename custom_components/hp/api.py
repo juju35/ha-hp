@@ -182,6 +182,24 @@ class HpClient:
             self._cache.pop(path, None)
         return document
 
+    async def request(
+        self, method: str, path: str, *, data: bytes | None = None, timeout: float = REQUEST_TIMEOUT
+    ) -> tuple[int, dict[str, str], bytes]:
+        """Send a request outside the cache and the polling semaphore (scan jobs); return status, headers, body."""
+        url = self.base_url.with_path(path)
+        headers = {"Content-Type": "text/xml"} if data is not None else {}
+        client_timeout = aiohttp.ClientTimeout(total=timeout, sock_connect=CONNECT_TIMEOUT)
+        try:
+            async with self.session.request(
+                method, url, data=data, headers=headers, timeout=client_timeout, ssl=False
+            ) as response:
+                body = await response.read()
+                return response.status, dict(response.headers), body
+        except (TimeoutError, aiohttp.ClientConnectionError, OSError) as err:
+            raise HpConnectionError(f"{method} {path}: {err.__class__.__name__} {err}".strip()) from err
+        except aiohttp.ClientError as err:
+            raise HpError(f"{method} {path}: {err}") from err
+
 
 def _parse_body(path: str, body: bytes, content_type: str) -> Element | dict[str, Any]:
     if "json" in content_type or "javascript" in content_type or body.lstrip()[:1] == b"{":
