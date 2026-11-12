@@ -212,6 +212,7 @@ class HpLastScanSensor(HpEntity, SensorEntity):
             "format": last.get("format"),
             "files": last.get("files", []),
             "media_ids": last.get("media_ids", []),
+            "download_paths": last.get("download_paths", []),
             "pages": last.get("pages"),
         }
 

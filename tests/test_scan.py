@@ -10,6 +10,7 @@ from unittest.mock import patch
 import pytest
 from homeassistant.core import HomeAssistant, State
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
+from homeassistant.helpers import device_registry as dr
 from PIL import Image
 from pytest_homeassistant_custom_component.common import MockConfigEntry, async_capture_events, mock_restore_cache
 
@@ -94,6 +95,7 @@ async def test_scan_pdf(hass: HomeAssistant, printer: FakePrinter, entry: MockCo
         "format": "pdf",
         "files": [str(path)],
         "media_ids": ["media-source://media_source/local/hp/invoice.pdf"],
+        "download_paths": [f"/api/hp/scans/{entry.entry_id}/0"],
         "pages": 1,
     }
     pages = read_pdf(path.read_bytes())
@@ -187,6 +189,18 @@ async def test_scanner_pdf_only(hass: HomeAssistant, printer: FakePrinter, entry
     assert Path(response["files"][0]).read_bytes() == PDF
     assert response["pages"] is None
     assert "<pwg:DocumentFormat>application/pdf</pwg:DocumentFormat>" in printer.scan_jobs[0].decode()
+
+
+async def test_scan_with_device_id(hass: HomeAssistant, printer: FakePrinter, entry: MockConfigEntry) -> None:
+    """The printer is found by its device."""
+    await _setup(hass, entry)
+    device = dr.async_entries_for_config_entry(dr.async_get(hass), entry.entry_id)[0]
+    printer.pages = [JPEG_1]
+    response = await _scan(hass, device_id=device.id)
+    assert response["pages"] == 1
+    with pytest.raises(ServiceValidationError) as err:
+        await _scan(hass, device_id="unknown")
+    assert err.value.translation_key == "device_not_found"
 
 
 async def test_scan_jpeg_feeder_duplex(
@@ -318,3 +332,24 @@ async def test_outside_media_no_media_id(
     printer.pages = [JPEG_1]
     response = await _scan(hass, directory=str(other))
     assert response["media_ids"] == []
+
+
+async def test_download_last_scan(
+    hass: HomeAssistant, printer: FakePrinter, entry: MockConfigEntry, hass_client, hass_client_no_auth
+) -> None:
+    """The last scan's PDF is downloaded through the integration (the media view does not serve PDFs)."""
+    await _setup(hass, entry)
+    printer.pages = [JPEG_1]
+    response = await _scan(hass, filename="letter")
+    path = response["download_paths"][0]
+    client = await hass_client()
+    resp = await client.get(path)
+    assert resp.status == HTTPStatus.OK
+    assert resp.headers["Content-Type"] == "application/pdf"
+    assert resp.headers["Content-Disposition"] == 'attachment; filename="letter.pdf"'
+    assert await resp.read() == Path(response["files"][0]).read_bytes()
+
+    for other in (f"/api/hp/scans/{entry.entry_id}/1", f"/api/hp/scans/{entry.entry_id}/x", "/api/hp/scans/nope/0"):
+        assert (await client.get(other)).status == HTTPStatus.NOT_FOUND
+    anonymous = await hass_client_no_auth()
+    assert (await anonymous.get(path)).status == HTTPStatus.UNAUTHORIZED

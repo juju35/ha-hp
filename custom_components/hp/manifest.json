@@ -3,12 +3,13 @@
   "name": "HP Printer",
   "codeowners": ["@juju35"],
   "config_flow": true,
+  "dependencies": ["http"],
   "documentation": "https://github.com/juju35/ha-hp",
   "integration_type": "device",
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/juju35/ha-hp/issues",
   "requirements": [],
-  "version": "1.1.1",
+  "version": "1.2.0",
   "zeroconf": [
     {
       "name": "hp*",

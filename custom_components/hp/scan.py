@@ -18,6 +18,7 @@ from .const import DOMAIN, LOGGER
 from .coordinator import HpConfigEntry, HpCoordinator
 from .document import DocumentError, build_pdf, jpeg_to_png, page_from_jpeg, read_pdf
 from .escl import COLOR_MODES, EXTENSIONS, FORMATS, PAGE_SIZES, SOURCES, ScanError, ScanResult, ScanSettings, async_scan
+from .http import download_path
 
 EVENT_SCAN_COMPLETED = "hp_scan_completed"
 SERVICE_SCAN = "scan"
@@ -80,7 +81,14 @@ def _coordinator(hass: HomeAssistant, device_id: str | None) -> HpCoordinator:
     ]
     if device_id is not None:
         device = dr.async_get(hass).async_get(device_id)
-        entries = [entry for entry in entries if device is not None and entry.entry_id in device.config_entries]
+        # By the entry's devices: DeviceEntry.config_entries is deprecated (Home Assistant 2026.10).
+        registry = dr.async_get(hass)
+        entries = [
+            entry
+            for entry in entries
+            if device is not None
+            and any(d.id == device.id for d in dr.async_entries_for_config_entry(registry, entry.entry_id))
+        ]
         if not entries:
             raise ServiceValidationError(translation_domain=DOMAIN, translation_key="device_not_found")
     elif len(entries) != 1:
@@ -144,6 +152,7 @@ async def async_scan_to_files(
         "format": settings.format,
         "files": files,
         "media_ids": media_ids(hass, files),
+        "download_paths": [download_path(coordinator.config_entry.entry_id, i) for i in range(len(files))],
         "pages": pages,
     }
     coordinator.async_set_scan({"time": now.isoformat(), **result_data}, {"time": now.isoformat(), "file": files[0]})

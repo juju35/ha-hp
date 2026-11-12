@@ -317,6 +317,9 @@
           },
           "pages": {
             "name": "Pages"
+          },
+          "download_paths": {
+            "name": "Download paths"
           }
         }
       }

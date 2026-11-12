@@ -132,7 +132,7 @@ Printers whose scanner answers eSCL (AirScan, at `http://<printer address>/eSCL/
 | `select.<printer>_scan_resolution` | The resolutions the scanner offers (300 by default) |
 | `select.<printer>_scan_color_mode` | `color`, `grayscale`, `black_and_white` |
 | `select.<printer>_scan_page_size` | `a4` (default), `letter`, `legal`, `max` (largest area of the source) |
-| `sensor.<printer>_last_scan` | Time of the last scan; attributes `format`, `files`, `media_ids` (media source IDs, to show or download the files), `pages` |
+| `sensor.<printer>_last_scan` | Time of the last scan; attributes `format`, `files`, `media_ids` (media source IDs, to show the images in the media browser), `download_paths` (to download the files, PDF included), `pages` |
 | `image.<printer>_last_scanned_image` | First page of the last scan (PDF, JPEG or PNG) |
 
 Files are saved in the `hp` folder of the local media (`/media/hp` on Home Assistant OS), named `scan_<date>_<time>.pdf` (`_1.jpg`, `_2.jpg`… per page in JPEG or PNG); an existing file is never overwritten. They show in **Media → Local media → hp**. The settings are kept across restarts.
@@ -152,10 +152,12 @@ data:
   filename: invoice_2026_11
   directory: /media/scans  # must be in allowlist_external_dirs (the media folders are)
   append: false            # true: add the pages to the last PDF instead of a new file
-response_variable: scan    # scan.files, scan.media_ids, scan.pages
+response_variable: scan    # scan.files, scan.media_ids, scan.download_paths, scan.pages
 ```
 
-When a scan is saved, the event `hp_scan_completed` is fired with `device_id`, `format`, `files`, `media_ids` and `pages`. [ha-printer-card](https://github.com/juju35/ha-printer-card) scans from the glass or the feeder and offers the download link.
+When a scan is saved, the event `hp_scan_completed` is fired with `device_id`, `format`, `files`, `media_ids`, `download_paths` and `pages`.
+
+The files of each printer's last scan are downloaded from `/api/hp/scans/<entry>/<n>` (the paths in `download_paths`), by a signed-in user or a signed link: Home Assistant's media view only serves audio, video and images, not PDFs. [ha-printer-card](https://github.com/juju35/ha-printer-card) scans from the glass or the feeder and offers the download link.
 
 PDF and PNG are made by the integration from the scanner's JPEG pages (embedded as is in the PDF, no new compression), which is what lets pages be added to a PDF. A scanner that only offers PDF gets its own PDF saved, without adding pages.
 

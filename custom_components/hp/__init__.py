@@ -12,6 +12,7 @@ from homeassistant.helpers.typing import ConfigType
 from .api import HpClient
 from .const import DOMAIN
 from .coordinator import HpConfigEntry, HpCoordinator, store_for
+from .http import HpScanView
 from .scan import async_register_services
 
 PLATFORMS: list[Platform] = [Platform.BINARY_SENSOR, Platform.BUTTON, Platform.IMAGE, Platform.SELECT, Platform.SENSOR]
@@ -19,8 +20,9 @@ CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
-    """Register the scan action."""
+    """Register the scan action and the download of scans."""
     async_register_services(hass)
+    hass.http.register_view(HpScanView())
     return True
 
 
