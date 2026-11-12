@@ -438,3 +438,30 @@ async def test_scan_files_deleted_after_a_restart(
     assert await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done(wait_background_tasks=True)
     assert not file.exists()
+
+
+async def test_poll_keeps_a_scan_finished_meanwhile(
+    hass: HomeAssistant, printer: FakePrinter, entry: MockConfigEntry
+) -> None:
+    """A poll that started before a scan ended does not bring the old scan state back."""
+    await _setup(hass, entry)
+    coordinator = entry.runtime_data
+    release = asyncio.Event()
+    fetch = coordinator.client.fetch
+
+    async def slow_fetch(path):
+        await release.wait()
+        return await fetch(path)
+
+    printer.set_status("processing")  # a change, so the poll's data is new
+    with patch.object(coordinator.client, "fetch", slow_fetch):
+        poll = hass.async_create_task(coordinator.async_refresh())
+        await asyncio.sleep(0)
+        # The scan ends while the poll waits for the printer.
+        last = {"time": "2026-11-12T03:00:00+01:00", "format": "pdf", "files": ["/media/hp/x.pdf"], "pages": 1}
+        coordinator.async_set_scan(last, {"time": last["time"], "file": "/media/hp/x.pdf"})
+        release.set()
+        await poll
+    assert coordinator.data["status"] == "processing"
+    assert coordinator.data["last_scan"] == last
+    assert [f["file"] for f in coordinator.data["scan_files"]] == ["/media/hp/x.pdf"]

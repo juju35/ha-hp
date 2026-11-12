@@ -66,6 +66,9 @@ from .http import download_path, media_ids
 
 type HpConfigEntry = ConfigEntry[HpCoordinator]
 
+# Data changed by scans and downloads, not by polling.
+SCAN_KEYS = ("last_scan", "last_image", "scan_files")
+
 # While online and unchanged, the last-seen time is still saved this often.
 SAVE_LAST_SEEN_EVERY = 600
 
@@ -235,6 +238,14 @@ class HpCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             return parse_status(await self.client.fetch(STATUS))
 
     async def _async_update_data(self) -> dict[str, Any]:
+        data = await self._poll()
+        # A scan finished or a file deleted while the printer was read changed self.data meanwhile: the poll
+        # started from a copy, so it must not bring the scan state back to what it was.
+        if self.data is not None and data is not self.data:
+            data = {**data, **{key: self.data[key] for key in SCAN_KEYS}}
+        return data
+
+    async def _poll(self) -> dict[str, Any]:
         previous = self.data or empty_data()
         was_online = bool(previous.get("online"))
         now = dt_util.utcnow()
