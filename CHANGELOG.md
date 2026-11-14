@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.2 (2026-11-14)
+
+### Improvements
+- New integration icon: an OfficeJet-style printer above the HP logo on an HP-blue tile, with an ink badge, in the same style as the other integrations (source in `brand/icon.svg`).
+
 ## 1.2.1 (2026-11-12)
 
 ### Fixes

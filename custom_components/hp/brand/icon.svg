@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3b7bf2"/><stop offset="1" stop-color="#0238b0"/></linearGradient>
+    <linearGradient id="b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e3ebfa"/></linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112.64" ry="112.64" fill="url(#g)"/>
+  <g transform="translate(-10 0)">
+    <!-- paper in the document feeder -->
+    <path d="M196 72 h104 l10 50 h-124 z" fill="#ffffff" opacity="0.9"/>
+    <path d="M214 90 h62 M210 104 h76" stroke="#9cbcf5" stroke-width="7" stroke-linecap="round"/>
+    <!-- document feeder (ADF) -->
+    <path d="M150 118 h204 a14 14 0 0 1 14 14 v20 h-232 v-20 a14 14 0 0 1 14 -14 z" fill="#ffffff"/>
+    <!-- scanner lid line -->
+    <rect x="128" y="152" width="248" height="8" rx="4" fill="#0b2a6b" opacity="0.55"/>
+    <!-- body -->
+    <rect x="118" y="160" width="268" height="132" rx="20" fill="url(#b)"/>
+    <!-- touchscreen control panel -->
+    <path d="M140 178 h96 a8 8 0 0 1 8 8 v34 a8 8 0 0 1 -8 8 h-96 a8 8 0 0 1 -8 -8 v-34 a8 8 0 0 1 8 -8 z" fill="#0b2a6b"/>
+    <rect x="146" y="186" width="34" height="18" rx="4" fill="#3b82f6"/>
+    <rect x="186" y="186" width="50" height="7" rx="3.5" fill="#9cbcf5"/>
+    <rect x="186" y="198" width="34" height="7" rx="3.5" fill="#9cbcf5"/>
+    <rect x="146" y="211" width="90" height="8" rx="4" fill="#2557c7"/>
+    <!-- power button -->
+    <circle cx="362" cy="188" r="7" fill="#3b82f6"/>
+    <!-- output slot + printed page -->
+    <rect x="166" y="240" width="172" height="10" rx="5" fill="#0b2a6b"/>
+    <path d="M176 245 h152 l8 30 h-168 z" fill="#ffffff" stroke="#c8d8f5" stroke-width="3"/>
+    <path d="M194 258 h70 M194 267 h104" stroke="#3b82f6" stroke-width="5" stroke-linecap="round"/>
+    <!-- paper tray -->
+    <path d="M118 278 h268 v4 a14 14 0 0 1 -14 14 h-240 a14 14 0 0 1 -14 -14 z" fill="#c8d8f5"/>
+  </g>
+  <!-- HP logo -->
+  <path transform="translate(195.223 318) scale(0.12229)" fill="#ffffff" d="m498 1012h-15l103-284h143q19 0 37-12.5t24-30.5l111-309q15-39-4.5-65.5t-59.5-26.5h-198l-164 457-94 258q-84-20-156-66-71-46-123.5-111t-81.5-146q-30-80-30-170 0-87 28-166 28-78 78-142t118-110 148-68l-96 266-163 442h107l137-376h81l-137 376h107l128-350q14-38-5-65t-59-27h-90l103-286h23q105 0 197 40t160.5 108.5 108.5 160.5 40 197-40 197-108.5 160.5-160.5 108.5-197 40zm305-662h-81l-113 310h81z"/>
+  <!-- ink badge -->
+  <circle cx="416.15" cy="95.85" r="66.56" fill="#ff7a1a" stroke="#ffffff" stroke-width="11.264"/>
+  <path d="M416 54 C430 74 448 94 448 112 a32 32 0 0 1 -64 0 C384 94 402 74 416 54 z" fill="#ffffff"/>
+</svg>
