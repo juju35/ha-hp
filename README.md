@@ -10,6 +10,10 @@
 
 <p align="center"><img src="https://raw.githubusercontent.com/juju35/ha-hp/main/custom_components/hp/brand/icon.png" alt="HP Printer" width="120"></p>
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/juju35/ha-hp/main/images/hp.svg" alt="HP" height="56">
+</p>
+
 Home Assistant integration for HP printers, fully local: status, ink or toner levels, pages remaining and page counters, read from the printer's built-in web server, and **scanning to PDF, JPEG or PNG** from the glass or the document feeder, multi-page PDFs included. When the printer is off or asleep, **its sensors keep their last values** instead of turning unavailable or unknown, even across a Home Assistant restart.
 
 [![Open your Home Assistant instance and open a repository inside the Marketplace.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/marketplace_repository/?owner=juju35&repository=ha-hp&category=integration)
