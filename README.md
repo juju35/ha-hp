@@ -98,6 +98,8 @@ Copy `custom_components/hp/` to `/config/custom_components/hp/`, then restart Ho
 | Port | Empty for the default port (80, or 443 with HTTPS) |
 | Use HTTPS | Only for printers whose web server answers over HTTPS only |
 
+The printer's certificate is **not verified** (`verify_ssl` off, for HTTP and HTTPS alike): printers ship a self-signed certificate that cannot be checked. Keep the printer on a trusted local network.
+
 ### Options
 
 | Option | Default | Description |
@@ -144,7 +146,7 @@ Files are saved in the `hp` folder of the local media (`/media/hp` on Home Assis
 
 ### Action `hp.scan`
 
-Every field is optional: those not given come from the select entities, and `device_id` is only needed with several printers.
+Every field is optional: those not given come from the select entities, and `device_id` is only needed with several printers. A custom `directory` can only be given by an **administrator** (or by an automation or a script, which run without a user); other users scan to the default folder.
 
 ```yaml
 action: hp.scan

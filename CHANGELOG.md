@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.2.3 (2026-11-20)
+
+### Fixes
+- Security: the `hp.scan` action with a custom `directory` is reserved to administrators (automations and scripts, which run without a user, still can); other users scan to the default folder.
+
+### Maintenance
+- New `brand/logo.png` (and `@2x`), the integration's tile, as the other integrations.
+- README: the printer's certificate is not verified (self-signed certificates), and who may pick the scan folder.
+- Tests: diagnostics and their redaction are covered.
+
 ## 1.2.2 (2026-11-14)
 
 ### Improvements
