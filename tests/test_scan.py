@@ -10,8 +10,8 @@ from pathlib import Path
 from unittest.mock import patch
 
 import pytest
-from homeassistant.core import HomeAssistant, State
-from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
+from homeassistant.core import Context, HomeAssistant, State
+from homeassistant.exceptions import HomeAssistantError, ServiceValidationError, Unauthorized
 from homeassistant.helpers import device_registry as dr
 from PIL import Image
 from pytest_homeassistant_custom_component.common import (
@@ -345,6 +345,35 @@ async def test_outside_media_no_media_id(
     printer.pages = [JPEG_1]
     response = await _scan(hass, directory=str(other))
     assert response["media_ids"] == []
+
+
+async def test_custom_directory_admin_only(
+    hass: HomeAssistant,
+    printer: FakePrinter,
+    entry: MockConfigEntry,
+    tmp_path: Path,
+    hass_admin_user,
+    hass_read_only_user,
+) -> None:
+    """A custom folder needs an admin (or no user: automations); the default folder is open to every user."""
+    other = tmp_path.parent / f"{tmp_path.name}_users"
+    other.mkdir()
+    hass.config.allowlist_external_dirs.add(str(other))
+    await _setup(hass, entry)
+    printer.pages = [JPEG_1]
+
+    async def call(user, **data):
+        return await hass.services.async_call(
+            DOMAIN, "scan", data, blocking=True, return_response=True, context=Context(user_id=user.id)
+        )
+
+    with pytest.raises(Unauthorized):
+        await call(hass_read_only_user, directory=str(other))
+    assert not list(other.iterdir())
+    assert (await call(hass_read_only_user, filename="user"))["files"]
+    printer.pages = [JPEG_1]
+    assert (await call(hass_admin_user, directory=str(other), filename="admin"))["files"]
+    assert [p.name for p in other.iterdir()] == ["admin.pdf"]
 
 
 async def test_download_last_scan(

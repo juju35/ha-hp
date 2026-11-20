@@ -7,8 +7,9 @@ from pathlib import Path
 from typing import Any
 
 import voluptuous as vol
+from homeassistant.auth.permissions.const import POLICY_CONTROL
 from homeassistant.core import HomeAssistant, ServiceCall, ServiceResponse, SupportsResponse, callback
-from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
+from homeassistant.exceptions import HomeAssistantError, ServiceValidationError, Unauthorized
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import device_registry as dr
 from homeassistant.util import dt as dt_util
@@ -53,6 +54,12 @@ def async_register_services(hass: HomeAssistant) -> None:
     """Register the hp.scan action."""
 
     async def _scan(call: ServiceCall) -> ServiceResponse:
+        # A custom folder writes anywhere in allowlist_external_dirs: admins only (automations and scripts,
+        # which run without a user, are allowed). The default folder stays open to every user.
+        if ATTR_DIRECTORY in call.data and call.context.user_id:
+            user = await hass.auth.async_get_user(call.context.user_id)
+            if user is None or not user.is_admin:
+                raise Unauthorized(context=call.context, permission=POLICY_CONTROL)
         coordinator = _coordinator(hass, call.data.get(ATTR_DEVICE_ID))
         overrides = {
             key: call.data[key]
