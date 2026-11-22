@@ -56,6 +56,14 @@ Home Assistant integration for HP printers, fully local: status, ink or toner le
 
 The two can be installed side by side (different domains), but use only one per printer.
 
+## Screenshots
+
+An HP printer shown by [Printer Card](https://github.com/juju35/ha-printer-card): status, ink levels with their estimated time left, and alerts; the levels stay known while the printer is off.
+
+| Light | Dark |
+|---|---|
+| <img src="https://raw.githubusercontent.com/juju35/ha-hp/main/screenshots/printer-card.png" alt="HP printer in Printer Card" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-hp/main/screenshots/printer-card-dark.png" alt="HP printer in Printer Card, dark theme" width="400"> |
+
 ## Supported printers
 
 HP printers whose built-in web server publishes the `/DevMgmt/*.xml` documents: OfficeJet, OfficeJet Pro, ENVY, DeskJet, Smart Tank, LaserJet and Color LaserJet with a network connection. Which sensors are created depends on the model: a printer without a scanner or fax gets no scanner or fax sensor.
