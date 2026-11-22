@@ -7,7 +7,7 @@ from datetime import timedelta
 from typing import Final
 
 DOMAIN: Final = "hp"
-VERSION: Final = "1.2.3"
+VERSION: Final = "1.2.4"
 LOGGER: Final = logging.getLogger(__package__)
 
 CONF_SCAN_INTERVAL: Final = "scan_interval"

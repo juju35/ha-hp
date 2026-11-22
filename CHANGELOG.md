@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.4 - 2026-11-22
+
+### Maintenance
+- README: a Screenshots section showing what the integration brings to Printer Card, light and dark (the showcase site shows them too).
+
 ## 1.2.3 (2026-11-20)
 
 ### Fixes
