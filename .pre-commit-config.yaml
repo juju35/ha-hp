@@ -22,3 +22,11 @@ repos:
       - id: ruff-check
         args: [--fix]
       - id: ruff-format
+  - repo: local
+    hooks:
+      - id: screenshots-used
+        name: every capture shown in the README, and only those
+        entry: python scripts/check_screenshots.py
+        language: python
+        pass_filenames: false
+        always_run: true

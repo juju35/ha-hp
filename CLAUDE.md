@@ -67,6 +67,9 @@ This is a **standalone integration** (its own integration, with its own card) �
 - Languages to keep in sync: en, fr, de, es, it, nl, pt, pl, sr, sr-Latn, ro, da, sv, bg, ru, uk, hu, sk, cs, sl, lv, el (no Irish or Maltese).
 - Integration strings: `custom_components/hp/translations/*.json` (all languages).
 
+## Screenshots
+No capture that serves no purpose: every file in `screenshots/` is shown in the README, and the README shows only captures the scripts render — `scripts/check_screenshots.py` (pre-commit hook `screenshots-used`, run in CI) fails otherwise. A capture no longer shown is removed from the screenshot list and deleted; a new one is added to the README with its twin. Tests on `screenshots/` flag only orphan files, never a capture just listed and not rendered yet (the workflow commits it after the first push).
+
 ## Conventions
 - Prefer YAML over UI configuration; keep configurations minimal; test iteratively.
 - Keep `ha-*` repos **independent**: no shared/factored code across repos — duplication is fine.
