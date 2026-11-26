@@ -1,6 +1,7 @@
 {
   "domain": "hp",
   "name": "HP Printer",
+  "categories": ["computers_network.printers"],
   "codeowners": ["@juju35"],
   "config_flow": true,
   "dependencies": ["http"],
