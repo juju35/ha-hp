@@ -62,7 +62,7 @@ An HP printer shown by [Printer Card](https://github.com/juju35/ha-printer-card)
 
 | Light | Dark |
 |---|---|
-| <img src="https://raw.githubusercontent.com/juju35/ha-hp/main/screenshots/printer-card.png" alt="HP printer in Printer Card" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-hp/main/screenshots/printer-card-dark.png" alt="HP printer in Printer Card, dark theme" width="400"> |
+| <img src="https://raw.githubusercontent.com/juju35/ha-printer-scanner-card/main/screenshots/card.png" alt="HP printer in Printer Card" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-printer-scanner-card/main/screenshots/card-dark.png" alt="HP printer in Printer Card, dark theme" width="400"> |
 
 ## Supported printers
 
