@@ -38,7 +38,9 @@ def main() -> int:
     text = README.read_text() if README.is_file() else ""
     # Captures of the card repo this integration feeds are shown from that repo (never copied here, so they
     # can't drift): only this repo's own captures are checked.
-    other_repo = rf"https://raw\.githubusercontent\.com/juju35/(?!{re.escape(ROOT.name)}/)[\w.-]+/main/screenshots/[\w.-]+"
+    other_repo = (
+        rf"https://raw\.githubusercontent\.com/juju35/(?!{re.escape(ROOT.name)}/)[\w.-]+/main/screenshots/[\w.-]+"
+    )
     text = re.sub(other_repo, "", text)
     shown = set(REF.findall(text))
     errors = [
